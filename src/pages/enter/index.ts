@@ -4,8 +4,6 @@ import { pageStyles } from "~src/global";
 import { getUsername } from "~services/name-service";
 import scopedStyles from "./styles.module.scss";
 
-import("~components/hello-text").then(f => f.default());
-
 @customElement("enter-page")
 export default class EnterPage extends LitElement {
     @state() username: string | null = null;

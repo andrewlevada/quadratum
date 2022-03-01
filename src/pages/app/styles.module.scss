@@ -1,5 +1,6 @@
 @use "../../assets/styles/global";
 
-.container {
-  margin: 40px;
+#section > * {
+  &:first-child { margin-top: 60px }
+  &:last-child { margin-bottom: 60px }
 }

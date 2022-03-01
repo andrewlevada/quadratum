@@ -1,0 +1,43 @@
+@import "./global";
+
+@mixin flex-gap($margin) {
+  & > *:not(:last-child) {
+    #{$margin}: 8px;
+  }
+}
+
+.flex {
+  display: flex;
+
+  &.row {
+    flex-direction: row;
+
+    &.gap {
+      @include flex-gap(margin-right);
+    }
+  }
+
+  &.col {
+    flex-direction: column;
+
+    &.gap {
+      @include flex-gap(margin-bottom);
+    }
+  }
+
+  &.justify-start { justify-content: flex-start }
+  &.justify-center { justify-content: center }
+  &.justify-end { justify-content: flex-end }
+  &.justify-around { justify-content: space-around }
+  &.justify-between { justify-content: space-between }
+
+  &.align-center { align-items: center }
+}
+
+.full-width {
+  width: 100%;
+}
+
+.full-height {
+  height: 100%;
+}

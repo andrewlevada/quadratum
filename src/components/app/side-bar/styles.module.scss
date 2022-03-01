@@ -1,0 +1,22 @@
+@use "../../../assets/styles/global";
+
+$margin: 24px;
+
+#drawer-content {
+  padding-left: $margin;
+  padding-right: $margin;
+
+  & > * {
+    margin-top: $margin;
+    width: 100%;
+
+    &:last-child {
+      margin-bottom: $margin;
+    }
+  }
+}
+
+#app-content {
+  padding-left: 60px;
+  padding-right: 60px;
+}

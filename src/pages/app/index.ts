@@ -13,7 +13,9 @@ export default class AppPage extends LitElement {
     render(): TemplateResult {
         return html`
             <side-bar>
-                <p>content</p>
+                <div id="section">
+                    <h4>Section Title</h4>
+                </div>
             </side-bar>
         `;
     }

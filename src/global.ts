@@ -1,8 +1,9 @@
 import globalStyles from "~styles/global.scss";
 import globalPageStyles from "~src/pages/global-styles.scss";
+import layoutHelperStyles from "~styles/tiny-layout-helper.scss";
 
-export const componentStyles = [globalStyles];
-export const pageStyles = [globalStyles, globalPageStyles];
+export const componentStyles = [globalStyles, layoutHelperStyles];
+export const pageStyles = [globalStyles, globalPageStyles, layoutHelperStyles];
 
 // This is a place for connecting to api or executing global scripts (like analytics)
 // This file is marked as with side effects, which means that even functions, that are not imported
