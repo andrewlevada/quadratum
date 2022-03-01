@@ -48,8 +48,6 @@ $RECYCLE.BIN/
 # Other files
 node_modules/
 
-.idea
-
 # Webpack
 build
 stats.json
