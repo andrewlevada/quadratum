@@ -1,9 +1,9 @@
 import { CSSResultGroup, html, LitElement, TemplateResult } from "lit";
 import { componentStyles } from "~src/global";
+import { CompactListItem } from "~components/common/compact-list";
 import { defineComponent } from "~utils/components";
 import scopedStyles from "./styles.module.scss";
 import "@material/mwc-drawer";
-import { CompactListItem } from "~components/common/compact-list";
 
 import("~components/common/compact-list").then(f => f.default());
 
@@ -12,13 +12,13 @@ export class SideBar extends LitElement {
     private static nowList: CompactListItem[] = [
         { label: "Current Sprint", link: "/sprint/0" },
         { label: "Daily List", link: "/daily" },
-    ]
+    ];
 
     private static sprintsList: CompactListItem[] = [
         { label: "Previous", link: "/sprint/0" },
         { label: "Current", link: "/sprint/0" },
         { label: "Next", link: "/sprint/0" },
-    ]
+    ];
 
     render(): TemplateResult {
         return html`

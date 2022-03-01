@@ -1,15 +1,12 @@
 import { css, CSSResultGroup, html, LitElement, TemplateResult } from "lit";
-import { customElement, state } from "lit/decorators.js";
+import { customElement } from "lit/decorators.js";
 import { pageStyles } from "~src/global";
-import { getUsername } from "~services/name-service";
 import scopedStyles from "./styles.module.scss";
 
 import("~components/app/side-bar").then(f => f.default());
 
 @customElement("app-page")
 export default class AppPage extends LitElement {
-    @state() username: string | null = null;
-
     render(): TemplateResult {
         return html`
             <side-bar>
@@ -18,13 +15,6 @@ export default class AppPage extends LitElement {
                 </div>
             </side-bar>
         `;
-    }
-
-    connectedCallback(): void {
-        super.connectedCallback();
-        this.username = getUsername();
-        // eslint-disable-next-line no-console
-        if (!PRODUCTION) console.log("Everything is working!");
     }
 
     static get styles(): CSSResultGroup {

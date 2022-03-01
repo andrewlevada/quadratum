@@ -1,9 +1,9 @@
 import { css, CSSResultGroup, html, LitElement, TemplateResult } from "lit";
-import { customElement} from "lit/decorators.js";
+import { customElement } from "lit/decorators.js";
 import { pageStyles } from "~src/global";
-import scopedStyles from "./styles.module.scss";
 import googleIcon from "~src/assets/icons/logo_google.svg";
 import { getAuth, GoogleAuthProvider, signInWithPopup } from "@firebase/auth";
+import scopedStyles from "./styles.module.scss";
 import "@material/mwc-fab";
 
 @customElement("enter-page")
@@ -13,7 +13,7 @@ export default class EnterPage extends LitElement {
             <div class="flex row justify-center align-center full-width full-height">
                 <div class="flex col gap big-gap align-center">
                     <h3>Welcome to Quadratum - just good task tracker</h3>
-                    <mwc-fab extended label="Sign in with Google" @click=${this.googleSignIn}>
+                    <mwc-fab extended label="Sign in with Google" @click=${EnterPage.googleSignIn}>
                         <img slot="icon" src=${googleIcon} alt="Google logo">
                     </mwc-fab>
                 </div>
@@ -21,10 +21,11 @@ export default class EnterPage extends LitElement {
         `;
     }
 
-    private googleSignIn(): void {
+    private static googleSignIn(): void {
         const auth = getAuth();
         signInWithPopup(auth, new GoogleAuthProvider()).then(() => {
             window.location.pathname = "/app";
+            // eslint-disable-next-line no-alert
         }).catch(() => alert("Auth failed"));
     }
 

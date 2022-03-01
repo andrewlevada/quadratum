@@ -16,7 +16,7 @@ function initEnv(): void {
         storageBucket: "quadratum-app.appspot.com",
         messagingSenderId: "245501526235",
         appId: "1:245501526235:web:57c17dc55932cdaebe4cfe",
-        measurementId: "G-66V8TPLHHX"
+        measurementId: "G-66V8TPLHHX",
     };
 
     const app = initializeApp(firebaseConfig);
