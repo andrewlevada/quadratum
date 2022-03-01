@@ -15,5 +15,7 @@
 module.exports = [
     // Here outputPath is optional
     // If it's not set, output will be the same as source
-    { source: "/test", title: "Test page", outputPath: "/" },
+    { source: "/landing", title: "Quadratum Tack Tracker", outputPath: "/" },
+    { source: "/app", title: "Quadratum Tack Tracker" },
+    { source: "/enter", title: "Sign in to Quadratum" },
 ];

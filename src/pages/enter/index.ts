@@ -6,8 +6,8 @@ import scopedStyles from "./styles.module.scss";
 
 import("~components/hello-text").then(f => f.default());
 
-@customElement("test-page")
-export default class TestPage extends LitElement {
+@customElement("enter-page")
+export default class EnterPage extends LitElement {
     @state() username: string | null = null;
 
     render(): TemplateResult {
