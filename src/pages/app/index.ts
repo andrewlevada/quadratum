@@ -4,7 +4,7 @@ import { pageStyles } from "~src/global";
 import { getUsername } from "~services/name-service";
 import scopedStyles from "./styles.module.scss";
 
-import("~components/hello-text").then(f => f.default());
+import("~components/app/side-bar").then(f => f.default());
 
 @customElement("app-page")
 export default class AppPage extends LitElement {
@@ -12,9 +12,9 @@ export default class AppPage extends LitElement {
 
     render(): TemplateResult {
         return html`
-            <div class="container">
-                <hello-text sub="Welcome User">${this.username}</hello-text>
-            </div>
+            <side-bar>
+                <p>content</p>
+            </side-bar>
         `;
     }
 

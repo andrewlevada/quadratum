@@ -12,6 +12,7 @@
     "./src/pages/global.ts"
   ],
   "dependencies": {
+    "@material/mwc-drawer": "^0.25.3",
     "lit": "^2.2.0"
   },
   "devDependencies": {
