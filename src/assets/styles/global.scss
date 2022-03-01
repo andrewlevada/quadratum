@@ -4,10 +4,15 @@
   box-sizing: border-box;
 }
 
-h4, h6, p {
+h3, h4, h6, p {
   font-family: Roboto, sans-serif;
   -webkit-font-feature-settings: 'liga';
   -webkit-font-smoothing: antialiased;
+}
+
+h3 {
+  font-size: 36px;
+  font-weight: 700;
 }
 
 h4 {

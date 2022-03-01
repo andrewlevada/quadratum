@@ -4,6 +4,10 @@
   & > *:not(:last-child) {
     #{$margin}: 8px;
   }
+
+  &.big-gap > *:not(:last-child) {
+    #{$margin}: 24px;
+  }
 }
 
 .flex {
