@@ -6,6 +6,8 @@
 
 h4, h6, p {
   font-family: Roboto, sans-serif;
+  -webkit-font-feature-settings: 'liga';
+  -webkit-font-smoothing: antialiased;
 }
 
 h4 {
