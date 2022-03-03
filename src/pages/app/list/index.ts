@@ -1,25 +1,19 @@
 import { css, CSSResultGroup, html, LitElement, TemplateResult } from "lit";
 import { customElement } from "lit/decorators.js";
 import { pageStyles } from "~src/global";
-import scopedStyles from "./styles.module.scss";
 
-import("~components/app/side-bar").then(f => f.default());
-import("~components/app/router/app-router").then(f => f.default());
-
-@customElement("app-page")
-export default class AppPage extends LitElement {
+@customElement("app-page--list")
+export default class AppPageList extends LitElement {
     render(): TemplateResult {
         return html`
-            <side-bar>
-                <app-router></app-router>
-            </side-bar>
+            <h4>Section Title</h4>
         `;
     }
 
     static get styles(): CSSResultGroup {
         // Styles can either be in this file (only css)
         // or imported from another file (scss in this case)
-        return [...pageStyles, scopedStyles as never, css`
+        return [...pageStyles, css`
           // More styles here
         `];
     }

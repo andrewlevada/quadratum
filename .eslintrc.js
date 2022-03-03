@@ -8,7 +8,6 @@ module.exports = {
         "plugin:@typescript-eslint/recommended",
         "plugin:wc/recommended",
         "plugin:wc/best-practice",
-        "plugin:lit/recommended",
     ],
     parser: "@typescript-eslint/parser",
     parserOptions: {
@@ -16,7 +15,7 @@ module.exports = {
         sourceType: "module",
         tsconfigRootDir: __dirname,
     },
-    plugins: ["@typescript-eslint", "lit", "wc"],
+    plugins: ["@typescript-eslint", "wc"],
     settings: {
         "import/resolver": { typescript: {} },
         wc: { elementBaseClasses: ["LitElement"] },

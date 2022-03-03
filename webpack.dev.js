@@ -14,7 +14,7 @@ const config = merge(common, {
         // Used for complex url routing (can be removed)
         historyApiFallback: {
             rewrites: [
-                { from: /^\/test\/.*/, to: "/test/index.html" },
+                { from: /^\/app\/.*/, to: "/app/index.html" },
             ],
         },
     },
