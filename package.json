@@ -9,7 +9,8 @@
     "lint": "eslint --fix ./src"
   },
   "sideEffects": [
-    "./src/pages/global.ts"
+    "./src/pages/global.ts",
+    "./src/utils/prototypes/*.ts"
   ],
   "dependencies": {
     "@firebase/analytics": "^0.7.5",

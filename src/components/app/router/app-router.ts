@@ -4,7 +4,7 @@ import { state } from "lit/decorators.js";
 import { componentStyles } from "~src/global";
 import { defineComponent } from "~utils/components";
 
-type PageTag = "list" | "daily";
+type PageTag = "sprint" | "daily" | "not-found";
 
 export default (): void => defineComponent("app-router", AppRouter);
 export class AppRouter extends LitElement {
@@ -26,7 +26,8 @@ export class AppRouter extends LitElement {
     private static choosePageTag(): PageTag {
         const path = window.location.pathname;
         if (path === "/daily") return "daily";
-        return "list";
+        if (path.startsWith("/sprint/")) return "sprint";
+        return "not-found";
     }
 
     static get styles(): CSSResultGroup {
