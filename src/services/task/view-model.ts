@@ -1,5 +1,5 @@
 import md5 from "md5";
-import { deleteTask, postTask } from "~services/task/model";
+import { deleteTask, postTask, updateTask } from "~services/task/model";
 import { deleteTaskFromList, postTaskToList } from "~services/list-service";
 import { getSprintById, getSprintIdFromDate } from "~services/sprints-service";
 
@@ -14,13 +14,29 @@ export interface CreationContext extends ActionContext {
 
 export class Task {
     public readonly id: string;
-    public text: string;
-    public projectId: string;
+
+    private textInner: string;
+    public get text(): string {
+        return this.textInner;
+    }
+    public set text(value: string) {
+        this.textInner = value;
+        updateTask(this).then();
+    }
+
+    private projectIdInner: string;
+    public get projectId(): string {
+        return this.projectIdInner;
+    }
+    public set projectId(value: string) {
+        this.projectIdInner = value;
+        updateTask(this).then();
+    }
 
     constructor(id: string, text: string, projectId: string) {
         this.id = id;
-        this.text = text;
-        this.projectId = projectId;
+        this.textInner = text;
+        this.projectIdInner = projectId;
     }
 
     public delete(context: ActionContext): Promise<void> {
