@@ -22,7 +22,7 @@ const config = mergeWithRules({
     module: {
         rules: [{
             test: /\.(ts|tsx)$/,
-            use: [{ loader: "minify-html-literals-loader" }],
+            // use: [{ loader: "minify-html-literals-loader" }],
         }, {
             test: /.(scss|css)$/,
             use: [{

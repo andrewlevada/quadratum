@@ -3,6 +3,7 @@ import globalPageStyles from "~src/pages/global-styles.scss";
 import layoutHelperStyles from "~styles/tiny-layout-helper.scss";
 import { initializeApp } from "@firebase/app";
 import { getAnalytics } from "@firebase/analytics";
+import "~utils/prototypes";
 
 export const componentStyles = [globalStyles, layoutHelperStyles];
 export const pageStyles = [globalStyles, globalPageStyles, layoutHelperStyles];

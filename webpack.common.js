@@ -21,6 +21,7 @@ const config = {
 
     output: {
         path: `${paths.build}`,
+        publicPath: "/",
         filename: "bundles/[name].[contenthash].js",
     },
 

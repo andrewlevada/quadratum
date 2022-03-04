@@ -24,7 +24,7 @@ export class AppRouter extends LitElement {
     }
 
     private static choosePageTag(): PageTag {
-        const path = window.location.pathname;
+        const path = window.location.pathname.split("/app")[1];
         if (path === "/daily") return "daily";
         if (path.startsWith("/sprint/")) return "sprint";
         if (path.startsWith("/project/")) return "project";
