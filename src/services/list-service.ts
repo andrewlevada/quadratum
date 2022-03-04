@@ -8,3 +8,7 @@ export function getTasksByListId(listId: string): Promise<Task[]> {
 export function postTaskToList(listId: string, taskId: string): Promise<void> {
     throw new Error("Not implemented!");
 }
+
+export function deleteTaskFromList(listId: string, taskId: string): Promise<void> {
+    throw new Error("Not implemented!");
+}

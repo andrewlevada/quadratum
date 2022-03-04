@@ -1,12 +1,15 @@
 import md5 from "md5";
-import { postNewTask } from "~services/task/model";
-import { postTaskToList } from "~services/list-service";
+import { deleteTask, postTask } from "~services/task/model";
+import { deleteTaskFromList, postTaskToList } from "~services/list-service";
 import { getSprintById, getSprintIdFromDate } from "~services/sprints-service";
 
-export interface CreationContext {
-    projectId: string;
+export interface ActionContext {
     listId: string;
     origin: "daily" | "sprint" | "backlog";
+}
+
+export interface CreationContext extends ActionContext {
+    projectId: string;
 }
 
 export class Task {
@@ -20,12 +23,26 @@ export class Task {
         this.projectId = projectId;
     }
 
+    public delete(context: ActionContext): Promise<void> {
+        const effect = this.getEffectFromDeletion(context);
+        return Promise.all([deleteTask(this), effect]).then();
+    }
+
+    private getEffectFromDeletion(context: ActionContext): Promise<void> {
+        if (context.origin === "daily")
+            return getSprintIdFromDate(new Date())
+                .then(currentSprintId => getSprintById(currentSprintId))
+                .then(sprint => deleteTaskFromList(sprint.listId, this.id))
+                .then(() => deleteTaskFromList(context.listId, this.id));
+        return deleteTaskFromList(context.listId, this.id);
+    }
+
     public static create(text: string, context: CreationContext): Promise<Task> {
         const hash = md5(text + new Date().valueOf().toString());
         const task = new Task(hash, text, context.projectId);
 
         const effect = this.getEffectForCreation(hash, context);
-        return Promise.all([postNewTask(task), effect]).then(() => task);
+        return Promise.all([postTask(task), effect]).then(() => task);
     }
 
     private static getEffectForCreation(taskId: string, context: CreationContext): Promise<void> {
