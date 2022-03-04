@@ -40,7 +40,7 @@ module.exports = {
         "wc/guard-super-call": "off",
         "no-unused-vars": "off",
         "no-param-reassign": "off",
-        "@typescript-eslint/no-unused-vars": "error",
+        // "@typescript-eslint/no-unused-vars": "error",
         "no-shadow": "off",
         "@typescript-eslint/no-shadow": "error",
         "@typescript-eslint/no-inferrable-types": "off",
@@ -54,5 +54,7 @@ module.exports = {
         "no-use-before-define": "off",
         "lines-between-class-members": "off",
         "import/extensions": "off",
+        "@typescript-eslint/no-unused-vars": "off",
+        "import/prefer-default-export": "off",
     },
 };
