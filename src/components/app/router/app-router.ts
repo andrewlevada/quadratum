@@ -4,9 +4,11 @@ import { state } from "lit/decorators.js";
 import { componentStyles } from "~src/global";
 import { defineComponent } from "~utils/components";
 
+type PageTag = "list" | "daily";
+
 export default (): void => defineComponent("app-router", AppRouter);
 export class AppRouter extends LitElement {
-    @state() pageTag: "list" | null = null;
+    @state() pageTag: PageTag | null = null;
 
     render(): TemplateResult {
         const tag = unsafeStatic(`app-page--${this.pageTag}`);
@@ -17,8 +19,14 @@ export class AppRouter extends LitElement {
 
     connectedCallback() {
         super.connectedCallback();
-        this.pageTag = "list";
+        this.pageTag = AppRouter.choosePageTag();
         import(`~src/pages/app/${this.pageTag}`);
+    }
+
+    private static choosePageTag(): PageTag {
+        const path = window.location.pathname;
+        if (path === "/daily") return "daily";
+        return "list";
     }
 
     static get styles(): CSSResultGroup {
