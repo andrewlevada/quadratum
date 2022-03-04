@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 export interface Project {
     id: string;
     label: string;
@@ -6,5 +7,9 @@ export interface Project {
 }
 
 export function getAllProjects(): Promise<Project[]> {
+    throw new Error("Not implemented!");
+}
+
+export function getProjectById(id: string): Promise<Project> {
     throw new Error("Not implemented!");
 }
