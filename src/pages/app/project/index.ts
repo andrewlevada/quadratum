@@ -1,7 +1,7 @@
 import { css, CSSResultGroup, html, LitElement, TemplateResult } from "lit";
 import { customElement, state } from "lit/decorators.js";
 import { pageStyles } from "~src/global";
-import { getProjectById, Project } from "~services/projects-service";
+import Project from "~services/project/view-model";
 
 import("~components/app/tasks-table").then(f => f.default());
 
@@ -20,7 +20,7 @@ export default class AppPageProject extends LitElement {
         super.connectedCallback();
         const projectId = window.location.pathname.split("/").last();
 
-        getProjectById(projectId).then(value => {
+        Project.fromId(projectId).then(value => {
             this.project = value;
         });
     }
