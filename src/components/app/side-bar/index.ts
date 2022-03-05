@@ -2,11 +2,11 @@ import { CSSResultGroup, html, LitElement, TemplateResult } from "lit";
 import { componentStyles } from "~src/global";
 import { CompactListItem } from "~components/common/compact-list";
 import { defineComponent } from "~utils/components";
-import { getSprintIdFromDate } from "~services/sprints-service";
 import "@material/mwc-drawer";
 import { state } from "lit/decorators.js";
 import Project from "~services/project/view-model";
 import { getAllProjects } from "~services/project/factory";
+import Sprint from "~services/sprint/view-model";
 import scopedStyles from "./styles.module.scss";
 
 import("~components/common/compact-list").then(f => f.default());
@@ -61,12 +61,12 @@ export class SideBar extends LitElement {
 
         Promise.all([
             getAllProjects(),
-            getSprintIdFromDate(lastWeekDate),
-            getSprintIdFromDate(new Date()),
-            getSprintIdFromDate(nextWeekDate),
-        ]).then(([projects, lastSprintId, currentSprintId, nextSprintId]) => {
+            Sprint.fromDate(lastWeekDate),
+            Sprint.fromDate(new Date()),
+            Sprint.fromDate(nextWeekDate),
+        ]).then(([projects, lastSprint, currentSprint, nextSprint]) => {
             this.projects = projects;
-            this.sprintIds = [lastSprintId, currentSprintId, nextSprintId];
+            this.sprintIds = [lastSprint.id, currentSprint.id, nextSprint.id];
         });
     }
 

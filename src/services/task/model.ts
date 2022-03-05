@@ -1,4 +1,4 @@
-import { Task } from "~services/task/view-model";
+import Task from "~services/task/view-model";
 
 export interface PostTaskPayload {
     text: string;
@@ -6,6 +6,14 @@ export interface PostTaskPayload {
 }
 
 export function postTask(payload: PostTaskPayload): Promise<Task> {
+    throw new Error("Not implemented!");
+}
+
+export function fetchTaskById(id: string): Promise<Task> {
+    throw new Error("Not implemented!");
+}
+
+export function fetchTasksByIds(ids: readonly string[]): Promise<Task[]> {
     throw new Error("Not implemented!");
 }
 

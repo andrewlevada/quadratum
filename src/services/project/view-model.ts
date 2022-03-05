@@ -1,5 +1,6 @@
-import { getStoredProjectById, postProject, updateProject } from "~services/project/model";
+import { fetchProjectById, postProject, updateProject } from "~services/project/model";
 import { getRandomNiceColor } from "~utils/color";
+import List from "~services/list/view-model";
 
 export default class Project {
     public readonly id: string;
@@ -31,13 +32,12 @@ export default class Project {
     }
 
     public static fromId(id: string): Promise<Project> {
-        return getStoredProjectById(id).then(project => {
-            if (!project) return Promise.reject();
-            return project;
-        });
+        return fetchProjectById(id);
     }
 
     public static create(label: string): Promise<Project> {
-        return postProject({ label, color: getRandomNiceColor() });
+        return List.create().then(list => postProject({
+            label, color: getRandomNiceColor(), backlogListId: list.id,
+        }));
     }
 }

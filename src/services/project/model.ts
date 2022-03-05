@@ -8,6 +8,7 @@ interface ProjectStored {
 
 export interface PostProjectPayload {
     label: string;
+    backlogListId: string;
     color?: string;
 }
 
@@ -15,7 +16,7 @@ export function postProject(payload: PostProjectPayload): Promise<Project> {
     throw new Error("Not implemented!");
 }
 
-export function getStoredProjectById(id: string): Promise<Project | undefined> {
+export function fetchProjectById(id: string): Promise<Project> {
     throw new Error("Not implemented!");
 }
 

@@ -1,6 +1,7 @@
-import { deleteTask, postTask, updateTask } from "~services/task/model";
-import { deleteTaskFromList, postTaskToList } from "~services/list-service";
-import { getSprintById, getSprintIdFromDate } from "~services/sprints-service";
+import { deleteTask, fetchTaskById, fetchTasksByIds, postTask, updateTask } from "~services/task/model";
+import Sprint from "~services/sprint/view-model";
+import List from "~services/list/view-model";
+import { read } from "fs";
 
 export interface ActionContext {
     listId: string;
@@ -11,7 +12,7 @@ export interface CreationContext extends ActionContext {
     projectId: string;
 }
 
-export class Task {
+export default class Task {
     public readonly id: string;
 
     private textInner: string;
@@ -45,25 +46,35 @@ export class Task {
 
     private getEffectFromDeletion(context: ActionContext): Promise<void> {
         if (context.origin === "daily")
-            return getSprintIdFromDate(new Date())
-                .then(currentSprintId => getSprintById(currentSprintId))
-                .then(sprint => deleteTaskFromList(sprint.listId, this.id))
-                .then(() => deleteTaskFromList(context.listId, this.id));
-        return deleteTaskFromList(context.listId, this.id);
+            return Sprint.fromDate(new Date())
+                .then(sprint => sprint.list())
+                .then(sprintList => sprintList.removeTask(this))
+                .then(() => List.fromId(context.listId))
+                .then(list => list.removeTask(this));
+        return List.fromId(context.listId).then(list => list.removeTask(this));
+    }
+
+    public static fromId(id: string): Promise<Task> {
+        return fetchTaskById(id);
+    }
+
+    public static fromIds(ids: readonly string[]): Promise<Task[]> {
+        return fetchTasksByIds(ids);
     }
 
     public static create(text: string, context: CreationContext): Promise<Task> {
         return postTask({ text, projectId: context.projectId })
-            .then(task => this.getEffectForCreation(task.id, context).then(() => task));
+            .then(task => this.getEffectForCreation(task, context).then(() => task));
     }
 
-    private static getEffectForCreation(taskId: string, context: CreationContext): Promise<void> {
+    private static getEffectForCreation(task: Task, context: CreationContext): Promise<void> {
         if (context.origin === "daily")
-            return getSprintIdFromDate(new Date())
-                .then(currentSprintId => getSprintById(currentSprintId))
-                .then(sprint => postTaskToList(sprint.listId, taskId))
-                .then(() => postTaskToList(context.listId, taskId));
-        return postTaskToList(context.listId, taskId);
+            return Sprint.fromDate(new Date())
+                .then(sprint => sprint.list())
+                .then(sprintList => sprintList.addTask(task))
+                .then(() => List.fromId(context.listId))
+                .then(list => list.addTask(task));
+        return List.fromId(context.listId).then(list => list.addTask(task));
     }
 }
 
