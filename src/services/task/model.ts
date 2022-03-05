@@ -1,6 +1,11 @@
 import { Task } from "~services/task/view-model";
 
-export function postTask(task: Task): Promise<void> {
+export interface PostTaskPayload {
+    text: string;
+    projectId: string;
+}
+
+export function postTask(payload: PostTaskPayload): Promise<Task> {
     throw new Error("Not implemented!");
 }
 

@@ -1,4 +1,3 @@
-import md5 from "md5";
 import { deleteTask, postTask, updateTask } from "~services/task/model";
 import { deleteTaskFromList, postTaskToList } from "~services/list-service";
 import { getSprintById, getSprintIdFromDate } from "~services/sprints-service";
@@ -54,11 +53,8 @@ export class Task {
     }
 
     public static create(text: string, context: CreationContext): Promise<Task> {
-        const hash = md5(text + new Date().valueOf().toString());
-        const task = new Task(hash, text, context.projectId);
-
-        const effect = this.getEffectForCreation(hash, context);
-        return Promise.all([postTask(task), effect]).then(() => task);
+        return postTask({ text, projectId: context.projectId })
+            .then(task => this.getEffectForCreation(task.id, context).then(() => task));
     }
 
     private static getEffectForCreation(taskId: string, context: CreationContext): Promise<void> {
