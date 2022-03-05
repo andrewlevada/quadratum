@@ -1,10 +1,10 @@
-import Task from "~services/task/view-model";
+import Task from "~services/task";
 import { deleteList,
     deleteTaskFromList,
     fetchListById,
     postList,
     postTaskToList,
-    updateList } from "~services/list/model";
+    updateList } from "~services/list/data";
 
 export default class List {
     public readonly id: string;

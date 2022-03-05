@@ -1,7 +1,7 @@
 import { css, CSSResultGroup, html, LitElement, TemplateResult } from "lit";
 import { customElement, state } from "lit/decorators.js";
 import { pageStyles } from "~src/global";
-import Project from "~services/project/view-model";
+import Project from "~services/project";
 
 import("~components/app/tasks-table").then(f => f.default());
 

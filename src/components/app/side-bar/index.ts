@@ -4,9 +4,9 @@ import { CompactListItem } from "~components/common/compact-list";
 import { defineComponent } from "~utils/components";
 import "@material/mwc-drawer";
 import { state } from "lit/decorators.js";
-import Project from "~services/project/view-model";
+import Project from "~services/project";
 import { getAllProjects } from "~services/project/factory";
-import Sprint from "~services/sprint/view-model";
+import Sprint from "~services/sprint";
 import scopedStyles from "./styles.module.scss";
 
 import("~components/common/compact-list").then(f => f.default());

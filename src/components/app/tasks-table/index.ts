@@ -2,8 +2,8 @@ import { CSSResultGroup, html, LitElement, TemplateResult } from "lit";
 import { componentStyles } from "~src/global";
 import { defineComponent } from "~utils/components";
 import { property, state } from "lit/decorators.js";
-import Task from "~services/task/view-model";
-import List from "~services/list/view-model";
+import Task from "~services/task";
+import List from "~services/list";
 import scopedStyles from "./styles.module.scss";
 
 export default (): void => defineComponent("tasks-table", TasksTable);

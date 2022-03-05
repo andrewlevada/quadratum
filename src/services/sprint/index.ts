@@ -1,5 +1,5 @@
-import { fetchSprintById, getSprintIdFromDate } from "~services/sprint/model";
-import List from "~services/list/view-model";
+import { fetchSprintById, getSprintIdFromDate } from "~services/sprint/data";
+import List from "~services/list";
 
 export default class Sprint {
     public readonly id: string;

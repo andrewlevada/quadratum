@@ -1,7 +1,7 @@
 import { css, CSSResultGroup, html, LitElement, TemplateResult } from "lit";
 import { customElement, state } from "lit/decorators.js";
 import { pageStyles } from "~src/global";
-import { getSprintById, Sprint } from "~services/sprints-service";
+import Sprint from "~services/sprint";
 
 import("~components/app/tasks-table").then(f => f.default());
 
@@ -20,7 +20,7 @@ export default class AppPageSprintList extends LitElement {
         super.connectedCallback();
         const sprintId = window.location.pathname.split("/").last();
 
-        getSprintById(sprintId).then(value => {
+        Sprint.fromId(sprintId).then(value => {
             this.sprint = value;
         });
     }

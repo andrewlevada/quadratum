@@ -1,4 +1,4 @@
-import List from "~services/list/view-model";
+import List from "~services/list";
 
 interface ListStored {
     id: string;

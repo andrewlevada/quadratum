@@ -1,4 +1,4 @@
-import Sprint from "~services/sprint/view-model";
+import Sprint from "~services/sprint";
 
 export function getSprintIdFromDate(date: Date): Promise<string> {
     throw new Error("Not implemented!");

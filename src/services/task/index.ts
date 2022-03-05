@@ -1,7 +1,6 @@
-import { deleteTask, fetchTaskById, fetchTasksByIds, postTask, updateTask } from "~services/task/model";
-import Sprint from "~services/sprint/view-model";
-import List from "~services/list/view-model";
-import { read } from "fs";
+import { deleteTask, fetchTaskById, fetchTasksByIds, postTask, updateTask } from "~services/task/data";
+import Sprint from "~services/sprint";
+import List from "~services/list";
 
 export interface ActionContext {
     listId: string;

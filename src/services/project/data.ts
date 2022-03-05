@@ -1,4 +1,4 @@
-import Project from "~services/project/view-model";
+import Project from "~services/project";
 
 interface ProjectStored {
     label: string;

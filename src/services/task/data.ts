@@ -1,4 +1,4 @@
-import Task from "~services/task/view-model";
+import Task from "~services/task";
 
 export interface PostTaskPayload {
     text: string;

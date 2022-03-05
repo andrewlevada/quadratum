@@ -1,4 +1,4 @@
-import Project from "~services/project/view-model";
+import Project from "~services/project";
 
 export function getAllProjects(): Promise<Project[]> {
     throw new Error("Not implemented!");
