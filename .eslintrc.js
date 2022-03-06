@@ -56,5 +56,6 @@ module.exports = {
         "import/extensions": "off",
         "@typescript-eslint/no-unused-vars": "off",
         "import/prefer-default-export": "off",
+        "max-len": "off",
     },
 };

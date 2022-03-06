@@ -1,4 +1,4 @@
-import { fetchSprintById, getSprintIdFromDate } from "~services/sprint/data";
+import { createNewSprint, fetchSprintByNumber, getCurrentSprintNumber } from "~services/sprint/data";
 import List from "~services/list";
 
 export default class Sprint {
@@ -18,12 +18,21 @@ export default class Sprint {
         return List.fromId(this.listId);
     }
 
-    public static fromId(id: string): Promise<Sprint> {
-        return fetchSprintById(id);
+    public static fromNumber(number: number): Promise<Sprint | null> {
+        return fetchSprintByNumber(number);
     }
 
-    public static fromDate(date: Date): Promise<Sprint> {
-        return getSprintIdFromDate(date)
-            .then(id => fetchSprintById(id));
+    public static current(shift?: number): Promise<Sprint | null> {
+        return getCurrentSprintNumber()
+            .then(currentSprintNumber => this.fromNumber(currentSprintNumber + (shift || 0))
+                .then(sprint => {
+                    if (sprint) return Promise.resolve(sprint);
+                    if (shift || -1 > 0) return this.createAndAppend();
+                    return Promise.resolve(null);
+                }));
+    }
+
+    public static createAndAppend(): Promise<Sprint> {
+        return List.create().then(list => createNewSprint(list.id));
     }
 }

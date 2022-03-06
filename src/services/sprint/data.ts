@@ -1,9 +1,13 @@
 import Sprint from "~services/sprint";
 
-export function getSprintIdFromDate(date: Date): Promise<string> {
+export function createNewSprint(listId: string): Promise<Sprint> {
     throw new Error("Not implemented!");
 }
 
-export function fetchSprintById(id: string): Promise<Sprint> {
+export function getCurrentSprintNumber(): Promise<number> {
+    throw new Error("Not implemented!");
+}
+
+export function fetchSprintByNumber(number: number): Promise<Sprint | null> {
     throw new Error("Not implemented!");
 }
