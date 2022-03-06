@@ -1,6 +1,1 @@
 @use "../../assets/styles/global";
-
-#section > * {
-  &:first-child { margin-top: 60px }
-  &:last-child { margin-bottom: 60px }
-}

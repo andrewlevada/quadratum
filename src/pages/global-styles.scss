@@ -2,3 +2,8 @@
   width: 100%;
   height: 100%;
 }
+
+.app-page > * {
+  &:first-child { margin-top: 60px }
+  &:last-child { margin-bottom: 60px }
+}

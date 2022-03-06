@@ -3,7 +3,7 @@ import { customElement, state } from "lit/decorators.js";
 import { pageStyles } from "~src/global";
 import Sprint from "~services/sprint";
 
-import("~components/app/tasks-table").then(f => f.default());
+import("~components/app/task-table").then(f => f.default());
 
 @customElement("app-page--sprint")
 export default class AppPageSprintList extends LitElement {

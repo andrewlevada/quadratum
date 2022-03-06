@@ -6,8 +6,8 @@ import Task from "~services/task";
 import List from "~services/list";
 import scopedStyles from "./styles.module.scss";
 
-export default (): void => defineComponent("tasks-table", TasksTable);
-export class TasksTable extends LitElement {
+export default (): void => defineComponent("task-table", TaskTable);
+export class TaskTable extends LitElement {
     @property() listId!: string;
     @state() tasks: Task[] | null = null;
 
