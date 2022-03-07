@@ -13,7 +13,7 @@ export default class List {
 
     constructor(id: string, tasksIds: string[]) {
         this.id = id;
-        this.tasksIdsInner = tasksIds;
+        this.tasksIdsInner = tasksIds || [];
     }
 
     public tasks(): Promise<Task[]> {

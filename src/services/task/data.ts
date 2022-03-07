@@ -20,6 +20,7 @@ export async function fetchTaskById(id: string): Promise<Task> {
 }
 
 export async function fetchTasksByIds(ids: readonly string[]): Promise<Task[]> {
+    if (ids.length === 0) return [];
     const q = await getDocs(query(collection(userDoc(), "tasks"), where("id", "in", ids)));
     const snaps = q.docs;
     return snaps.map(snap => {

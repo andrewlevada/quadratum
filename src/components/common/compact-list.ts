@@ -20,9 +20,9 @@ export class CompactList extends LitElement {
 
             <ol class="flex col">
                 ${this.items.map(item => html`
-                    <li class="flex row align-center">
+                    <a class="flex row align-center" href="/app${item.link || "#"}">
                         <p>${item.label}</p>
-                    </li>
+                    </a>
                 `)}
             </ol>
         `;
@@ -34,9 +34,8 @@ export class CompactList extends LitElement {
             margin-bottom: 16px;
           }
           
-          li {
+          a {
             height: 30px;
-            cursor: pointer;
           }
         `];
     }
