@@ -1,6 +1,8 @@
 import Project from "~services/project";
+import { addDoc, collection, doc, getDoc, setDoc } from "@firebase/firestore";
+import { userDoc } from "~services/tools";
 
-interface ProjectStored {
+interface ProjectDocument {
     label: string;
     color: string;
     backlogListId: string;
@@ -9,17 +11,23 @@ interface ProjectStored {
 export interface PostProjectPayload {
     label: string;
     backlogListId: string;
-    color?: string;
+    color: string;
 }
 
-export function postProject(payload: PostProjectPayload): Promise<Project> {
-    throw new Error("Not implemented!");
+export async function postProject(payload: PostProjectPayload): Promise<Project> {
+    const snap = await addDoc(collection(userDoc(), "projects"), payload);
+    return new Project(snap.id, payload.backlogListId, payload.label, payload.color);
 }
 
-export function fetchProjectById(id: string): Promise<Project> {
-    throw new Error("Not implemented!");
+export async function fetchProjectById(id: string): Promise<Project> {
+    const snap = await getDoc(doc(userDoc(), "projects", id));
+    const data = snap.data() as ProjectDocument;
+    if (!data) return Promise.reject();
+    return new Project(id, data.backlogListId, data.label, data.color);
 }
 
 export function updateProject(project: Project): Promise<void> {
-    throw new Error("Not implemented!");
+    return setDoc(doc(userDoc(), "projects", project.id), {
+        label: project.label, color: project.color, backlogListId: project.backlogListId,
+    } as ProjectDocument).then();
 }

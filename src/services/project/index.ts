@@ -1,6 +1,6 @@
 import { fetchProjectById, postProject, updateProject } from "~services/project/data";
-import { getRandomNiceColor } from "~utils/color";
 import List from "~services/list";
+import { getRandomNiceColor } from "~utils/random";
 
 export default class Project {
     public readonly id: string;

@@ -6,16 +6,16 @@ interface ListDocument {
     tasksIds: string[];
 }
 
+export async function postList(): Promise<string> {
+    const snap = await addDoc(collection(userDoc(), "lists"), { taskIds: [] });
+    return snap.id;
+}
+
 export async function fetchListById(id: string): Promise<List> {
     const snap = await getDoc(doc(userDoc(), "lists", id));
     const data = snap.data() as ListDocument | undefined;
     if (!data) return Promise.reject();
     return new List(id, data.tasksIds);
-}
-
-export async function postList(): Promise<string> {
-    const snap = await addDoc(collection(userDoc(), "lists"), { taskIds: [] });
-    return snap.id;
 }
 
 export function updateList(list: List): Promise<void> {
