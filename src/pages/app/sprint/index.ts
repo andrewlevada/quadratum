@@ -11,9 +11,16 @@ export default class AppPageSprintList extends LitElement {
 
     render(): TemplateResult {
         return html`
-            <h4>Sprint ${this.sprint?.number || ""}</h4>
-            ${this.sprint ? html`<task-table .listId=${this.sprint.listId}></task-table>` : ""}
+            <div class="flex col app-page">
+                <h4>${this.pageHeader()}</h4>
+                ${this.sprint ? html`<task-table .listId=${this.sprint.listId}></task-table>` : ""}
+            </div>
         `;
+    }
+
+    private pageHeader(): string {
+        if (this.sprint?.number === 0) return "Your First Sprint!";
+        return `Sprint ${this.sprint?.number || ""}`;
     }
 
     connectedCallback() {

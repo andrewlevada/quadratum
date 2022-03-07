@@ -27,9 +27,7 @@ export default class AppPageDailyList extends LitElement {
 
     static get styles(): CSSResultGroup {
         return [...pageStyles, css`
-          h4 {
-            margin-bottom: 40px;
-          }
+          
         `];
     }
 }
