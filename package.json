@@ -16,6 +16,7 @@
     "@firebase/analytics": "^0.7.5",
     "@firebase/app": "^0.7.17",
     "@firebase/auth": "^0.19.9",
+    "@firebase/firestore": "^3.4.5",
     "@firebase/util": "^1.4.3",
     "@material/mwc-drawer": "^0.25.3",
     "@material/mwc-fab": "^0.25.3",
