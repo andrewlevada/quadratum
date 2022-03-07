@@ -5,7 +5,6 @@ import { defineComponent } from "~utils/components";
 import "@material/mwc-drawer";
 import { state } from "lit/decorators.js";
 import Project from "~services/project";
-import { getAllProjects } from "~services/project/factory";
 import Sprint from "~services/sprint";
 import scopedStyles from "./styles.module.scss";
 
@@ -61,7 +60,7 @@ export class SideBar extends LitElement {
         nextWeekDate.setDate(nextWeekDate.getDate() + 7);
 
         Promise.all([
-            getAllProjects(), Sprint.current(-1), Sprint.current(), Sprint.current(1),
+            Project.all(), Sprint.current(-1), Sprint.current(), Sprint.current(1),
         ]).then(([projects, lastSprint, currentSprint, nextSprint]) => {
             this.projects = projects;
             this.sprintNumbers = [lastSprint?.number || null, currentSprint!.number, nextSprint!.number];

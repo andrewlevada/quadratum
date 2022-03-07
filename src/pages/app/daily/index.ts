@@ -1,7 +1,7 @@
 import { css, CSSResultGroup, html, LitElement, TemplateResult } from "lit";
 import { customElement, state } from "lit/decorators.js";
 import { pageStyles } from "~src/global";
-import { getDailyListId } from "~services/daily-list-service";
+import { getDailyListId } from "~services/user-service";
 
 import("~components/app/task-table").then(f => f.default());
 

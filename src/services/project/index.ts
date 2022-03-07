@@ -1,4 +1,4 @@
-import { fetchProjectById, postProject, updateProject } from "~services/project/data";
+import { fetchAllProjects, fetchProjectById, postProject, updateProject } from "~services/project/data";
 import List from "~services/list";
 import { getRandomNiceColor } from "~utils/random";
 
@@ -33,6 +33,10 @@ export default class Project {
 
     public static fromId(id: string): Promise<Project> {
         return fetchProjectById(id);
+    }
+
+    public static all(): Promise<Project[]> {
+        return fetchAllProjects();
     }
 
     public static create(label: string): Promise<Project> {

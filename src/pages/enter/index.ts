@@ -3,6 +3,7 @@ import { customElement } from "lit/decorators.js";
 import { pageStyles } from "~src/global";
 import googleIcon from "~src/assets/icons/logo_google.svg";
 import { getAuth, GoogleAuthProvider, signInWithPopup } from "@firebase/auth";
+import { initializeUser } from "~services/user-service";
 import scopedStyles from "./styles.module.scss";
 import "@material/mwc-fab";
 
@@ -23,10 +24,12 @@ export default class EnterPage extends LitElement {
 
     private static googleSignIn(): void {
         const auth = getAuth();
-        signInWithPopup(auth, new GoogleAuthProvider()).then(() => {
-            window.location.pathname = "/app";
-            // eslint-disable-next-line no-alert
-        }).catch(() => alert("Auth failed"));
+        signInWithPopup(auth, new GoogleAuthProvider())
+            .then(credentials => initializeUser(credentials.user.uid))
+            .then(() => {
+                window.location.pathname = "/app";
+            });
+        // .catch(() => alert("Auth failed"));
     }
 
     static get styles(): CSSResultGroup {

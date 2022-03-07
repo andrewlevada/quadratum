@@ -18,9 +18,9 @@ export default class AppPageSprintList extends LitElement {
 
     connectedCallback() {
         super.connectedCallback();
-        const sprintId = window.location.pathname.split("/").last();
+        const sprintNumber = Number(window.location.pathname.split("/").last());
 
-        Sprint.fromId(sprintId).then(value => {
+        Sprint.fromNumber(sprintNumber).then(value => {
             this.sprint = value;
         });
     }

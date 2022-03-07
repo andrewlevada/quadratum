@@ -5,7 +5,7 @@ export function db(): Firestore {
 }
 
 export function userId(): string {
-    return ""; // TODO: Implement
+    return localStorage.getItem("fb_user_uid") || "";
 }
 
 export function userDoc(): DocumentReference {
