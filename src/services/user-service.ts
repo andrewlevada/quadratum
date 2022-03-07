@@ -3,8 +3,9 @@ import Sprint from "~services/sprint";
 import List from "~services/list";
 import { db, userId } from "~services/tools";
 
-interface UserInfo {
+export interface UserInfoDocument {
     dailyListId: string;
+    lastSprintNumber: number;
 }
 
 export function initializeUser(): Promise<void> {
@@ -18,6 +19,6 @@ export function initializeUser(): Promise<void> {
 
 export function getDailyListId(): Promise<string> {
     return getDoc(doc(db(), "users", userId()))
-        .then(snap => snap.data() as UserInfo)
+        .then(snap => snap.data() as UserInfoDocument)
         .then(userInfo => userInfo.dailyListId);
 }
