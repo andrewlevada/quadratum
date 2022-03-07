@@ -45,8 +45,8 @@ export default class Task {
 
     private getEffectFromDeletion(context: ActionContext): Promise<void> {
         if (context.origin === "daily")
-            return Sprint.fromDate(new Date())
-                .then(sprint => sprint.list())
+            return Sprint.current()
+                .then(sprint => sprint!.list())
                 .then(sprintList => sprintList.removeTask(this))
                 .then(() => List.fromId(context.listId))
                 .then(list => list.removeTask(this));
@@ -68,8 +68,8 @@ export default class Task {
 
     private static getEffectForCreation(task: Task, context: CreationContext): Promise<void> {
         if (context.origin === "daily")
-            return Sprint.fromDate(new Date())
-                .then(sprint => sprint.list())
+            return Sprint.current()
+                .then(sprint => sprint!.list())
                 .then(sprintList => sprintList.addTask(task))
                 .then(() => List.fromId(context.listId))
                 .then(list => list.addTask(task));
