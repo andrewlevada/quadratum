@@ -1,5 +1,13 @@
 import List from "~services/list";
-import { addDoc, collection, deleteDoc, doc, getDoc, setDoc } from "@firebase/firestore";
+import { addDoc,
+    arrayRemove,
+    arrayUnion,
+    collection,
+    deleteDoc,
+    doc,
+    getDoc,
+    setDoc,
+    updateDoc } from "@firebase/firestore";
 import { userDoc } from "~services/tools";
 
 interface ListDocument {
@@ -20,6 +28,18 @@ export async function fetchListById(id: string): Promise<List> {
 
 export function updateList(list: List): Promise<void> {
     return setDoc(doc(userDoc(), "lists", list.id), { tasksIds: list.tasksIds } as ListDocument).then();
+}
+
+export function addTaskToList(listId: string, taskId: string): Promise<void> {
+    return updateDoc(doc(userDoc(), "lists", listId), {
+        taskIds: arrayUnion(taskId),
+    }).then();
+}
+
+export function removeTaskFromList(listId: string, taskId: string): Promise<void> {
+    return updateDoc(doc(userDoc(), "lists", listId), {
+        taskIds: arrayRemove(taskId),
+    }).then();
 }
 
 export function deleteList(id: string): Promise<void> {

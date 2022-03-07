@@ -40,7 +40,7 @@ export default class Task {
 
     public delete(context: ActionContext): Promise<void> {
         const effect = this.getEffectFromDeletion(context);
-        return Promise.all([deleteTask(this), effect]).then();
+        return Promise.all([deleteTask(this.id), effect]).then();
     }
 
     private getEffectFromDeletion(context: ActionContext): Promise<void> {

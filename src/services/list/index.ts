@@ -1,7 +1,7 @@
 import Task from "~services/task";
-import { deleteList,
+import { addTaskToList, deleteList,
     fetchListById,
-    postList,
+    postList, removeTaskFromList,
     updateList } from "~services/list/data";
 
 export default class List {
@@ -23,6 +23,14 @@ export default class List {
     public updateTasks(tasks: Task[]): Promise<void> {
         this.tasksIdsInner = tasks.map(task => task.id);
         return updateList(this);
+    }
+
+    public addTask(task: Task): Promise<void> {
+        return addTaskToList(this.id, task.id);
+    }
+
+    public removeTask(task: Task): Promise<void> {
+        return removeTaskFromList(this.id, task.id);
     }
 
     public delete(): Promise<void> {
