@@ -1,22 +1,43 @@
-import { doc, getDoc, setDoc, updateDoc } from "@firebase/firestore";
+import { doc, getDoc, setDoc } from "@firebase/firestore";
 import Sprint from "~services/sprint";
 import List from "~services/list";
 import { db, userDoc, userId } from "~services/tools";
+import { createNewSprint } from "~services/sprint/data";
 
 export interface UserDocument {
     dailyListId: string;
+    sprintAnchor: SprintAnchor;
+}
+
+export interface SprintAnchor {
+    currentSprintWeek: number
+    currentSprintNumber: number;
     lastSprintNumber: number;
 }
 
-export function initializeUser(userUid: string): Promise<void> {
+export async function initializeUser(userUid: string): Promise<void> {
     localStorage.setItem("fb_user_uid", userUid);
-    return setDoc(userDoc(), { lastSprintNumber: 0 } as UserDocument)
-        .then(() => Sprint.createAndAppend())
-        .then(() => Sprint.createAndAppend())
-        .then(() => List.create())
-        .then(list => updateDoc(doc(db(), "users", userId()), {
-            dailyListId: list.id,
-        } as Partial<UserDocument>));
+
+    const listForSprint = await List.create();
+    const listForDaily = await List.create();
+
+    await setDoc(doc(db(), "users", userId()), {
+        dailyListId: listForDaily.id,
+        sprintAnchor: {
+            currentSprintWeek: new Date().week(),
+            currentSprintNumber: 0,
+            lastSprintNumber: 0,
+        },
+    } as Partial<UserDocument>);
+
+    await createNewSprint(listForSprint.id, 0, new Date().week());
+    await Sprint.createAndAppend();
+}
+
+export function getSprintAnchor(): Promise<SprintAnchor> {
+    return getDoc(userDoc())
+        .then(snap => snap.data() as UserDocument)
+        .then(user => user.sprintAnchor);
 }
 
 export function getDailyListId(): Promise<string> {

@@ -8,4 +8,8 @@ declare global {
     interface HTMLElement {
         dispatchSimpleEvent(name: string, value?: unknown): void;
     }
+
+    interface Date {
+        week(): number;
+    }
 }

@@ -38,4 +38,5 @@ export function updateTask(task: Task): Promise<void> {
 
 export function deleteTask(id: string): Promise<void> {
     return deleteDoc(doc(userDoc(), "tasks", id));
+    // TODO: Also delete all references to this task in lists
 }
