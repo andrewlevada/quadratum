@@ -3,17 +3,10 @@ import { doc, getDoc, setDoc, updateDoc } from "@firebase/firestore";
 import { userDoc } from "~services/tools";
 import { getSprintAnchor, UserDocument } from "~services/user-service";
 
-interface SprintDocument {
-    startWeek: number;
-    listId: string;
-}
-
-export function createNewSprint(listId: string, number: number, weekNumber: number): Promise<Sprint> {
-    return setDoc(doc(userDoc(), "sprints", number.toString()), {
-        startWeek: weekNumber, listId,
-    } as SprintDocument)
-        .then(() => updateDoc(userDoc(), { "sprintAnchor.lastSprintNumber": number } as Partial<UserDocument>))
-        .then(() => new Sprint(number, weekNumber, listId));
+export async function createNewSprint(sprint: Sprint): Promise<Sprint> {
+    await setDoc(doc(userDoc(), "sprints", sprint.number.toString()).withConverter(Sprint.converter), sprint);
+    await updateDoc(userDoc(), { "sprintAnchor.lastSprintNumber": sprint.number } as Partial<UserDocument>);
+    return sprint;
 }
 
 export async function getCurrentSprintNumber(): Promise<number> {
@@ -32,8 +25,6 @@ export async function getCurrentSprintNumber(): Promise<number> {
 }
 
 export async function fetchSprintByNumber(number: number): Promise<Sprint | null> {
-    const snap = await getDoc(doc(userDoc(), "sprints", number.toString()));
-    const data = snap.data() as SprintDocument | undefined;
-    if (!data) return null;
-    return new Sprint(number, data.startWeek, data.listId);
+    const snap = await getDoc(doc(userDoc(), "sprints", number.toString()).withConverter(Sprint.converter));
+    return snap.data() || null;
 }

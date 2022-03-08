@@ -1,10 +1,16 @@
 import { fetchAllProjects, fetchProjectById, postProject, updateProject } from "~services/project/data";
-import List from "~services/list";
 import { getRandomNiceColor } from "~utils/random";
+import Task from "~services/task";
+import { fetchTasksWithFilter } from "~services/task/data";
+import { DocumentData, FirestoreDataConverter, PartialWithFieldValue, QueryDocumentSnapshot, where, WithFieldValue } from "@firebase/firestore";
+
+interface ProjectDocument {
+    label: string;
+    color: string;
+}
 
 export default class Project {
     public readonly id: string;
-    public readonly backlogListId: string;
 
     private labelInner: string;
     get label(): string {
@@ -24,15 +30,18 @@ export default class Project {
         updateProject(this).then();
     }
 
-    constructor(id: string, backlogListId: string, label: string, color: string) {
+    constructor(id: string, data: Project | ProjectDocument) {
         this.id = id;
-        this.backlogListId = backlogListId;
-        this.labelInner = label;
-        this.colorInner = color;
+        this.labelInner = data.label;
+        this.colorInner = data.color;
     }
 
-    public backlog(): Promise<List> {
-        return List.fromId(this.backlogListId);
+    public tasks(): Promise<Task[]> {
+        return Project.tasks(this.id);
+    }
+
+    public static tasks(projectId: string): Promise<Task[]> {
+        return fetchTasksWithFilter(where("projectId", "==", projectId));
     }
 
     public static fromId(id: string): Promise<Project> {
@@ -49,8 +58,24 @@ export default class Project {
     }
 
     public static create(label: string): Promise<Project> {
-        return List.create().then(list => postProject({
-            label, color: getRandomNiceColor(), backlogListId: list.id,
+        return postProject(new Project("null", {
+            label, color: getRandomNiceColor(),
         }));
     }
+
+    public static converter: FirestoreDataConverter<Project> = {
+        fromFirestore(snap: QueryDocumentSnapshot): Project {
+            return new Project(snap.id, snap.data() as ProjectDocument);
+        },
+
+        toFirestore(modelObject: WithFieldValue<Project> | PartialWithFieldValue<Project>): DocumentData {
+            const o = modelObject as Partial<Project>;
+            const payload: Partial<ProjectDocument> = {};
+
+            if (o.label) payload.label = o.label;
+            if (o.color) payload.color = o.color;
+
+            return payload;
+        },
+    };
 }

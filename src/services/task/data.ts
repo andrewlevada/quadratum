@@ -1,42 +1,43 @@
 import Task from "~services/task";
-import { addDoc, collection, deleteDoc, doc, getDoc, getDocs, query, setDoc, where } from "@firebase/firestore";
+import { addDoc,
+    collection,
+    deleteDoc,
+    doc,
+    getDoc,
+    getDocs,
+    query,
+    QueryConstraint,
+    setDoc,
+    where } from "@firebase/firestore";
 import { userDoc } from "~services/tools";
 
-interface TaskDocument {
-    text: string;
-    projectId: string;
-}
-
-export async function postTask(payload: TaskDocument): Promise<Task> {
-    const snap = await addDoc(collection(userDoc(), "tasks"), payload);
-    return new Task(snap.id, payload.text, payload.projectId);
+export async function postTask(task: Task): Promise<Task> {
+    const snap = await addDoc(collection(userDoc(), "tasks").withConverter(Task.converter), task);
+    return new Task(snap.id, task);
 }
 
 export async function fetchTaskById(id: string): Promise<Task> {
-    const snap = await getDoc(doc(userDoc(), "tasks", id));
-    const data = snap.data() as TaskDocument | undefined;
-    if (!data) return Promise.reject();
-    return new Task(id, data.text, data.projectId);
+    const snap = await getDoc(doc(userDoc(), "tasks", id).withConverter(Task.converter));
+    return snap.data() || Promise.reject();
 }
 
 export async function fetchTasksByIds(ids: readonly string[]): Promise<Task[]> {
     if (ids.length === 0) return [];
-    const q = await getDocs(query(collection(userDoc(), "tasks"), where("id", "in", ids)));
-    const snaps = q.docs;
-    return snaps.map(snap => {
-        const data = snap.data() as TaskDocument | undefined;
-        if (!data) return null;
-        return new Task(snap.id, data.text, data.projectId);
-    }).filter(v => !!v) as Task[];
+    const q = query(collection(userDoc(), "tasks").withConverter(Task.converter), where("id", "in", ids));
+    const snap = await getDocs(q);
+    return snap.docs.map(v => v.data());
+}
+
+export async function fetchTasksWithFilter(...constraints: QueryConstraint[]): Promise<Task[]> {
+    const q = query(collection(userDoc(), "tasks").withConverter(Task.converter), ...constraints);
+    const snap = await getDocs(q);
+    return snap.docs.map(v => v.data());
 }
 
 export function updateTask(task: Task): Promise<void> {
-    return setDoc(doc(userDoc(), "tasks", task.id), {
-        text: task.text, projectId: task.projectId,
-    } as TaskDocument).then();
+    return setDoc(doc(userDoc(), "tasks", task.id).withConverter(Task.converter), task).then();
 }
 
 export function deleteTask(id: string): Promise<void> {
     return deleteDoc(doc(userDoc(), "tasks", id));
-    // TODO: Also delete all references to this task in lists
 }

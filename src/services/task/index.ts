@@ -1,22 +1,32 @@
-import { deleteTask, fetchTaskById, fetchTasksByIds, postTask, updateTask } from "~services/task/data";
-import Sprint from "~services/sprint";
-import List from "~services/list";
-import { getNoneProjectId } from "~services/user-service";
-import Project from "~services/project";
+import { deleteTask,
+    fetchTaskById,
+    fetchTasksByIds,
+    fetchTasksWithFilter,
+    postTask,
+    updateTask } from "~services/task/data";
+import { DocumentData,
+    FirestoreDataConverter,
+    PartialWithFieldValue,
+    QueryDocumentSnapshot, where,
+    WithFieldValue } from "@firebase/firestore";
+import { getCurrentSprintNumber } from "~services/sprint/data";
 
 export type ActionOrigin = "daily" | "sprint" | "backlog";
 
 export interface ActionContext {
-    listId: string;
     origin: ActionOrigin;
 }
 
 export interface CreationContext extends ActionContext {
     projectId: string | null;
+    sprintNumber: number | null;
 }
 
-interface SafeCreationContext extends CreationContext {
-    projectId: string;
+interface TaskDocument {
+    text: string;
+    projectId?: string;
+    sprintNumber?: number;
+    isInDaily?: boolean;
 }
 
 export default class Task {
@@ -31,34 +41,43 @@ export default class Task {
         updateTask(this).then();
     }
 
-    private projectIdInner: string;
-    public get projectId(): string {
+    private isInDailyInner: boolean;
+    public get isInDaily(): boolean {
+        return this.isInDailyInner;
+    }
+    public set isInDaily(value: boolean) {
+        this.isInDailyInner = value;
+        updateTask(this).then();
+    }
+
+    private projectIdInner: string | null;
+    public get projectId(): string | null {
         return this.projectIdInner;
     }
-    public set projectId(value: string) {
+    public set projectId(value: string | null) {
         this.projectIdInner = value;
         updateTask(this).then();
     }
 
-    constructor(id: string, text: string, projectId: string) {
+    private sprintNumberInner: number | null;
+    public get sprintNumber(): number | null {
+        return this.sprintNumberInner;
+    }
+    public set sprintNumber(value: number | null) {
+        this.sprintNumberInner = value;
+        updateTask(this).then();
+    }
+
+    constructor(id: string, data: TaskDocument | Task) {
         this.id = id;
-        this.textInner = text;
-        this.projectIdInner = projectId;
+        this.textInner = data.text;
+        this.projectIdInner = data.projectId || null;
+        this.sprintNumberInner = data.sprintNumber !== undefined ? data.sprintNumber : null;
+        this.isInDailyInner = !!data.isInDaily;
     }
 
-    public delete(context: ActionContext): Promise<void> {
-        const effect = this.getEffectFromDeletion(context);
-        return Promise.all([deleteTask(this.id), effect]).then();
-    }
-
-    private getEffectFromDeletion(context: ActionContext): Promise<void> {
-        if (context.origin === "daily")
-            return Sprint.current()
-                .then(sprint => sprint!.list())
-                .then(sprintList => sprintList.removeTask(this))
-                .then(() => List.fromId(context.listId))
-                .then(list => list.removeTask(this));
-        return List.fromId(context.listId).then(list => list.removeTask(this));
+    public delete(): Promise<void> {
+        return deleteTask(this.id).then();
     }
 
     public static fromId(id: string): Promise<Task> {
@@ -69,29 +88,36 @@ export default class Task {
         return fetchTasksByIds(ids);
     }
 
+    public static daily(): Promise<Task[]> {
+        return fetchTasksWithFilter(where("isInDaily", "==", true));
+    }
+
     public static async create(text: string, context: CreationContext): Promise<Task> {
-        if (!context.projectId) context.projectId = await getNoneProjectId();
-        const task = await postTask({ text, projectId: context.projectId });
-        await this.getEffectForCreation(task, context as SafeCreationContext);
-        return task;
+        if (context.origin === "daily") context.sprintNumber = await getCurrentSprintNumber();
+        return postTask(new Task("null", {
+            text,
+            projectId: context.projectId || undefined,
+            sprintNumber: typeof context.sprintNumber === "number" ? context.sprintNumber : undefined,
+            isInDaily: context.origin === "daily",
+        }));
     }
 
-    private static async getEffectForCreation(task: Task, context: SafeCreationContext): Promise<void> {
-        if (context.origin === "daily") {
-            const currentSprint = await Sprint.current();
-            const sprintList = await currentSprint!.list();
-            await sprintList.addTask(task);
-        }
+    public static converter: FirestoreDataConverter<Task> = {
+        fromFirestore(snap: QueryDocumentSnapshot): Task {
+            return new Task(snap.id, snap.data() as TaskDocument);
+        },
 
-        if (context.origin !== "backlog") {
-            const project = await Project.fromId(context.projectId);
-            const backlog = await project.backlog();
-            await backlog.addTask(task);
-        }
+        toFirestore(modelObject: WithFieldValue<Task> | PartialWithFieldValue<Task>): DocumentData {
+            const o = modelObject as Partial<Task>;
+            const payload: Partial<TaskDocument> = {};
 
-        const list = await List.fromId(context.listId);
-        await list.addTask(task);
-    }
+            if (o.text) payload.text = o.text;
+            if (o.projectId) payload.projectId = o.projectId;
+            if (typeof o.sprintNumber === "number") payload.sprintNumber = o.sprintNumber;
+            if (o.isInDaily) payload.isInDaily = true;
+            return payload;
+        },
+    };
 }
 
 // export interface ParentTask extends Task {

@@ -1,20 +1,20 @@
 import { css, CSSResultGroup, html, LitElement, TemplateResult } from "lit";
 import { customElement, state } from "lit/decorators.js";
 import { pageStyles } from "~src/global";
-import { getDailyListId } from "~services/user-service";
+import Task from "~services/task";
 
 import("~components/app/task-table").then(f => f.default());
 
 @customElement("app-page--daily")
 export default class AppPageDailyList extends LitElement {
-    @state() dailyListId: string | null = null;
+    @state() dailyTasks: Task[] | null = null;
 
     render(): TemplateResult {
         return html`
             <div class="flex col app-page">
                 <h4>Daily List</h4>
-                ${this.dailyListId ? html`
-                    <task-table listId=${this.dailyListId} origin="daily"></task-table>
+                ${this.dailyTasks ? html`
+                    <task-table .tasks=${this.dailyTasks} origin="daily"></task-table>
                 ` : ""}
             </div>
         `;
@@ -22,14 +22,12 @@ export default class AppPageDailyList extends LitElement {
 
     connectedCallback() {
         super.connectedCallback();
-        getDailyListId().then(value => {
-            this.dailyListId = value;
+        Task.daily().then(tasks => {
+            this.dailyTasks = tasks;
         });
     }
 
     static get styles(): CSSResultGroup {
-        return [...pageStyles, css`
-          
-        `];
+        return [...pageStyles, css``];
     }
 }

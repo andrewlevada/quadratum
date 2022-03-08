@@ -1,9 +1,8 @@
-import { CSSResultGroup, html, LitElement, TemplateResult } from "lit";
+import { CSSResultGroup, html, LitElement, PropertyValues, TemplateResult } from "lit";
 import { componentStyles } from "~src/global";
 import { defineComponent } from "~utils/components";
 import { property, state } from "lit/decorators.js";
 import Task, { ActionOrigin } from "~services/task";
-import List from "~services/list";
 import Project from "~services/project";
 import scopedStyles from "./styles.module.scss";
 import "@material/mwc-button";
@@ -16,8 +15,10 @@ interface Section {
 
 export default (): void => defineComponent("task-table", TaskTable);
 export class TaskTable extends LitElement {
-    @property() listId!: string;
+    @property() tasks!: Task[];
     @property() origin!: ActionOrigin;
+    @property() globalSprintNumber?: number;
+    @property() globalProjectId?: string;
     @state() sections: Section[] | null = null;
 
     render(): TemplateResult {
@@ -25,7 +26,7 @@ export class TaskTable extends LitElement {
             <div class="container">
                 ${this.sections.map(section => html`
                     ${section.tasks.map((task, i) => html`
-                        ${i === 0 ? html`<p class="project">${task.projectId}</p>` : ""}
+                        ${i === 0 && !this.globalProjectId ? html`<p class="project">${task.projectId}</p>` : ""}
                         <p class="text">${task.text}</p>
                         <input class="progress" type="checkbox">
                     `)}
@@ -42,25 +43,28 @@ export class TaskTable extends LitElement {
         ` : html``;
     }
 
-    connectedCallback() {
-        super.connectedCallback();
-        if (!this.listId) throw new Error("tasks-table requires property listId, but it's not set");
-        List.fromId(this.listId).then(list => list.tasks()).then(tasks => {
-            const temp: Record<string, Task[]> = {};
-            for (const task of tasks) {
-                if (!temp[task.projectId]) temp[task.projectId] = [];
-                temp[task.projectId].push(task);
-            }
+    protected firstUpdated(_changedProperties: PropertyValues) {
+        super.firstUpdated(_changedProperties);
+        if (!this.tasks) throw new Error("tasks-table requires property tasks, but it's not set");
 
-            Project.fromIds(Object.keys(temp)).then(projects => {
-                this.sections = [];
-                for (const project of projects) this.sections.push({
-                    project, tasks: temp[project.id], isAddMutated: false,
-                });
+        const temp: Record<string, Task[]> = { null: [] };
+        for (const task of this.tasks) {
+            const pId = task.projectId || "null";
+            if (!temp[pId]) temp[pId] = [];
+            temp[pId].push(task);
+        }
 
-                if (projects.length === 0) this.sections.push({
-                    project: null, tasks: [], isAddMutated: false,
-                });
+        const fetchProjects = Object.keys(temp);
+        fetchProjects.shift();
+        Project.fromIds(fetchProjects).then(projects => {
+            this.sections = [];
+            for (const project of projects) this.sections.push({
+                project, tasks: temp[project.id], isAddMutated: false,
+            });
+
+            // Always have an add button at the end
+            if (temp.null.length > 0 || fetchProjects.length === 0) this.sections.push({
+                project: null, tasks: temp.null, isAddMutated: false,
             });
         });
     }
@@ -74,8 +78,8 @@ export class TaskTable extends LitElement {
         if (event.key !== "Enter") return;
         Task.create((event.target as HTMLInputElement).value, {
             origin: this.origin,
-            projectId: section.project?.id || null,
-            listId: this.listId,
+            projectId: section.project?.id || this.globalProjectId || null,
+            sprintNumber: typeof this.globalSprintNumber === "number" ? this.globalSprintNumber : null,
         }).then(task => {
             section.tasks.push(task);
             section.isAddMutated = false;
