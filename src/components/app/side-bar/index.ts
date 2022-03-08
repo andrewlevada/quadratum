@@ -1,11 +1,17 @@
 import { CSSResultGroup, html, LitElement, TemplateResult } from "lit";
+import { createRef, ref } from "lit/directives/ref.js";
 import { componentStyles } from "~src/global";
 import { CompactListItem } from "~components/common/compact-list";
 import { defineComponent } from "~utils/components";
 import "@material/mwc-drawer";
+import "@material/mwc-button";
+import "@material/mwc-dialog";
+import "@material/mwc-textfield";
 import { state } from "lit/decorators.js";
 import Project from "~services/project";
 import Sprint from "~services/sprint";
+import { Dialog } from "@material/mwc-dialog";
+import { TextField } from "@material/mwc-textfield";
 import scopedStyles from "./styles.module.scss";
 
 import("~components/common/compact-list").then(f => f.default());
@@ -22,13 +28,30 @@ export class SideBar extends LitElement {
                     <compact-list label="Pinned" .items=${this.pinnedCompactList()}></compact-list>
                     <compact-list label="Sprints" .items=${this.sprintsCompactList()}></compact-list>
                     <compact-list label="Projects" .items=${this.projectsToCompactList()}></compact-list>
+                    <mwc-button label="Create project" icon="add" @click=${() => this.newProjectDialogState(true)}></mwc-button>
                 </div>
                 <div id="app-content" slot="appContent">
                     <slot></slot>
                 </div>
             </mwc-drawer>
+
+            <mwc-dialog heading="Let's do something new..." ${ref(this.newProjectDialog)}>
+                <div class="flex col">
+                    <mwc-textfield label="Project Name" ${ref(this.newProjectNameField)}></mwc-textfield>
+                    <!-- TODO: Color picker -->
+                </div>
+                <mwc-button slot="primaryAction" @click=${this.createNewProject}>
+                    Create
+                </mwc-button>
+                <mwc-button slot="secondaryAction">
+                    Cancel
+                </mwc-button>
+            </mwc-dialog>
         `;
     }
+
+    private newProjectDialog = createRef<Dialog>();
+    private newProjectNameField = createRef<TextField>();
 
     private pinnedCompactList(): CompactListItem[] {
         return [
@@ -64,6 +87,18 @@ export class SideBar extends LitElement {
         ]).then(([projects, lastSprint, currentSprint, nextSprint]) => {
             this.projects = projects;
             this.sprintNumbers = [lastSprint?.number || null, currentSprint!.number, nextSprint!.number];
+        });
+    }
+
+    private newProjectDialogState(newState: boolean): void {
+        if (this.newProjectDialog.value) this.newProjectDialog.value.open = newState;
+    }
+
+    private createNewProject(): void {
+        Project.create(this.newProjectNameField.value?.value || "Project").then(project => {
+            this.newProjectDialogState(false);
+            this.projects.push(project);
+            this.requestUpdate();
         });
     }
 
