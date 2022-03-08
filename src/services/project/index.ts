@@ -31,8 +31,17 @@ export default class Project {
         this.colorInner = color;
     }
 
+    public backlog(): Promise<List> {
+        return List.fromId(this.backlogListId);
+    }
+
     public static fromId(id: string): Promise<Project> {
         return fetchProjectById(id);
+    }
+
+    public static fromIds(ids: string[]): Promise<Project[]> {
+        if (ids.length === 0) return Promise.resolve([]);
+        return Promise.all(ids.map(id => this.fromId(id)));
     }
 
     public static all(): Promise<Project[]> {

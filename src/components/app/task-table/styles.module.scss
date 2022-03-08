@@ -3,4 +3,22 @@
 .container {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
+
+  p {
+    &.project {
+      grid-column: 1;
+    }
+
+    &.text {
+      grid-column: 2;
+    }
+
+    &.progress {
+      grid-column: 3;
+    }
+  }
+
+  .add-button, .add-input {
+    grid-column: 2;
+  }
 }

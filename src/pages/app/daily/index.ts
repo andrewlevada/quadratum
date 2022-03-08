@@ -13,7 +13,9 @@ export default class AppPageDailyList extends LitElement {
         return html`
             <div class="flex col app-page">
                 <h4>Daily List</h4>
-                ${this.dailyListId ? html`<task-table listId=${this.dailyListId}></task-table>` : ""}
+                ${this.dailyListId ? html`
+                    <task-table listId=${this.dailyListId} origin="daily"></task-table>
+                ` : ""}
             </div>
         `;
     }

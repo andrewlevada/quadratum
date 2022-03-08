@@ -13,7 +13,9 @@ export default class AppPageProject extends LitElement {
         return html`
             <div class="flex col app-page">
                 <h4>Project: ${this.project?.label || ""}</h4>
-                ${this.project ? html`<task-table .listId=${this.project.backlogListId}></task-table>` : ""}
+                ${this.project ? html`
+                    <task-table .listId=${this.project.backlogListId} origin="backlog"></task-table>
+                ` : ""}
             </div>
         `;
     }
