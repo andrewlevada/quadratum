@@ -1,3 +1,4 @@
+/* eslint-disable indent */
 import { CSSResultGroup, html, LitElement, PropertyValues, TemplateResult } from "lit";
 import { componentStyles } from "~src/global";
 import { defineComponent } from "~utils/components";
@@ -6,6 +7,7 @@ import Task, { ActionOrigin } from "~services/task";
 import Project from "~services/project";
 import scopedStyles from "./styles.module.scss";
 import "@material/mwc-button";
+import "@material/mwc-icon-button";
 
 interface Section {
     project: Project | null;
@@ -19,6 +21,7 @@ export class TaskTable extends LitElement {
     @property() origin!: ActionOrigin;
     @property() globalSprintNumber?: number;
     @property() globalProjectId?: string;
+    @property() isCurrentSprint?: boolean;
     @state() sections: Section[] | null = null;
 
     render(): TemplateResult {
@@ -28,7 +31,14 @@ export class TaskTable extends LitElement {
                     ${section.tasks.map((task, i) => html`
                         ${i === 0 && !this.globalProjectId ? html`<p class="project">${task.projectId}</p>` : ""}
                         <p class="text">${task.text}</p>
-                        <input class="progress" type="checkbox">
+                        
+                        <div class="progress flex row">
+                            <div class="quick-actions flex row">
+                                ${this.quickActionsHtml(section, task, i)}
+                            </div>
+                            
+                            <input type="checkbox">
+                        </div>
                     `)}
 
                     ${!section.isAddMutated ? html`
@@ -41,6 +51,33 @@ export class TaskTable extends LitElement {
                 `)}
             </div>
         ` : html``;
+    }
+
+    private quickActionsHtml(section: Section, task: Task, taskIndex: number): TemplateResult {
+        if (this.origin === "daily") return html`
+            <mwc-icon-button icon="cancel" @click=${() => {
+                task.isInDaily = false;
+                section.tasks.splice(taskIndex, 1);
+            }}></mwc-icon-button>
+        `;
+
+        if (this.origin === "backlog") return html`
+            <mwc-icon-button icon="arrow_upward"></mwc-icon-button>
+            <mwc-icon-button icon="moving"></mwc-icon-button>
+        `;
+
+        if (this.origin === "sprint" && this.isCurrentSprint) return html`
+            <mwc-icon-button icon="arrow_circle_down"></mwc-icon-button>
+            <mwc-icon-button icon="arrow_forward"></mwc-icon-button>
+        `;
+
+        if (this.origin === "sprint" && !this.isCurrentSprint) return html`
+            <mwc-icon-button icon="arrow_back"></mwc-icon-button>
+            <mwc-icon-button icon="arrow_upward"></mwc-icon-button>
+            <mwc-icon-button icon="arrow_forward"></mwc-icon-button>
+        `;
+
+        throw new Error("Wrong value of origin prop in task-table");
     }
 
     protected firstUpdated(_changedProperties: PropertyValues) {

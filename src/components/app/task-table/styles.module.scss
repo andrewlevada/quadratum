@@ -1,20 +1,31 @@
 @use "../../../assets/styles/global";
 
+:host {
+  --mdc-icon-button-size: 24px;
+  --mdc-icon-size: 18px;
+}
+
 .container {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
 
-  p {
-    &.project {
-      grid-column: 1;
-    }
+  p.project {
+    grid-column: 1;
+  }
 
-    &.text {
-      grid-column: 2;
-    }
+  p.text {
+    grid-column: 2;
+  }
 
-    &.progress {
-      grid-column: 3;
+  div.progress {
+    grid-column: 3;
+
+    .quick-actions {
+      opacity: 0;
+      transition: opacity 100ms ease;
+      &:hover {
+        opacity: 1;
+      }
     }
   }
 

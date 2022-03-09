@@ -3,6 +3,7 @@ import { customElement, state } from "lit/decorators.js";
 import { pageStyles } from "~src/global";
 import Sprint from "~services/sprint";
 import Task from "~services/task";
+import { getCurrentSprintNumber } from "~services/sprint/data";
 
 import("~components/app/task-table").then(f => f.default());
 
@@ -10,13 +11,14 @@ import("~components/app/task-table").then(f => f.default());
 export default class AppPageSprintList extends LitElement {
     @state() sprint: Sprint | null = null;
     @state() tasks: Task[] | null = null;
+    @state() isCurrentSprint: boolean = false;
 
     render(): TemplateResult {
         return html`
             <div class="flex col app-page">
                 <h4>${this.pageHeader()}</h4>
                 ${this.sprint ? html`
-                    <task-table .tasks=${this.tasks} origin="sprint"
+                    <task-table .tasks=${this.tasks} origin="sprint" isCurrentSprint=${this.isCurrentSprint}
                                 globalSprintNumber=${this.sprint.number}></task-table>
                 ` : ""}
             </div>
@@ -32,10 +34,11 @@ export default class AppPageSprintList extends LitElement {
         super.connectedCallback();
         const sprintNumber = Number(window.location.pathname.split("/").last());
 
-        Promise.all([Sprint.fromNumber(sprintNumber), Sprint.tasks(sprintNumber)])
-            .then(([sprint, tasks]) => {
+        Promise.all([Sprint.fromNumber(sprintNumber), Sprint.tasks(sprintNumber), getCurrentSprintNumber()])
+            .then(([sprint, tasks, currentSprintNumber]) => {
                 this.sprint = sprint;
                 this.tasks = tasks;
+                this.isCurrentSprint = currentSprintNumber === sprintNumber;
             });
     }
 
