@@ -5,6 +5,7 @@ import { defineComponent } from "~utils/components";
 import { property, state } from "lit/decorators.js";
 import Task, { ActionOrigin } from "~services/task";
 import Project from "~services/project";
+import { getCurrentSprintNumber } from "~services/sprint/data";
 import scopedStyles from "./styles.module.scss";
 import "@material/mwc-button";
 import "@material/mwc-icon-button";
@@ -54,27 +55,65 @@ export class TaskTable extends LitElement {
     }
 
     private quickActionsHtml(section: Section, task: Task, taskIndex: number): TemplateResult {
+        const popTask = () => {
+            section.tasks.splice(taskIndex, 1);
+            this.requestUpdate();
+        };
+
         if (this.origin === "daily") return html`
             <mwc-icon-button icon="cancel" @click=${() => {
                 task.isInDaily = false;
-                section.tasks.splice(taskIndex, 1);
+                popTask();
             }}></mwc-icon-button>
         `;
 
         if (this.origin === "backlog") return html`
-            <mwc-icon-button icon="arrow_upward"></mwc-icon-button>
-            <mwc-icon-button icon="moving"></mwc-icon-button>
+            <mwc-icon-button icon="arrow_upward" @click=${() => {
+                getCurrentSprintNumber().then(currentSprintNumber => {
+                    task.sprintNumber = currentSprintNumber;
+                    popTask();
+                });
+            }}></mwc-icon-button>
+            <mwc-icon-button icon="moving" @click=${() => {
+                getCurrentSprintNumber().then(currentSprintNumber => {
+                    task.sprintNumber = currentSprintNumber + 1;
+                    popTask();
+                });
+            }}></mwc-icon-button>
         `;
 
         if (this.origin === "sprint" && this.isCurrentSprint) return html`
-            <mwc-icon-button icon="arrow_circle_down"></mwc-icon-button>
-            <mwc-icon-button icon="arrow_forward"></mwc-icon-button>
+            <mwc-icon-button icon="arrow_circle_down" @click=${() => {
+                task.isInDaily = true;
+            }}></mwc-icon-button>
+            <mwc-icon-button icon="arrow_upward" @click=${() => {
+                task.sprintNumber = null;
+                task.isInDaily = false;
+                popTask();
+            }}></mwc-icon-button>
+            <mwc-icon-button icon="arrow_forward" @click=${() => {
+                // TODO: Add sprint existance check here
+                task.sprintNumber = this.globalSprintNumber! + 1;
+                task.isInDaily = false;
+                popTask();
+            }}></mwc-icon-button>
         `;
 
         if (this.origin === "sprint" && !this.isCurrentSprint) return html`
-            <mwc-icon-button icon="arrow_back"></mwc-icon-button>
-            <mwc-icon-button icon="arrow_upward"></mwc-icon-button>
-            <mwc-icon-button icon="arrow_forward"></mwc-icon-button>
+            <mwc-icon-button icon="arrow_back" @click=${() => {
+                // TODO: Add sprint existance check here
+                task.sprintNumber = this.globalSprintNumber! - 1;
+                popTask();
+            }}></mwc-icon-button>
+            <mwc-icon-button icon="arrow_upward" @click=${() => {
+                task.sprintNumber = null;
+                popTask();
+            }}></mwc-icon-button>
+            <mwc-icon-button icon="arrow_forward" @click=${() => {
+                // TODO: Add sprint existance check here
+                task.sprintNumber = this.globalSprintNumber! + 1;
+                popTask();
+            }}></mwc-icon-button>
         `;
 
         throw new Error("Wrong value of origin prop in task-table");

@@ -18,7 +18,7 @@ export default class AppPageSprintList extends LitElement {
             <div class="flex col app-page">
                 <h4>${this.pageHeader()}</h4>
                 ${this.sprint ? html`
-                    <task-table .tasks=${this.tasks} origin="sprint" isCurrentSprint=${this.isCurrentSprint}
+                    <task-table .tasks=${this.tasks} origin="sprint" .isCurrentSprint=${this.isCurrentSprint}
                                 globalSprintNumber=${this.sprint.number}></task-table>
                 ` : ""}
             </div>
