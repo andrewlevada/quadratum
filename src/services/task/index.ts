@@ -92,11 +92,15 @@ export default class Task {
         return fetchTasksWithFilter(where("isInDaily", "==", true));
     }
 
+    public static noProject(): Promise<Task[]> {
+        return fetchTasksWithFilter(where("projectId", "==", "none"));
+    }
+
     public static async create(text: string, context: CreationContext): Promise<Task> {
         if (context.origin === "daily") context.sprintNumber = await getCurrentSprintNumber();
         return postTask(new Task("null", {
             text,
-            projectId: context.projectId || undefined,
+            projectId: context.projectId || "none",
             sprintNumber: typeof context.sprintNumber === "number" ? context.sprintNumber : undefined,
             isInDaily: context.origin === "daily",
         }));

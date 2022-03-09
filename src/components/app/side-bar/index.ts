@@ -71,9 +71,11 @@ export class SideBar extends LitElement {
     }
 
     private projectsToCompactList(): CompactListItem[] {
-        return this.projects.map(v => ({
+        const list = this.projects.map(v => ({
             label: v.label, link: `/project/${v.id}`, color: v.color,
         } as CompactListItem));
+        list.push({ label: "None", link: "/project/none", color: "#dddddd" });
+        return list;
     }
 
     connectedCallback() {

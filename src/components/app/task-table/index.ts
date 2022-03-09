@@ -47,9 +47,9 @@ export class TaskTable extends LitElement {
         super.firstUpdated(_changedProperties);
         if (!this.tasks) throw new Error("tasks-table requires property tasks, but it's not set");
 
-        const temp: Record<string, Task[]> = { null: [] };
+        const temp: Record<string, Task[]> = { none: [] };
         for (const task of this.tasks) {
-            const pId = task.projectId || "null";
+            const pId = task.projectId || "none";
             if (!temp[pId]) temp[pId] = [];
             temp[pId].push(task);
         }
@@ -63,8 +63,8 @@ export class TaskTable extends LitElement {
             });
 
             // Always have an add button at the end
-            if (temp.null.length > 0 || fetchProjects.length === 0) this.sections.push({
-                project: null, tasks: temp.null, isAddMutated: false,
+            if (temp.none.length > 0 || fetchProjects.length === 0) this.sections.push({
+                project: null, tasks: temp.none, isAddMutated: false,
             });
         });
     }
