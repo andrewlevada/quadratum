@@ -30,7 +30,10 @@ export class TaskTable extends LitElement {
             <div class="container">
                 ${this.sections.map(section => html`
                     ${section.tasks.map((task, i) => html`
-                        ${i === 0 && !this.globalProjectId ? html`<p class="project">${task.projectId}</p>` : ""}
+                        ${i === 0 && !this.globalProjectId ? html`
+                            <p class="project">${section.project?.label || "None"}</p>
+                        ` : ""}
+
                         <p class="text">${task.text}</p>
                         
                         <div class="progress flex row">
