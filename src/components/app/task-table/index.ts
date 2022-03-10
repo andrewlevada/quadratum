@@ -7,8 +7,9 @@ import Task, { ActionOrigin } from "~services/task";
 import Project from "~services/project";
 import { getCurrentSprintNumber } from "~services/sprint/data";
 import scopedStyles from "./styles.module.scss";
-import "@material/mwc-button";
 import "@material/mwc-icon-button";
+
+import("~components/overwrites/mwc-button-small").then(f => f.default());
 
 interface Section {
     project: Project | null;
@@ -46,8 +47,8 @@ export class TaskTable extends LitElement {
                     `)}
 
                     ${!section.isAddMutated ? html`
-                        <mwc-button class="add-button" label="Create task"
-                                    @click=${() => this.mutateAddButton(section)}></mwc-button>
+                        <mwc-button-small class="add-button" label="Create task" icon="add"
+                                          @click=${() => this.mutateAddButton(section)}></mwc-button-small>
                     ` : html`
                         <input class="add-input" type="text"
                                @keyup=${(event: KeyboardEvent) => this.onAddInputKeyUp(event, section)}>

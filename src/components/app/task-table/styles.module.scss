@@ -5,9 +5,18 @@
   --mdc-icon-size: 18px;
 }
 
+@mixin hover-show() {
+  opacity: 0;
+  transition: opacity 100ms ease;
+  &:hover {
+    opacity: 1;
+  }
+}
+
 .container {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-columns: fit-content(100%) fit-content(100%) fit-content(100%);
+  gap: 12px;
 
   p.project {
     grid-column: 1;
@@ -21,15 +30,24 @@
     grid-column: 3;
 
     .quick-actions {
-      opacity: 0;
-      transition: opacity 100ms ease;
-      &:hover {
-        opacity: 1;
-      }
+      @include hover-show();
     }
+  }
+
+  & > * {
+    height: 18px;
   }
 
   .add-button, .add-input {
     grid-column: 2;
+  }
+
+  .add-button {
+    @include hover-show();
+  }
+
+  .add-input {
+    background: none;
+    font-size: 16px;
   }
 }
