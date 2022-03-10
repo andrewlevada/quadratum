@@ -50,7 +50,7 @@ export class TaskTable extends LitElement {
                         <mwc-button-small class="add-button" label="Create task" icon="add"
                                           @click=${() => this.mutateAddButton(section)}></mwc-button-small>
                     ` : html`
-                        <input class="add-input" type="text"
+                        <input class="add-input" type="text" autofocus
                                @keyup=${(event: KeyboardEvent) => this.onAddInputKeyUp(event, section)}>
                     `}
                 `)}
@@ -151,7 +151,7 @@ export class TaskTable extends LitElement {
 
     private mutateAddButton(section: Section) {
         section.isAddMutated = true;
-        this.requestUpdate();
+        this.requestUpdate("sections");
     }
 
     private onAddInputKeyUp(event: KeyboardEvent, section: Section) {
