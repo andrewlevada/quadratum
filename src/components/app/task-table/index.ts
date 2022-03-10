@@ -9,6 +9,7 @@ import { getCurrentSprintNumber } from "~services/sprint/data";
 import scopedStyles from "./styles.module.scss";
 import "@material/mwc-icon-button";
 
+import("~components/common/square-checkbox").then(f => f.default());
 import("~components/overwrites/mwc-button-small").then(f => f.default());
 
 interface Section {
@@ -42,7 +43,7 @@ export class TaskTable extends LitElement {
                                 ${this.quickActionsHtml(section, task, i)}
                             </div>
                             
-                            <input type="checkbox">
+                            <square-checkbox></square-checkbox>
                         </div>
                     `)}
 
