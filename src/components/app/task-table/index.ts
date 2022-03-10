@@ -10,12 +10,11 @@ import scopedStyles from "./styles.module.scss";
 import "@material/mwc-icon-button";
 
 import("~components/common/square-checkbox").then(f => f.default());
-import("~components/overwrites/mwc-button-small").then(f => f.default());
+import("./add-button").then(f => f.default());
 
 interface Section {
     project: Project | null;
     tasks: Task[];
-    isAddMutated: boolean;
 }
 
 export default (): void => defineComponent("task-table", TaskTable);
@@ -36,14 +35,19 @@ export class TaskTable extends LitElement {
                             <p class="project">${section.project?.label || "None"}</p>
                         ` : ""}
 
-                        <p class="text">${task.text}</p>
+                        <p class="text flex row align-center">
+                            ${task.text}
+                            <add-button sub @create=${(event: CustomEvent) => {
+                                this.createTask(event.detail.value, section, task.id);
+                            }}></add-button>
+                        </p>
                         
                         <div class="progress flex row">
-                            <div class="quick-actions flex row">
+                            <div class="quick-actions flex row align-center">
                                 ${this.quickActionsHtml(section, task, i)}
                             </div>
                             
-                            <div class="checkboxes flex row gap">
+                            <div class="checkboxes flex row gap align-center">
                                 ${task.progress ? task.progress.map((v, pI) => html`
                                     <square-checkbox ?checked=${v} @change=${(event: CustomEvent) => {
                                         task.progress![pI] = event.detail.value as boolean;
@@ -62,13 +66,9 @@ export class TaskTable extends LitElement {
                         </div>
                     `)}
 
-                    ${!section.isAddMutated ? html`
-                        <mwc-button-small class="add-button" label="Create task" icon="add"
-                                          @click=${() => this.mutateAddButton(section)}></mwc-button-small>
-                    ` : html`
-                        <input class="add-input" type="text" autofocus
-                               @keyup=${(event: KeyboardEvent) => this.onAddInputKeyUp(event, section)}>
-                    `}
+                    <add-button @create=${(event: CustomEvent) => {
+                        this.createTask(event.detail.value, section);
+                    }}></add-button>
                 `)}
             </div>
         ` : html``;
@@ -155,30 +155,24 @@ export class TaskTable extends LitElement {
         Project.fromIds(fetchProjects).then(projects => {
             this.sections = [];
             for (const project of projects) this.sections.push({
-                project, tasks: temp[project.id], isAddMutated: false,
+                project, tasks: temp[project.id],
             });
 
             // Always have an add button at the end
             if (temp.none.length > 0 || fetchProjects.length === 0) this.sections.push({
-                project: null, tasks: temp.none, isAddMutated: false,
+                project: null, tasks: temp.none,
             });
         });
     }
 
-    private mutateAddButton(section: Section) {
-        section.isAddMutated = true;
-        this.requestUpdate("sections");
-    }
-
-    private onAddInputKeyUp(event: KeyboardEvent, section: Section) {
-        if (event.key !== "Enter") return;
-        Task.create((event.target as HTMLInputElement).value, {
+    private createTask(text: string, section: Section, parentTaskId?: string) {
+        Task.create(text, {
             origin: this.origin,
             projectId: section.project?.id || this.globalProjectId || null,
             sprintNumber: typeof this.globalSprintNumber === "number" ? this.globalSprintNumber : null,
+            parentTaskId,
         }).then(task => {
             section.tasks.push(task);
-            section.isAddMutated = false;
             this.requestUpdate();
         });
     }

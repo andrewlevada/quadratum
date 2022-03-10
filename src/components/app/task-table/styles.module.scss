@@ -9,7 +9,7 @@
   opacity: 0;
   transition: opacity 100ms ease;
   &:hover {
-    opacity: 1;
+    opacity: 0.6;
   }
 }
 
@@ -43,16 +43,8 @@
     height: 18px;
   }
 
-  .add-button, .add-input {
+  & > add-button {
     grid-column: 2;
-  }
-
-  .add-button {
-    @include hover-show();
-  }
-
-  .add-input {
-    background: none;
-    font-size: 16px;
+    width: 100%;
   }
 }

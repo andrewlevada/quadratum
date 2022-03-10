@@ -1,0 +1,27 @@
+:host {
+  --mdc-icon-button-size: 24px;
+  --mdc-icon-size: 18px;
+}
+
+@mixin hover-show($max-opacity) {
+  opacity: 0;
+  transition: opacity 100ms ease;
+  &:hover {
+    opacity: $max-opacity;
+  }
+}
+
+mwc-button-small {
+  @include hover-show(1);
+  width: 100%;
+}
+
+mwc-icon-button {
+  @include hover-show(0.6);
+}
+
+input {
+  background: none;
+  font-size: 16px;
+  width: 100%;
+}

@@ -20,6 +20,7 @@ export interface ActionContext {
 export interface CreationContext extends ActionContext {
     projectId: string | null;
     sprintNumber: number | null;
+    parentTaskId?: string;
 }
 
 interface TaskDocument {
@@ -28,6 +29,7 @@ interface TaskDocument {
     sprintNumber?: number;
     isInDaily?: boolean;
     progress?: boolean[];
+    parentTaskId?: string;
 }
 
 export default class Task {
@@ -69,6 +71,15 @@ export default class Task {
         updateTask({ id: this.id, sprintNumber: value }).then();
     }
 
+    private parentTaskIdInner: string | undefined;
+    public get parentTaskId(): string | undefined {
+        return this.parentTaskIdInner;
+    }
+    public set parentTaskId(value: string | undefined) {
+        this.parentTaskIdInner = value;
+        updateTask({ id: this.id, parentTaskId: value }).then();
+    }
+
     private progressInner: boolean[] | null;
     public get progress(): boolean[] | null {
         return this.progressInner;
@@ -81,6 +92,7 @@ export default class Task {
         this.sprintNumberInner = data.sprintNumber !== undefined ? data.sprintNumber : null;
         this.isInDailyInner = !!data.isInDaily;
         this.progressInner = data.progress || null;
+        this.parentTaskIdInner = data.parentTaskId;
     }
 
     public delete(): Promise<void> {
@@ -116,6 +128,7 @@ export default class Task {
             sprintNumber: typeof context.sprintNumber === "number" ? context.sprintNumber : undefined,
             isInDaily: context.origin === "daily",
             progress: [false],
+            parentTaskId: context.parentTaskId,
         }));
     }
 
@@ -132,8 +145,11 @@ export default class Task {
             if (o.projectId) payload.projectId = o.projectId;
             if (typeof o.sprintNumber === "number") payload.sprintNumber = o.sprintNumber;
             if (o.isInDaily) payload.isInDaily = true;
+            if (o.parentTaskId) payload.parentTaskId = o.parentTaskId;
+
             if (o.progress === null) payload.progress = deleteField();
             else if (o.progress) payload.progress = o.progress as boolean[];
+
             return payload;
         },
     };
