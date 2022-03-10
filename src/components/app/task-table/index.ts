@@ -19,11 +19,11 @@ interface Section {
 
 export default (): void => defineComponent("task-table", TaskTable);
 export class TaskTable extends LitElement {
-    @property() tasks!: Task[];
-    @property() origin!: ActionOrigin;
-    @property() globalSprintNumber?: number;
-    @property() globalProjectId?: string;
-    @property() isCurrentSprint?: boolean;
+    @property({ type: Array }) tasks!: Task[];
+    @property({ type: String }) origin!: ActionOrigin;
+    @property({ type: Number }) globalSprintNumber?: number;
+    @property({ type: String }) globalProjectId?: string;
+    @property({ type: Boolean }) isCurrentSprint?: boolean;
     @state() sections: Section[] | null = null;
 
     render(): TemplateResult {
