@@ -4,7 +4,7 @@ import { deleteTask,
     fetchTasksWithFilter,
     postTask,
     updateTask } from "~services/task/data";
-import { DocumentData,
+import { deleteField, DocumentData,
     FirestoreDataConverter,
     PartialWithFieldValue,
     QueryDocumentSnapshot, where,
@@ -27,6 +27,7 @@ interface TaskDocument {
     projectId?: string;
     sprintNumber?: number;
     isInDaily?: boolean;
+    progress?: boolean[];
 }
 
 export default class Task {
@@ -38,7 +39,7 @@ export default class Task {
     }
     public set text(value: string) {
         this.textInner = value;
-        updateTask(this).then();
+        updateTask({ id: this.id, text: value }).then();
     }
 
     private isInDailyInner: boolean;
@@ -47,7 +48,7 @@ export default class Task {
     }
     public set isInDaily(value: boolean) {
         this.isInDailyInner = value;
-        updateTask(this).then();
+        updateTask({ id: this.id, isInDaily: value }).then();
     }
 
     private projectIdInner: string | null;
@@ -56,7 +57,7 @@ export default class Task {
     }
     public set projectId(value: string | null) {
         this.projectIdInner = value;
-        updateTask(this).then();
+        updateTask({ id: this.id, projectId: value }).then();
     }
 
     private sprintNumberInner: number | null;
@@ -65,7 +66,12 @@ export default class Task {
     }
     public set sprintNumber(value: number | null) {
         this.sprintNumberInner = value;
-        updateTask(this).then();
+        updateTask({ id: this.id, sprintNumber: value }).then();
+    }
+
+    private progressInner: boolean[] | null;
+    public get progress(): boolean[] | null {
+        return this.progressInner;
     }
 
     constructor(id: string, data: TaskDocument | Task) {
@@ -74,10 +80,16 @@ export default class Task {
         this.projectIdInner = data.projectId || null;
         this.sprintNumberInner = data.sprintNumber !== undefined ? data.sprintNumber : null;
         this.isInDailyInner = !!data.isInDaily;
+        this.progressInner = data.progress || null;
     }
 
     public delete(): Promise<void> {
         return deleteTask(this.id).then();
+    }
+
+    public updateProgress(value?: boolean[]): void {
+        if (value !== undefined) this.progressInner = value;
+        updateTask({ id: this.id, progress: this.progressInner }).then();
     }
 
     public static fromId(id: string): Promise<Task> {
@@ -103,6 +115,7 @@ export default class Task {
             projectId: context.projectId || "none",
             sprintNumber: typeof context.sprintNumber === "number" ? context.sprintNumber : undefined,
             isInDaily: context.origin === "daily",
+            progress: [false],
         }));
     }
 
@@ -113,12 +126,14 @@ export default class Task {
 
         toFirestore(modelObject: WithFieldValue<Task> | PartialWithFieldValue<Task>): DocumentData {
             const o = modelObject as Partial<Task>;
-            const payload: Partial<TaskDocument> = {};
+            const payload: PartialWithFieldValue<TaskDocument> = {};
 
             if (o.text) payload.text = o.text;
             if (o.projectId) payload.projectId = o.projectId;
             if (typeof o.sprintNumber === "number") payload.sprintNumber = o.sprintNumber;
             if (o.isInDaily) payload.isInDaily = true;
+            if (o.progress === null) payload.progress = deleteField();
+            else if (o.progress) payload.progress = o.progress as boolean[];
             return payload;
         },
     };

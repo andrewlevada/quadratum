@@ -43,7 +43,22 @@ export class TaskTable extends LitElement {
                                 ${this.quickActionsHtml(section, task, i)}
                             </div>
                             
-                            <square-checkbox></square-checkbox>
+                            <div class="checkboxes flex row gap">
+                                ${task.progress ? task.progress.map((v, pI) => html`
+                                    <square-checkbox ?checked=${v} @change=${(event: CustomEvent) => {
+                                        task.progress![pI] = event.detail.value as boolean;
+                                        task.updateProgress();
+                                        this.requestUpdate("sections");
+                                    }}></square-checkbox>
+                                `) : ""}
+
+                                <mwc-icon-button icon="add_box" @click=${() => {
+                                    const progress = task.progress || [];
+                                    progress.push(false);
+                                    task.updateProgress(progress);
+                                    this.requestUpdate("sections");
+                                }}></mwc-icon-button>
+                            </div>
                         </div>
                     `)}
 

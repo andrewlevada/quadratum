@@ -7,9 +7,11 @@ import { addDoc,
     getDocs,
     query,
     QueryConstraint,
-    setDoc,
+    updateDoc,
     where } from "@firebase/firestore";
 import { userDoc } from "~services/tools";
+
+type PartialTaskWithId = Partial<Task> & { id: string };
 
 export async function postTask(task: Task): Promise<Task> {
     const snap = await addDoc(collection(userDoc(), "tasks").withConverter(Task.converter), task);
@@ -34,8 +36,8 @@ export async function fetchTasksWithFilter(...constraints: QueryConstraint[]): P
     return snap.docs.map(v => v.data());
 }
 
-export function updateTask(task: Task): Promise<void> {
-    return setDoc(doc(userDoc(), "tasks", task.id).withConverter(Task.converter), task).then();
+export function updateTask(task: PartialTaskWithId): Promise<void> {
+    return updateDoc(doc(userDoc(), "tasks", task.id).withConverter(Task.converter), task).then();
 }
 
 export function deleteTask(id: string): Promise<void> {

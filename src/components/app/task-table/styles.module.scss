@@ -33,6 +33,10 @@
     .quick-actions {
       @include hover-show();
     }
+
+    .checkboxes mwc-icon-button {
+      @include hover-show();
+    }
   }
 
   & > * {
