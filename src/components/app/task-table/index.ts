@@ -10,6 +10,7 @@ import scopedStyles from "./styles.module.scss";
 import "@material/mwc-icon-button";
 
 import("~components/common/square-checkbox").then(f => f.default());
+import("./inline-text-input").then(f => f.default());
 import("./add-button").then(f => f.default());
 
 interface Section {
@@ -35,13 +36,18 @@ export class TaskTable extends LitElement {
                             <p class="project">${section.project?.label || "None"}</p>
                         ` : ""}
 
-                        <p class="text flex row align-center ${task.parentTaskId ? "sub" : ""}">
-                            ${task.text}
+                        <div class="text flex row align-center ${task.parentTaskId ? "sub" : ""}">
+                            <inline-text-input value=${task.text} @update=${(event: CustomEvent) => {
+                                task.text = (event.detail.value as string).trim();
+                            }} @clear=${() => {
+                                section.tasks.splice(i, 1)[0].delete().then();
+                                this.requestUpdate("sections");
+                            }}></inline-text-input>
                             
                             <add-button sub @create=${(event: CustomEvent) => {
                                 this.createTask(event.detail.value, section, task.parentTaskId || task.id);
                             }}></add-button>
-                        </p>
+                        </div>
                         
                         <div class="progress flex row">
                             <div class="quick-actions flex row align-center ${task.parentTaskId ? "sub" : ""}">
