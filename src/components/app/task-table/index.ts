@@ -35,15 +35,16 @@ export class TaskTable extends LitElement {
                             <p class="project">${section.project?.label || "None"}</p>
                         ` : ""}
 
-                        <p class="text flex row align-center">
+                        <p class="text flex row align-center ${task.parentTaskId ? "sub" : ""}">
                             ${task.text}
+                            
                             <add-button sub @create=${(event: CustomEvent) => {
-                                this.createTask(event.detail.value, section, task.id);
+                                this.createTask(event.detail.value, section, task.parentTaskId || task.id);
                             }}></add-button>
                         </p>
                         
                         <div class="progress flex row">
-                            <div class="quick-actions flex row align-center">
+                            <div class="quick-actions flex row align-center ${task.parentTaskId ? "sub" : ""}">
                                 ${this.quickActionsHtml(section, task, i)}
                             </div>
                             
@@ -150,6 +151,9 @@ export class TaskTable extends LitElement {
             temp[pId].push(task);
         }
 
+        for (const i of Object.entries(temp))
+            temp[i[0]] = TaskTable.reorderTasks(i[1]);
+
         const fetchProjects = Object.keys(temp);
         fetchProjects.shift();
         Project.fromIds(fetchProjects).then(projects => {
@@ -173,8 +177,30 @@ export class TaskTable extends LitElement {
             parentTaskId,
         }).then(task => {
             section.tasks.push(task);
+            section.tasks = TaskTable.reorderTasks(section.tasks);
             this.requestUpdate();
         });
+    }
+
+    private static reorderTasks(heap: Task[]): Task[] {
+        const tasks: Task[] = [];
+
+        for (const t of heap) {
+            if (t.parentTaskId !== undefined) continue;
+            tasks.push(t, ...this.constructSubTree(heap, t.id));
+        }
+
+        return tasks;
+    }
+
+    private static constructSubTree(heap: Task[], parentId: string): Task[] {
+        const tasks: Task[] = [];
+
+        for (const t of heap)
+            if (t.parentTaskId === parentId)
+                tasks.push(t, ...this.constructSubTree(heap, t.id));
+
+        return tasks;
     }
 
     static get styles(): CSSResultGroup {

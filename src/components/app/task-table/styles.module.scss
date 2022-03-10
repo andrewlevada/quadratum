@@ -25,6 +25,10 @@
 
   p.text {
     grid-column: 2;
+
+    &.sub {
+      margin-left: 16px;
+    }
   }
 
   div.progress {
@@ -32,6 +36,11 @@
 
     .quick-actions {
       @include hover-show();
+
+      &.sub {
+        opacity: 0 !important;
+        pointer-events: none !important;
+      }
     }
 
     .checkboxes mwc-icon-button {
