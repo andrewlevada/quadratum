@@ -32,6 +32,8 @@ interface TaskDocument {
     parentTaskId?: string;
 }
 
+// TODO: Use decorator to fix repetitive code in getters/setters
+
 export default class Task {
     public readonly id: string;
 
@@ -40,6 +42,7 @@ export default class Task {
         return this.textInner;
     }
     public set text(value: string) {
+        if (this.textInner === value) return;
         this.textInner = value;
         updateTask({ id: this.id, text: value }).then();
     }
@@ -49,6 +52,7 @@ export default class Task {
         return this.isInDailyInner;
     }
     public set isInDaily(value: boolean) {
+        if (this.isInDailyInner === value) return;
         this.isInDailyInner = value;
         updateTask({ id: this.id, isInDaily: value }).then();
     }
@@ -58,6 +62,7 @@ export default class Task {
         return this.projectIdInner;
     }
     public set projectId(value: string | null) {
+        if (this.projectIdInner === value) return;
         this.projectIdInner = value;
         updateTask({ id: this.id, projectId: value }).then();
     }
@@ -67,6 +72,7 @@ export default class Task {
         return this.sprintNumberInner;
     }
     public set sprintNumber(value: number | null) {
+        if (this.sprintNumberInner === value) return;
         this.sprintNumberInner = value;
         updateTask({ id: this.id, sprintNumber: value }).then();
     }
@@ -76,6 +82,7 @@ export default class Task {
         return this.parentTaskIdInner;
     }
     public set parentTaskId(value: string | undefined) {
+        if (this.parentTaskIdInner === value) return;
         this.parentTaskIdInner = value;
         updateTask({ id: this.id, parentTaskId: value }).then();
     }
@@ -154,11 +161,3 @@ export default class Task {
         },
     };
 }
-
-// export interface ParentTask extends Task {
-//     subtasksIds: string[];
-// }
-//
-// export interface PointsTask extends Task {
-//     points: boolean[];
-// }
