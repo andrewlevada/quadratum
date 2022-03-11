@@ -54,7 +54,7 @@ export class TaskTable extends LitElement {
                                 ${this.quickActionsHtml(section, task, i)}
                             </div>
                             
-                            <div class="checkboxes flex row gap align-center">
+                            <div class="checkboxes flex row align-center">
                                 ${task.progress ? task.progress.map((v, pI) => html`
                                     <square-checkbox ?checked=${v} @change=${(event: CustomEvent) => {
                                         task.progress![pI] = event.detail.value as boolean;

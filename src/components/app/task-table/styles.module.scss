@@ -45,8 +45,13 @@
       }
     }
 
+    .checkboxes > *:not(:last-child) {
+      margin-right: 12px;
+    }
+
     .checkboxes mwc-icon-button {
       @include hover-show();
+      transform: translateX(-4px);
     }
   }
 
