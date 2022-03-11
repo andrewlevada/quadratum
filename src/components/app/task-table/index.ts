@@ -37,7 +37,9 @@ export class TaskTable extends LitElement {
                         ` : ""}
 
                         <div class="text flex row align-center ${task.parentTaskId ? "sub" : ""}">
-                            <inline-text-input value=${task.text} @update=${(event: CustomEvent) => {
+                            <inline-text-input value=${task.text}
+                                               class=${task.isDone() ? "fade" : ""}
+                                               @update=${(event: CustomEvent) => {
                                 task.text = (event.detail.value as string).trim();
                             }} @clear=${() => {
                                 section.tasks.splice(i, 1)[0].delete().then();
@@ -191,7 +193,12 @@ export class TaskTable extends LitElement {
     private static reorderTasks(heap: Task[]): Task[] {
         const tasks: Task[] = [];
 
-        for (const t of heap) {
+        for (const t of heap.filter(v => !v.isDone())) {
+            if (t.parentTaskId !== undefined) continue;
+            tasks.push(t, ...this.constructSubTree(heap, t.id));
+        }
+
+        for (const t of heap.filter(v => v.isDone())) {
             if (t.parentTaskId !== undefined) continue;
             tasks.push(t, ...this.constructSubTree(heap, t.id));
         }

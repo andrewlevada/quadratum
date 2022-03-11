@@ -111,6 +111,12 @@ export default class Task {
         updateTask({ id: this.id, progress: this.progressInner }).then();
     }
 
+    public isDone(): boolean {
+        return !!this.progressInner
+            && this.progressInner.length > 0
+            && this.progressInner.filter(v => v).length === this.progressInner.length;
+    }
+
     public static fromId(id: string): Promise<Task> {
         return fetchTaskById(id);
     }
