@@ -37,13 +37,13 @@ export class SideBar extends LitElement {
 
             <mwc-dialog heading="Let's do something new..." ${ref(this.newProjectDialog)}>
                 <div class="flex col">
-                    <mwc-textfield label="Project Name" ${ref(this.newProjectNameField)}></mwc-textfield>
+                    <mwc-textfield label="Project Label" ${ref(this.newProjectNameField)}></mwc-textfield>
                     <!-- TODO: Color picker -->
                 </div>
                 <mwc-button slot="primaryAction" @click=${this.createNewProject}>
                     Create
                 </mwc-button>
-                <mwc-button slot="secondaryAction">
+                <mwc-button slot="secondaryAction" @click=${() => this.newProjectDialogState(false)}>
                     Cancel
                 </mwc-button>
             </mwc-dialog>

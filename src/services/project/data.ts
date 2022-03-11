@@ -1,5 +1,5 @@
 import Project from "~services/project";
-import { addDoc, collection, doc, getDoc, getDocs, setDoc } from "@firebase/firestore";
+import { addDoc, collection, doc, getDoc, getDocs, updateDoc } from "@firebase/firestore";
 import { userDoc } from "~services/tools";
 
 export async function postProject(project: Project): Promise<Project> {
@@ -12,8 +12,8 @@ export async function fetchProjectById(id: string): Promise<Project> {
     return snap.data() || Promise.reject();
 }
 
-export function updateProject(project: Project): Promise<void> {
-    return setDoc(doc(userDoc(), "projects", project.id).withConverter(Project.converter), project).then();
+export function updateProject(project: Partial<Project> & { id: string }): Promise<void> {
+    return updateDoc(doc(userDoc(), "projects", project.id).withConverter(Project.converter), project).then();
 }
 
 export async function fetchAllProjects(): Promise<Project[]> {

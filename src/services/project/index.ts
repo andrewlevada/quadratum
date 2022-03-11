@@ -7,6 +7,7 @@ import { DocumentData, FirestoreDataConverter, PartialWithFieldValue, QueryDocum
 interface ProjectDocument {
     label: string;
     color: string;
+    isArchived?: boolean;
 }
 
 export default class Project {
@@ -17,8 +18,9 @@ export default class Project {
         return this.labelInner;
     }
     set label(value: string) {
+        if (this.labelInner === value) return;
         this.labelInner = value;
-        updateProject(this).then();
+        updateProject({ id: this.id, label: value }).then();
     }
 
     private colorInner: string;
@@ -26,14 +28,26 @@ export default class Project {
         return this.colorInner;
     }
     set color(value: string) {
+        if (this.colorInner === value) return;
         this.colorInner = value;
-        updateProject(this).then();
+        updateProject({ id: this.id, color: value }).then();
+    }
+
+    private isArchivedInner: boolean | undefined;
+    get isArchived(): boolean | undefined {
+        return this.isArchivedInner;
+    }
+    set isArchived(value: boolean | undefined) {
+        if (this.isArchivedInner === value) return;
+        this.isArchivedInner = value;
+        updateProject({ id: this.id, isArchived: value }).then();
     }
 
     constructor(id: string, data: Project | ProjectDocument) {
         this.id = id;
         this.labelInner = data.label;
         this.colorInner = data.color;
+        this.isArchivedInner = data.isArchived;
     }
 
     public tasks(): Promise<Task[]> {
@@ -53,8 +67,9 @@ export default class Project {
         return Promise.all(ids.map(id => this.fromId(id)));
     }
 
-    public static all(): Promise<Project[]> {
-        return fetchAllProjects();
+    public static all(isArchived?: boolean): Promise<Project[]> {
+        return fetchAllProjects()
+            .then(projects => projects.filter(v => !!v.isArchived === !!isArchived));
     }
 
     public static create(label: string): Promise<Project> {
