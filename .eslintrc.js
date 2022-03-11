@@ -59,5 +59,6 @@ module.exports = {
         "max-len": "off",
         "no-restricted-syntax": "off",
         "no-continue": "off",
+        "no-plusplus": "off",
     },
 };

@@ -84,64 +84,73 @@ export class TaskTable extends LitElement {
     }
 
     private quickActionsHtml(section: Section, task: Task, taskIndex: number): TemplateResult {
-        const popTask = () => {
-            section.tasks.splice(taskIndex, 1);
+        let affectedTasksNumber = 1;
+        for (let i = taskIndex + 1; i < section.tasks.length; i++)
+            if (section.tasks[i].parentTaskId === task.id) affectedTasksNumber++;
+            else break;
+
+        const popTasks = () => {
+            // This removal of tasks relies heavily on how they are displayed.
+            // Change this in the future, as it can and will lead to bugs
+            section.tasks.splice(taskIndex, affectedTasksNumber);
             this.requestUpdate();
         };
 
+        const affectedTasks = () => section.tasks.slice(taskIndex, taskIndex + affectedTasksNumber);
+
         if (this.origin === "daily") return html`
             <mwc-icon-button icon="cancel" @click=${() => {
-                task.isInDaily = false;
-                popTask();
+                for (const t of affectedTasks()) t.isInDaily = false;
+                popTasks();
             }}></mwc-icon-button>
         `;
 
         if (this.origin === "backlog") return html`
             <mwc-icon-button icon="arrow_upward" @click=${() => {
                 getCurrentSprintNumber().then(currentSprintNumber => {
-                    task.sprintNumber = currentSprintNumber;
-                    popTask();
+                    for (const t of affectedTasks()) t.sprintNumber = currentSprintNumber;
+                    popTasks();
                 });
             }}></mwc-icon-button>
             <mwc-icon-button icon="moving" @click=${() => {
                 getCurrentSprintNumber().then(currentSprintNumber => {
-                    task.sprintNumber = currentSprintNumber + 1;
-                    popTask();
+                    for (const t of affectedTasks()) t.sprintNumber = currentSprintNumber + 1;
+                    popTasks();
                 });
             }}></mwc-icon-button>
         `;
 
         if (this.origin === "sprint" && this.isCurrentSprint) return html`
             <mwc-icon-button icon="arrow_circle_down" @click=${() => {
-                task.isInDaily = true;
+                for (const t of affectedTasks()) t.isInDaily = true;
             }}></mwc-icon-button>
             <mwc-icon-button icon="arrow_upward" @click=${() => {
-                task.sprintNumber = null;
-                task.isInDaily = false;
-                popTask();
+                for (const t of affectedTasks()) t.sprintNumber = null;
+                for (const t of affectedTasks()) t.isInDaily = false;
+                popTasks();
             }}></mwc-icon-button>
             <mwc-icon-button icon="arrow_forward" @click=${() => {
                 // TODO: Add sprint existance check here
-                task.sprintNumber = this.globalSprintNumber! + 1;
-                task.isInDaily = false;
-                popTask();
+                for (const t of affectedTasks()) t.sprintNumber = this.globalSprintNumber! + 1;
+                for (const t of affectedTasks()) t.isInDaily = false;
+                popTasks();
             }}></mwc-icon-button>
         `;
 
         if (this.origin === "sprint" && !this.isCurrentSprint) return html`
             <mwc-icon-button icon="arrow_back" @click=${() => {
                 // TODO: Add sprint existance check here
-                task.sprintNumber = this.globalSprintNumber! - 1;
-                popTask();
+                for (const t of affectedTasks()) t.sprintNumber = this.globalSprintNumber! - 1;
+                popTasks();
             }}></mwc-icon-button>
             <mwc-icon-button icon="arrow_upward" @click=${() => {
-                task.sprintNumber = null;
-                popTask();
+                for (const t of affectedTasks()) t.sprintNumber = null;
+                popTasks();
             }}></mwc-icon-button>
             <mwc-icon-button icon="arrow_forward" @click=${() => {
                 // TODO: Add sprint existance check here
-                task.sprintNumber = this.globalSprintNumber! + 1;
-                popTask();
+                for (const t of affectedTasks()) t.sprintNumber = this.globalSprintNumber! + 1;
+                popTasks();
             }}></mwc-icon-button>
         `;
 
