@@ -73,7 +73,7 @@ export default class AppPageProject extends LitElement {
             Task.noProject().then(tasks => {
                 this.tasks = tasks;
             });
-        } else Promise.all([Project.fromId(projectId), Project.tasks(projectId)])
+        } else Promise.all([Project.fromId(projectId), Project.tasks(projectId, false)])
             .then(([project, tasks]) => {
                 this.project = project;
                 this.tasks = tasks;

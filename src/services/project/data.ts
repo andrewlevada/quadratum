@@ -1,5 +1,5 @@
 import Project from "~services/project";
-import { addDoc, collection, doc, getDoc, getDocs, updateDoc } from "@firebase/firestore";
+import { addDoc, collection, doc, getDoc, getDocs, setDoc } from "@firebase/firestore";
 import { userDoc } from "~services/tools";
 
 export async function postProject(project: Project): Promise<Project> {
@@ -13,7 +13,8 @@ export async function fetchProjectById(id: string): Promise<Project> {
 }
 
 export function updateProject(project: Partial<Project> & { id: string }): Promise<void> {
-    return updateDoc(doc(userDoc(), "projects", project.id).withConverter(Project.converter), project).then();
+    // Don't use updateDoc() - it does not work with convertors!
+    return setDoc(doc(userDoc(), "projects", project.id).withConverter(Project.converter), project, { merge: true }).then();
 }
 
 export async function fetchAllProjects(): Promise<Project[]> {

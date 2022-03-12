@@ -50,12 +50,14 @@ export default class Project {
         this.isArchivedInner = data.isArchived;
     }
 
-    public tasks(): Promise<Task[]> {
-        return Project.tasks(this.id);
+    public tasks(doneState?: boolean): Promise<Task[]> {
+        return Project.tasks(this.id, doneState);
     }
 
-    public static tasks(projectId: string): Promise<Task[]> {
-        return fetchTasksWithFilter(where("projectId", "==", projectId));
+    public static tasks(projectId: string, doneState?: boolean): Promise<Task[]> {
+        return doneState !== undefined
+            ? fetchTasksWithFilter(where("projectId", "==", projectId), where("isDone", "==", doneState))
+            : fetchTasksWithFilter(where("projectId", "==", projectId));
     }
 
     public static fromId(id: string): Promise<Project> {

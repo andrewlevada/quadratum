@@ -6,8 +6,7 @@ import { addDoc,
     getDoc,
     getDocs,
     query,
-    QueryConstraint,
-    updateDoc,
+    QueryConstraint, setDoc,
     where } from "@firebase/firestore";
 import { userDoc } from "~services/tools";
 
@@ -37,7 +36,8 @@ export async function fetchTasksWithFilter(...constraints: QueryConstraint[]): P
 }
 
 export function updateTask(task: PartialTaskWithId): Promise<void> {
-    return updateDoc(doc(userDoc(), "tasks", task.id).withConverter(Task.converter), task).then();
+    // Don't use updateDoc() - it does not work with convertors!
+    return setDoc(doc(userDoc(), "tasks", task.id).withConverter(Task.converter), task, { merge: true }).then();
 }
 
 export function deleteTask(id: string): Promise<void> {

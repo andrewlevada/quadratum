@@ -25,6 +25,7 @@ export interface CreationContext extends ActionContext {
 
 interface TaskDocument {
     text: string;
+    isDone: boolean;
     projectId?: string;
     sprintNumber?: number;
     isInDaily?: boolean;
@@ -37,9 +38,9 @@ interface TaskDocument {
 export default class Task {
     public readonly id: string;
 
-    private textInner: string;
+    private textInner: string | undefined;
     public get text(): string {
-        return this.textInner;
+        return this.textInner || "";
     }
     public set text(value: string) {
         if (this.textInner === value) return;
@@ -92,7 +93,7 @@ export default class Task {
         return this.progressInner;
     }
 
-    constructor(id: string, data: TaskDocument | Task) {
+    constructor(id: string, data: TaskDocument | Task | Partial<Task>) {
         this.id = id;
         this.textInner = data.text;
         this.projectIdInner = data.projectId || null;
@@ -142,6 +143,7 @@ export default class Task {
             isInDaily: context.origin === "daily",
             progress: [false],
             parentTaskId: context.parentTaskId,
+            isDone: false,
         }));
     }
 
@@ -160,8 +162,13 @@ export default class Task {
             if (o.isInDaily) payload.isInDaily = true;
             if (o.parentTaskId) payload.parentTaskId = o.parentTaskId;
 
-            if (o.progress === null) payload.progress = deleteField();
-            else if (o.progress) payload.progress = o.progress as boolean[];
+            if (o.progress === null) {
+                payload.progress = deleteField();
+                payload.isDone = deleteField();
+            } else if (o.progress) {
+                payload.progress = o.progress as boolean[];
+                payload.isDone = o.progress.every(v => v);
+            }
 
             return payload;
         },

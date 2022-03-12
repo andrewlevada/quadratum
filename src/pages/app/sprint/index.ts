@@ -12,11 +12,26 @@ export default class AppPageSprintList extends LitElement {
     @state() sprint: Sprint | null = null;
     @state() tasks: Task[] | null = null;
     @state() isCurrentSprint: boolean = false;
+    @state() separateDoneTasks: boolean = false;
 
     render(): TemplateResult {
         return html`
             <div class="flex col app-page">
-                <h4>${this.pageHeader()}</h4>
+                <div class="flex row justify-between align-center">
+                    <h4>${this.pageHeader()}</h4>
+                    ${this.separateDoneTasks ? html`
+                        <mwc-button label="Don't separate tasks" icon="view_stream" @click=${() => {
+                            this.separateDoneTasks = false;
+                            this.requestUpdate("tasks");
+                        }}></mwc-button>
+                    ` : html`
+                        <mwc-button label="Separate done tasks" icon="view_agenda" @click=${() => {
+                            this.separateDoneTasks = true;
+                            this.requestUpdate("tasks");
+                        }}></mwc-button>
+                    `}
+                </div>
+                
                 ${this.sprint ? html`
                     <task-table .tasks=${this.tasks} origin="sprint" .isCurrentSprint=${this.isCurrentSprint}
                                 globalSprintNumber=${this.sprint.number}></task-table>
