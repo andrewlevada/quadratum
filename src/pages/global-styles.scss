@@ -3,11 +3,17 @@
   height: 100%;
 }
 
-.app-page > * {
-  &:first-child { margin-top: 60px }
-  &:last-child { margin-bottom: 60px }
-}
+.app-page {
+  width: fit-content;
 
-.app-page > *:first-child {
-  margin-bottom: 40px;
+  & > * {
+    &:first-child {
+      margin-top: 60px;
+      margin-bottom: 40px;
+    }
+
+    &:last-child {
+      margin-bottom: 60px
+    }
+  }
 }

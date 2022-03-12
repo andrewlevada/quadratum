@@ -16,3 +16,8 @@ Date.prototype.week = function
 week() {
     return Math.floor((this.valueOf() + 345600000) / 604800000);
 };
+
+Date.prototype.absoluteDay = function
+absoluteDay() {
+    return Math.floor(this.valueOf() / 86400000);
+};

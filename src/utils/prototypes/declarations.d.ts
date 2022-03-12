@@ -11,5 +11,6 @@ declare global {
 
     interface Date {
         week(): number;
+        absoluteDay(): number;
     }
 }

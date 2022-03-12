@@ -31,9 +31,6 @@ module.exports = {
         "no-return-assign": [
             "error", "except-parens",
         ],
-        indent: [
-            "error", 4, { FunctionDeclaration: { parameters: "first" } },
-        ],
         "@typescript-eslint/type-annotation-spacing": [
             "error", { before: false, after: true },
         ],
@@ -60,5 +57,6 @@ module.exports = {
         "no-restricted-syntax": "off",
         "no-continue": "off",
         "no-plusplus": "off",
+        indent: "off",
     },
 };
