@@ -157,10 +157,12 @@ export default class Task {
             const payload: PartialWithFieldValue<TaskDocument> = {};
 
             if (o.text) payload.text = o.text;
-            if (o.projectId) payload.projectId = o.projectId;
-            if (typeof o.sprintNumber === "number") payload.sprintNumber = o.sprintNumber;
-            if (o.isInDaily) payload.isInDaily = true;
+            if (o.projectId !== undefined) payload.projectId = o.projectId || deleteField();
+            if (o.isInDaily !== undefined) payload.isInDaily = o.isInDaily;
             if (o.parentTaskId) payload.parentTaskId = o.parentTaskId;
+
+            if (o.sprintNumber === null) payload.sprintNumber = deleteField();
+            else if (o.sprintNumber) payload.sprintNumber = o.sprintNumber;
 
             if (o.progress === null) {
                 payload.progress = deleteField();

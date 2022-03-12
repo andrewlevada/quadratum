@@ -60,6 +60,12 @@ export default class Project {
             : fetchTasksWithFilter(where("projectId", "==", projectId));
     }
 
+    public static backlogTasks(projectId: string): Promise<Task[]> {
+        // Manual filtering is not very efficient - better to user firestore indexing
+        // But in this case default sprintNumber must be set to something (ex null)
+        return this.tasks(projectId, false).then(tasks => tasks.filter(v => typeof v.sprintNumber !== "number"));
+    }
+
     public static fromId(id: string): Promise<Project> {
         return fetchProjectById(id);
     }
