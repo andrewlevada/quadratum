@@ -1,6 +1,6 @@
 import { doc, getDoc, setDoc } from "@firebase/firestore";
 import Sprint from "~services/sprint";
-import { db, userId } from "~services/tools";
+import { db, userDoc, userId } from "~services/tools";
 import { createNewSprint } from "~services/sprint/data";
 
 export interface UserDocument {
@@ -16,7 +16,10 @@ export interface SprintAnchor {
 export async function initializeUser(userUid: string): Promise<void> {
     localStorage.setItem("fb_user_uid", userUid);
 
-    await setDoc(doc(db(), "users", userId()), {
+    const d = await getDoc(userDoc());
+    if (d.exists()) return;
+
+    await setDoc(userDoc(), {
         sprintAnchor: {
             currentSprintWeek: new Date().week(),
             currentSprintNumber: 0,
