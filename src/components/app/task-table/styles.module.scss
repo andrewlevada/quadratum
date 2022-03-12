@@ -18,12 +18,12 @@
   grid-template-columns: fit-content(100%) fit-content(100%) fit-content(100%);
   gap: 12px;
 
-  p.project {
+  & > .project {
     grid-column: 1;
     margin-right: 16px;
   }
 
-  div.text {
+  & > .text {
     grid-column: 2;
 
     &.sub {
@@ -33,7 +33,7 @@
 
   }
 
-  div.progress {
+  & > .progress {
     grid-column: 3;
 
     .quick-actions {

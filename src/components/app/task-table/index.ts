@@ -9,6 +9,7 @@ import { getCurrentSprintNumber } from "~services/sprint/data";
 import scopedStyles from "./styles.module.scss";
 import "@material/mwc-icon-button";
 
+import("~components/common/color-chip").then(f => f.default());
 import("~components/common/square-checkbox").then(f => f.default());
 import("./inline-text-input").then(f => f.default());
 import("./add-button").then(f => f.default());
@@ -33,7 +34,7 @@ export class TaskTable extends LitElement {
                 ${this.sections.map(section => html`
                     ${section.tasks.map((task, i) => html`
                         ${i === 0 && !this.globalProjectId ? html`
-                            <p class="project">${section.project?.label || "None"}</p>
+                            <color-chip class="project">${section.project?.label || "None"}</color-chip>
                         ` : ""}
 
                         <div class="text flex row align-center ${task.parentTaskId ? "sub" : ""}">
