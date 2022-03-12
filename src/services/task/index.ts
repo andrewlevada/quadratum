@@ -162,7 +162,7 @@ export default class Task {
             if (o.parentTaskId) payload.parentTaskId = o.parentTaskId;
 
             if (o.sprintNumber === null) payload.sprintNumber = deleteField();
-            else if (o.sprintNumber) payload.sprintNumber = o.sprintNumber;
+            else if (o.sprintNumber !== undefined) payload.sprintNumber = o.sprintNumber;
 
             if (o.progress === null) {
                 payload.progress = deleteField();

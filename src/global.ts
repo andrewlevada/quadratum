@@ -4,6 +4,7 @@ import layoutHelperStyles from "~styles/tiny-layout-helper.scss";
 import { initializeApp } from "@firebase/app";
 import { getAnalytics } from "@firebase/analytics";
 import "~utils/prototypes";
+import { getAuth } from "@firebase/auth";
 
 export const componentStyles = [globalStyles, layoutHelperStyles];
 export const pageStyles = [globalStyles, globalPageStyles, layoutHelperStyles];
@@ -21,5 +22,6 @@ function initEnv(): void {
     };
 
     const app = initializeApp(firebaseConfig);
+    getAuth(app);
     if (PRODUCTION) getAnalytics(app);
 }
