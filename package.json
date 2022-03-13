@@ -19,11 +19,13 @@
     "@firebase/auth": "^0.19.9",
     "@firebase/firestore": "^3.4.5",
     "@firebase/util": "^1.4.3",
+    "@material/material-color-utilities": "^0.1.1",
     "@material/mwc-button": "^0.25.3",
     "@material/mwc-dialog": "^0.25.3",
     "@material/mwc-drawer": "^0.25.3",
     "@material/mwc-fab": "^0.25.3",
     "@material/mwc-icon-button": "^0.25.3",
+    "@material/mwc-slider": "^0.25.3",
     "@material/mwc-textfield": "^0.25.3",
     "lit": "^2.2.0",
     "md5": "^2.3.0"

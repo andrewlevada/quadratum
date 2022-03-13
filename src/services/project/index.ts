@@ -1,5 +1,4 @@
 import { fetchAllProjects, fetchProjectById, postProject, updateProject } from "~services/project/data";
-import { getRandomNiceColor } from "~utils/random";
 import Task from "~services/task";
 import { fetchTasksWithFilter } from "~services/task/data";
 import { DocumentData, FirestoreDataConverter, PartialWithFieldValue, QueryDocumentSnapshot, where, WithFieldValue } from "@firebase/firestore";
@@ -80,9 +79,9 @@ export default class Project {
             .then(projects => projects.filter(v => !!v.isArchived === !!isArchived));
     }
 
-    public static create(label: string): Promise<Project> {
+    public static create(label: string, color: string): Promise<Project> {
         return postProject(new Project("null", {
-            label, color: getRandomNiceColor(),
+            label, color,
         }));
     }
 
