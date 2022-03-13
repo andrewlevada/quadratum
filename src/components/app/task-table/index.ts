@@ -34,7 +34,9 @@ export class TaskTable extends LitElement {
                 ${this.sections.map(section => html`
                     ${section.tasks.map((task, i) => html`
                         ${i === 0 && !this.globalProjectId ? html`
-                            <color-chip class="project">${section.project?.label || "None"}</color-chip>
+                            <color-chip class="project" color=${section.project?.color || "#dedede"}>
+                                ${section.project?.label || "None"}
+                            </color-chip>
                         ` : ""}
 
                         <div class="text flex row align-center ${task.parentTaskId ? "sub" : ""}">

@@ -6,6 +6,9 @@ export function getRandomNiceColor(): string {
 
 export function getNiceColor(hue: number): string {
     const color = HCT.from(hue, 45, 80);
-    const hex = color.toInt().toString(16).substring(2);
-    return `#${hex}`;
+    return `#${numberToHex(color.toInt())}`;
+}
+
+export function numberToHex(n: number): string {
+    return `#${n.toString(16).substring(2)}`;
 }
