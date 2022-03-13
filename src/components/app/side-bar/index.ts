@@ -41,7 +41,7 @@ export class SideBar extends LitElement {
             <mwc-dialog heading="Let's do something new..." ${ref(this.newProjectDialog)}>
                 <div class="flex col gap">
                     <mwc-textfield label="Project Label" ${ref(this.newProjectNameField)}></mwc-textfield>
-                    <color-picker @change=${(e: CustomEvent) => {
+                    <color-picker @update=${(e: CustomEvent) => {
                         this.newProjectColor = e.detail.value as string;
                     }}></color-picker>
                 </div>

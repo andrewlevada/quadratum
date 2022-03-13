@@ -22,9 +22,14 @@ export class ColorChip extends LitElement {
 
     protected firstUpdated(_changedProperties: PropertyValues) {
         super.firstUpdated(_changedProperties);
-        const scheme = Scheme.light(Number.parseInt(this.color.substring(1), 16));
-        this.div.style.background = numberToHex(scheme.primaryContainer);
-        this.p.style.color = numberToHex(scheme.onPrimaryContainer);
+        if (this.color !== "#dedede") {
+            const scheme = Scheme.light(Number.parseInt(this.color.substring(1), 16));
+            this.div.style.background = numberToHex(scheme.primaryContainer);
+            this.p.style.color = numberToHex(scheme.onPrimaryContainer);
+        } else {
+            this.div.style.background = this.color;
+            this.p.style.color = "#111111";
+        }
     }
 
     static get styles(): CSSResultGroup {
