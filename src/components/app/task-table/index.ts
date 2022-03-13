@@ -163,6 +163,7 @@ export class TaskTable extends LitElement {
     protected update(changedProperties: PropertyValues) {
         super.update(changedProperties);
         if (!this.tasks) throw new Error("tasks-table requires property tasks, but it's not set");
+        if (!changedProperties.has("tasks")) return;
 
         const temp: Record<string, Task[]> = { none: [] };
         for (const task of this.tasks) {

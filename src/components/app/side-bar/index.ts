@@ -7,22 +7,22 @@ import "@material/mwc-drawer";
 import "@material/mwc-button";
 import "@material/mwc-dialog";
 import "@material/mwc-textfield";
-import "@material/mwc-slider";
 import { state } from "lit/decorators.js";
 import Project from "~services/project";
 import Sprint from "~services/sprint";
 import { Dialog } from "@material/mwc-dialog";
 import { TextField } from "@material/mwc-textfield";
-import { Slider } from "@material/mwc-slider";
-import { getNiceColor } from "~utils/color";
 import scopedStyles from "./styles.module.scss";
 
+import("~components/common/color-picker").then(f => f.default());
 import("~components/common/compact-list").then(f => f.default());
 
 export default (): void => defineComponent("side-bar", SideBar);
 export class SideBar extends LitElement {
     @state() projects: Project[] = [];
     @state() sprintNumbers: [number | undefined, number, number] | null = null;
+
+    private newProjectColor: string = "";
 
     render(): TemplateResult {
         return html`
@@ -41,10 +41,9 @@ export class SideBar extends LitElement {
             <mwc-dialog heading="Let's do something new..." ${ref(this.newProjectDialog)}>
                 <div class="flex col gap">
                     <mwc-textfield label="Project Label" ${ref(this.newProjectNameField)}></mwc-textfield>
-                    <div id="new-project-color-display" ${ref(this.newProjectColorDisplay)}></div>
-                    <mwc-slider value="0" min="0" max="359" ${ref(this.newProjectColorSlider)} @input=${() => {
-                        this.newProjectColorDisplay.value!.style.background = getNiceColor(this.newProjectColorSlider.value!.value);
-                    }}></mwc-slider>
+                    <color-picker @change=${(e: CustomEvent) => {
+                        this.newProjectColor = e.detail.value as string;
+                    }}></color-picker>
                 </div>
                 <mwc-button slot="primaryAction" @click=${this.createNewProject}>
                     Create
@@ -58,8 +57,6 @@ export class SideBar extends LitElement {
 
     private newProjectDialog = createRef<Dialog>();
     private newProjectNameField = createRef<TextField>();
-    private newProjectColorDisplay = createRef<HTMLElement>();
-    private newProjectColorSlider = createRef<Slider>();
 
     private pinnedCompactList(): CompactListItem[] {
         return [
@@ -105,8 +102,7 @@ export class SideBar extends LitElement {
     }
 
     private createNewProject(): void {
-        const color = getNiceColor(this.newProjectColorSlider.value!.value);
-        Project.create(this.newProjectNameField.value?.value || "Project", color).then(project => {
+        Project.create(this.newProjectNameField.value?.value || "Project", this.newProjectColor).then(project => {
             this.newProjectDialogState(false);
             this.projects.push(project);
             this.requestUpdate();

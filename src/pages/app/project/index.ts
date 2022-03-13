@@ -21,6 +21,8 @@ export default class AppPageProject extends LitElement {
     @state() tasks: Task[] | null = null;
     @state() noneProject: boolean = false;
 
+    private lastSetColor: string = "";
+
     render(): TemplateResult {
         return html`
             <div class="flex col app-page">
@@ -34,30 +36,36 @@ export default class AppPageProject extends LitElement {
                                 globalProjectId=${ifDefined(this.noneProject ? undefined : this.project!.id)}></task-table>
                 ` : ""}
             </div>
-            
-            <mwc-dialog heading="Project Settings" ${ref(this.settingsDialog)}>
-                <div class="flex col gap">
-                    <mwc-textfield label="Label" .value=${this.project?.label || ""}
-                                   ${ref(this.projectLabelTextfield)}></mwc-textfield>
-                    <!-- TODO: Color picker -->
-                    
-                    <mwc-button label="Archive" @click=${() => {
-                        this.project!.isArchived = true;
+
+            ${this.project ? html`
+                <mwc-dialog heading="Project Settings" ${ref(this.settingsDialog)}>
+                    <div class="flex col gap">
+                        <mwc-textfield label="Label" .value=${this.project?.label || ""}
+                                       ${ref(this.projectLabelTextfield)}></mwc-textfield>
+
+                        <color-picker .color=${this.project!.color} @update=${(e: CustomEvent) => {
+                            this.lastSetColor = e.detail.value as string;
+                        }}></color-picker>
+
+                        <mwc-button label="Archive" @click=${() => {
+                            this.project!.isArchived = true;
+                            this.closeSettingsDialog();
+                            this.requestUpdate();
+                        }}></mwc-button>
+                    </div>
+
+                    <mwc-button slot="primaryAction" @click=${() => {
+                        this.project!.label = this.projectLabelTextfield.value!.value;
+                        if (this.lastSetColor) this.project!.color = this.lastSetColor;
                         this.closeSettingsDialog();
                         this.requestUpdate();
-                    }}></mwc-button>
-                </div>
+                    }}>Save</mwc-button>
 
-                <mwc-button slot="primaryAction" @click=${() => {
-                    this.project!.label = this.projectLabelTextfield.value!.value;
-                    this.closeSettingsDialog();
-                    this.requestUpdate();
-                }}>Save</mwc-button>
-
-                <mwc-button slot="secondaryAction" @click=${this.closeSettingsDialog}>
-                    Cancel
-                </mwc-button>
-            </mwc-dialog>
+                    <mwc-button slot="secondaryAction" @click=${this.closeSettingsDialog}>
+                        Cancel
+                    </mwc-button>
+                </mwc-dialog>
+            ` : ""}
         `;
     }
 
