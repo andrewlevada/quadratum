@@ -193,8 +193,8 @@ export class TaskTable extends LitElement {
     private createTask(text: string, section: Section, parentTaskId?: string) {
         Task.create(text, {
             origin: this.origin,
-            projectId: section.project?.id || this.globalProjectId || null,
-            sprintNumber: typeof this.globalSprintNumber === "number" ? this.globalSprintNumber : null,
+            projectId: section.project?.id || this.globalProjectId,
+            sprintNumber: this.globalSprintNumber,
             parentTaskId,
         }).then(task => {
             section.tasks.push(task);

@@ -18,8 +18,8 @@ export interface ActionContext {
 }
 
 export interface CreationContext extends ActionContext {
-    projectId: string | null;
-    sprintNumber: number | null;
+    projectId: string | undefined;
+    sprintNumber: number | undefined;
     parentTaskId?: string;
 }
 
@@ -58,9 +58,9 @@ export default class Task {
         updateTask({ id: this.id, isInDaily: value }).then();
     }
 
-    private projectIdInner: string | null;
+    private projectIdInner: string | null | undefined;
     public get projectId(): string | null {
-        return this.projectIdInner;
+        return this.projectIdInner!;
     }
     public set projectId(value: string | null) {
         if (this.projectIdInner === value) return;
@@ -68,9 +68,9 @@ export default class Task {
         updateTask({ id: this.id, projectId: value }).then();
     }
 
-    private sprintNumberInner: number | null;
+    private sprintNumberInner: number | null | undefined;
     public get sprintNumber(): number | null {
-        return this.sprintNumberInner;
+        return this.sprintNumberInner!;
     }
     public set sprintNumber(value: number | null) {
         if (this.sprintNumberInner === value) return;
@@ -88,18 +88,18 @@ export default class Task {
         updateTask({ id: this.id, parentTaskId: value }).then();
     }
 
-    private progressInner: boolean[] | null;
+    private progressInner: boolean[] | null | undefined;
     public get progress(): boolean[] | null {
-        return this.progressInner;
+        return this.progressInner!;
     }
 
     constructor(id: string, data: TaskDocument | Task | Partial<Task>) {
         this.id = id;
         this.textInner = data.text;
-        this.projectIdInner = data.projectId || null;
-        this.sprintNumberInner = data.sprintNumber !== undefined ? data.sprintNumber : null;
+        this.projectIdInner = data.projectId;
+        this.sprintNumberInner = data.sprintNumber;
         this.isInDailyInner = !!data.isInDaily;
-        this.progressInner = data.progress || null;
+        this.progressInner = data.progress;
         this.parentTaskIdInner = data.parentTaskId;
     }
 
@@ -139,7 +139,7 @@ export default class Task {
         return postTask(new Task("null", {
             text,
             projectId: context.projectId || "none",
-            sprintNumber: typeof context.sprintNumber === "number" ? context.sprintNumber : undefined,
+            sprintNumber: context.sprintNumber,
             isInDaily: context.origin === "daily",
             progress: [false],
             parentTaskId: context.parentTaskId,
