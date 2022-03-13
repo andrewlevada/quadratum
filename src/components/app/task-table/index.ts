@@ -160,8 +160,8 @@ export class TaskTable extends LitElement {
         throw new Error("Wrong value of origin prop in task-table");
     }
 
-    protected firstUpdated(_changedProperties: PropertyValues) {
-        super.firstUpdated(_changedProperties);
+    protected update(changedProperties: PropertyValues) {
+        super.update(changedProperties);
         if (!this.tasks) throw new Error("tasks-table requires property tasks, but it's not set");
 
         const temp: Record<string, Task[]> = { none: [] };
