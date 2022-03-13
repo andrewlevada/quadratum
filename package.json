@@ -27,6 +27,8 @@
     "@material/mwc-icon-button": "^0.25.3",
     "@material/mwc-slider": "^0.25.3",
     "@material/mwc-textfield": "^0.25.3",
+    "@sentry/browser": "^6.18.2",
+    "@sentry/tracing": "^6.18.2",
     "lit": "^2.2.0",
     "md5": "^2.3.0"
   },

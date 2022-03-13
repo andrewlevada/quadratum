@@ -17,7 +17,7 @@ export default class AppPageDailyList extends LitElement {
                 <div class="flex row justify-between align-center">
                     <h4>Daily List</h4>
                     ${this.hasDoneTasks ? html`
-                        <mwc-button label="Hide done" icon="grading" outlined @click=${() => {
+                        <mwc-button label="Remove done" icon="grading" outlined @click=${() => {
                             this.dailyTasks!.filter(v => v.isDone()).forEach(v => {
                                 v.isInDaily = false;
                             });
