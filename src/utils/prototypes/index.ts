@@ -14,7 +14,8 @@ dispatchSimpleEvent(name: string, value?: unknown) {
 
 Date.prototype.week = function
 week() {
-    return Math.floor((this.valueOf() + 345600000) / 604800000);
+    // - 86400_ is for week start on monday
+    return Math.floor((this.valueOf() + 345600_000 - 86400_000) / 604800_000);
 };
 
 Date.prototype.absoluteDay = function

@@ -30,6 +30,10 @@ export class ColorChip extends LitElement {
             background-color: aquamarine;
             border-radius: 8px;
           }
+          
+          p {
+            font-size: 15px;
+          }
         `];
     }
 }
