@@ -20,7 +20,8 @@ export class CompactList extends LitElement {
 
             <ol class="flex col">
                 ${this.items.map(item => html`
-                    <a class="flex row align-center" href="/app${item.link || "#"}">
+                    <a class="flex row gap align-center" href="/app${item.link || "#"}">
+                        ${item.color ? html`<span style="background: ${item.color}"></span>` : ""}
                         <p>${item.label}</p>
                     </a>
                 `)}
@@ -36,6 +37,13 @@ export class CompactList extends LitElement {
           
           a {
             height: 30px;
+          }
+          
+          span {
+            width: 8px;
+            height: 8px;
+            border-radius: 4px;
+            margin-right: 12px !important;
           }
         `];
     }

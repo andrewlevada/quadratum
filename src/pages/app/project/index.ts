@@ -27,7 +27,10 @@ export default class AppPageProject extends LitElement {
         return html`
             <div class="flex col app-page">
                 <div class="flex row justify-between align-center full-width">
-                    <h4>Project: ${this.project?.label || ""} ${this.project?.isArchived ? "(Archived)" : ""}</h4>
+                    <div class="flex row">
+                        <span class="color-indicator" style="background: ${this.project?.color || "#dedede"}"></span>
+                        <h4>Project: ${this.project?.label || ""} ${this.project?.isArchived ? "(Archived)" : ""}</h4>
+                    </div>
                     <mwc-icon-button icon="settings" @click=${() => this.openSettingsDialog()}></mwc-icon-button>
                 </div>
 
@@ -97,6 +100,13 @@ export default class AppPageProject extends LitElement {
     }
 
     static get styles(): CSSResultGroup {
-        return [...pageStyles, css``];
+        return [...pageStyles, css`
+          .color-indicator {
+            width: 28px;
+            height: 28px;
+            border-radius: 8px;
+            margin-right: 12px;
+          }
+        `];
     }
 }
