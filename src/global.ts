@@ -2,8 +2,8 @@ import globalStyles from "~styles/global.scss";
 import globalPageStyles from "~src/pages/global-styles.scss";
 import layoutHelperStyles from "~styles/tiny-layout-helper.scss";
 import { initializeApp } from "@firebase/app";
-import { getAnalytics } from "@firebase/analytics";
-import { getAuth } from "@firebase/auth";
+import { getAnalytics, setUserId, setUserProperties } from "@firebase/analytics";
+import { getAuth, onAuthStateChanged } from "@firebase/auth";
 import { BrowserTracing } from "@sentry/tracing";
 import { init } from "@sentry/browser";
 import "~utils/prototypes";
@@ -27,11 +27,21 @@ function initEnv(): void {
     getAuth(app);
 
     if (PRODUCTION) {
-        getAnalytics(app);
+        // eslint-disable-next-line no-console
+        console.log("Running in production env!");
+
         init({
             dsn: "https://4a0d7f67595d4d7c8eca0ad7add1fef9@o570491.ingest.sentry.io/6256806",
             integrations: [new BrowserTracing()],
             tracesSampleRate: 0.8,
+        });
+
+        const analytics = getAnalytics(app);
+        onAuthStateChanged(getAuth(app), user => {
+            if (user) {
+                setUserId(analytics, user.uid);
+                setUserProperties(analytics, { crmId: user.uid });
+            }
         });
     }
 }
