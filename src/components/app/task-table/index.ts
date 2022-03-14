@@ -5,7 +5,6 @@ import { defineComponent } from "~utils/components";
 import { property, state } from "lit/decorators.js";
 import Task, { ActionOrigin } from "~services/task";
 import Project from "~services/project";
-import { getCurrentSprintNumber } from "~services/sprint/data";
 import scopedStyles from "./styles.module.scss";
 import "@material/mwc-icon-button";
 
@@ -13,8 +12,9 @@ import("~components/common/color-chip").then(f => f.default());
 import("~components/common/square-checkbox").then(f => f.default());
 import("./inline-text-input").then(f => f.default());
 import("./add-button").then(f => f.default());
+import("./progress-line").then(f => f.default());
 
-interface Section {
+export interface Section {
     project: Project | null;
     tasks: Task[];
 }
@@ -54,28 +54,11 @@ export class TaskTable extends LitElement {
                             }}></add-button>
                         </div>
                         
-                        <div class="progress flex row">
-                            <div class="quick-actions flex row align-center ${task.parentTaskId ? "sub" : ""}">
-                                ${this.quickActionsHtml(section, task, i)}
-                            </div>
-                            
-                            <div class="checkboxes flex row align-center">
-                                ${task.progress ? task.progress.map((v, pI) => html`
-                                    <square-checkbox ?checked=${v} @change=${(event: CustomEvent) => {
-                                        task.progress![pI] = event.detail.value as boolean;
-                                        task.updateProgress();
-                                        this.requestUpdate("sections");
-                                    }}></square-checkbox>
-                                `) : ""}
-
-                                <mwc-icon-button icon="add_box" @click=${() => {
-                                    const progress = task.progress || [];
-                                    progress.push(false);
-                                    task.updateProgress(progress);
-                                    this.requestUpdate("sections");
-                                }}></mwc-icon-button>
-                            </div>
-                        </div>
+                        <progress-line class="progress" .section=${section}
+                                       .task=${task} .taskIndex=${i} .isCurrentSprint=${this.isCurrentSprint}
+                                       .origin=${this.origin} @requestReorder=${() => {
+                                           this.requestUpdate();
+                        }}></progress-line>
                     `)}
 
                     <add-button @create=${(event: CustomEvent) => {
@@ -84,80 +67,6 @@ export class TaskTable extends LitElement {
                 `)}
             </div>
         ` : html``;
-    }
-
-    private quickActionsHtml(section: Section, task: Task, taskIndex: number): TemplateResult {
-        let affectedTasksNumber = 1;
-        for (let i = taskIndex + 1; i < section.tasks.length; i++)
-            if (section.tasks[i].parentTaskId === task.id) affectedTasksNumber++;
-            else break;
-
-        const popTasks = () => {
-            // This removal of tasks relies heavily on how they are displayed.
-            // Change this in the future, as it can and will lead to bugs
-            section.tasks.splice(taskIndex, affectedTasksNumber);
-            this.requestUpdate();
-        };
-
-        const affectedTasks = () => section.tasks.slice(taskIndex, taskIndex + affectedTasksNumber);
-
-        if (this.origin === "daily") return html`
-            <mwc-icon-button icon="cancel" @click=${() => {
-                for (const t of affectedTasks()) t.isInDaily = false;
-                popTasks();
-            }}></mwc-icon-button>
-        `;
-
-        if (this.origin === "backlog") return html`
-            <mwc-icon-button icon="arrow_upward" @click=${() => {
-                getCurrentSprintNumber().then(currentSprintNumber => {
-                    for (const t of affectedTasks()) t.sprintNumber = currentSprintNumber;
-                    popTasks();
-                });
-            }}></mwc-icon-button>
-            <mwc-icon-button icon="moving" @click=${() => {
-                getCurrentSprintNumber().then(currentSprintNumber => {
-                    for (const t of affectedTasks()) t.sprintNumber = currentSprintNumber + 1;
-                    popTasks();
-                });
-            }}></mwc-icon-button>
-        `;
-
-        if (this.origin === "sprint" && this.isCurrentSprint) return html`
-            <mwc-icon-button icon="arrow_circle_down" @click=${() => {
-                for (const t of affectedTasks()) t.isInDaily = true;
-            }}></mwc-icon-button>
-            <mwc-icon-button icon="arrow_upward" @click=${() => {
-                for (const t of affectedTasks()) t.sprintNumber = null;
-                for (const t of affectedTasks()) t.isInDaily = false;
-                popTasks();
-            }}></mwc-icon-button>
-            <mwc-icon-button icon="arrow_forward" @click=${() => {
-                // TODO: Add sprint existance check here
-                for (const t of affectedTasks()) t.sprintNumber = this.globalSprintNumber! + 1;
-                for (const t of affectedTasks()) t.isInDaily = false;
-                popTasks();
-            }}></mwc-icon-button>
-        `;
-
-        if (this.origin === "sprint" && !this.isCurrentSprint) return html`
-            <mwc-icon-button icon="arrow_back" @click=${() => {
-                // TODO: Add sprint existance check here
-                for (const t of affectedTasks()) t.sprintNumber = this.globalSprintNumber! - 1;
-                popTasks();
-            }}></mwc-icon-button>
-            <mwc-icon-button icon="arrow_upward" @click=${() => {
-                for (const t of affectedTasks()) t.sprintNumber = null;
-                popTasks();
-            }}></mwc-icon-button>
-            <mwc-icon-button icon="arrow_forward" @click=${() => {
-                // TODO: Add sprint existance check here
-                for (const t of affectedTasks()) t.sprintNumber = this.globalSprintNumber! + 1;
-                popTasks();
-            }}></mwc-icon-button>
-        `;
-
-        throw new Error("Wrong value of origin prop in task-table");
     }
 
     protected update(changedProperties: PropertyValues) {

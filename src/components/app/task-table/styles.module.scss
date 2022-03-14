@@ -21,6 +21,7 @@
   & > .project {
     grid-column: 1;
     margin-right: 16px;
+    width: max-content;
   }
 
   & > .text {
@@ -29,30 +30,10 @@
     &.sub {
       margin-left: 16px;
     }
-
-
   }
 
   & > .progress {
     grid-column: 3;
-
-    .quick-actions {
-      @include hover-show();
-
-      &.sub {
-        opacity: 0 !important;
-        pointer-events: none !important;
-      }
-    }
-
-    .checkboxes > *:not(:last-child) {
-      margin-right: 12px;
-    }
-
-    .checkboxes mwc-icon-button {
-      @include hover-show();
-      transform: translateX(-4px);
-    }
   }
 
   & > * {

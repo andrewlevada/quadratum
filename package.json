@@ -25,6 +25,7 @@
     "@material/mwc-drawer": "^0.25.3",
     "@material/mwc-fab": "^0.25.3",
     "@material/mwc-icon-button": "^0.25.3",
+    "@material/mwc-menu": "^0.25.3",
     "@material/mwc-slider": "^0.25.3",
     "@material/mwc-textfield": "^0.25.3",
     "@sentry/browser": "^6.18.2",

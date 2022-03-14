@@ -1,0 +1,39 @@
+@mixin hover-show() {
+  opacity: 0;
+  transition: opacity 100ms ease;
+
+  &:hover {
+    opacity: 0.6;
+  }
+}
+
+.progress {
+  height: 18px;
+}
+
+.quick-actions {
+  position: relative;
+
+  &.sub {
+    opacity: 0 !important;
+    pointer-events: none !important;
+  }
+
+  & > mwc-icon-button {
+    opacity: 0;
+    transition: opacity 100ms ease;
+  }
+
+  &:hover > mwc-icon-button {
+    opacity: 0.6;
+  }
+}
+
+.checkboxes > *:not(:last-child) {
+  margin-right: 12px;
+}
+
+.checkboxes mwc-icon-button {
+  @include hover-show();
+  transform: translateX(-4px);
+}
