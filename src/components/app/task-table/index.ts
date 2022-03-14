@@ -46,7 +46,7 @@ export class TaskTable extends LitElement {
                                 task.text = (event.detail.value as string).trim();
                             }} @clear=${() => {
                                 section.tasks.splice(i, 1)[0].delete().then();
-                                this.requestUpdate("sections");
+                                this.requestUpdate();
                             }}></inline-text-input>
                             
                             <add-button sub @create=${(event: CustomEvent) => {
