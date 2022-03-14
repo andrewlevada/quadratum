@@ -38,7 +38,10 @@ export class ProgressLine extends LitElement {
 
                 <div class="checkboxes flex row align-center">
                     ${(this.task.progress || []).map((v, pI) => html`
-                        <square-checkbox ?checked=${v} @change=${(event: CustomEvent) => {
+                        <square-checkbox ?checked=${v}
+                                         ?marked=${this.task.isInDaily && this.origin !== "daily"}
+                                         .color=${this.section.project?.color || "#000000"}
+                                         @change=${(event: CustomEvent) => {
                             this.task.progress![pI] = event.detail.value as boolean;
                             this.task.updateProgress();
                             this.dispatchSimpleEvent("requestReorder");

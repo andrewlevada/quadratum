@@ -8,6 +8,8 @@ import { ifDefined } from "lit/directives/if-defined.js";
 export default (): void => defineComponent("square-checkbox", SquareCheckbox);
 export class SquareCheckbox extends LitElement {
     @property({ type: Boolean }) checked: boolean = false;
+    @property({ type: Boolean }) marked: boolean = false;
+    @property({ type: String }) color: string = "#000000";
 
     render(): TemplateResult {
         return html`
@@ -16,7 +18,10 @@ export class SquareCheckbox extends LitElement {
                 this.dispatchSimpleEvent("change", input.checked);
                 this.checked = input.checked;
             }}>
-            <span></span>
+
+            <span style=${this.checked
+                    ? `background: ${this.color}; border-color: ${this.color}`
+                    : (this.marked ? `border-color: ${this.color}` : "")}></span>
         `;
     }
 
@@ -25,6 +30,7 @@ export class SquareCheckbox extends LitElement {
           :host {
             width: 18px;
             height: 18px;
+            position: relative;
           }
           
           span {
@@ -39,9 +45,24 @@ export class SquareCheckbox extends LitElement {
             transition: background-color 100ms ease-out;
           }
           
-          input:checked + span {
-            background-color: #000000;
-          }
+          //span.marked {
+          //  border: 2px solid #000000;
+          //}
+          
+          //span.marked::before {
+          //  content: "";
+          //  width: 6px;
+          //  height: 6px;
+          //  position: absolute;
+          //  right: 6px;
+          //  top: 6px;
+          //  background-color: black;
+          //  border-radius: 3px;
+          //}
+          
+          //input:checked + span {
+          //  background-color: #000000;
+          //}
 
           input {
             position: absolute;

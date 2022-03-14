@@ -115,7 +115,12 @@ export class TaskTable extends LitElement {
     private static reorderTasks(heap: Task[]): Task[] {
         const tasks: Task[] = [];
 
-        for (const t of heap.filter(v => !v.isDone())) {
+        for (const t of heap.filter(v => !v.isDone() && !v.isInDaily)) {
+            if (t.parentTaskId !== undefined) continue;
+            tasks.push(t, ...this.constructSubTree(heap, t.id));
+        }
+
+        for (const t of heap.filter(v => !v.isDone() && v.isInDaily)) {
             if (t.parentTaskId !== undefined) continue;
             tasks.push(t, ...this.constructSubTree(heap, t.id));
         }
