@@ -36,7 +36,7 @@ export default class AppPageProject extends LitElement {
 
                 ${this.tasks ? html`
                     <task-table .tasks=${this.tasks} origin="backlog"
-                                globalProjectId=${ifDefined(this.noneProject ? undefined : this.project!.id)}></task-table>
+                                globalProjectId=${ifDefined(this.noneProject ? "none" : this.project!.id)}></task-table>
                 ` : ""}
             </div>
 
@@ -81,7 +81,7 @@ export default class AppPageProject extends LitElement {
 
         if (projectId === "none") {
             this.noneProject = true;
-            Task.noProject().then(tasks => {
+            Project.backlogTasks("none").then(tasks => {
                 this.tasks = tasks;
             });
         } else Promise.all([Project.fromId(projectId), Project.backlogTasks(projectId)])

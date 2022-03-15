@@ -4,7 +4,7 @@ import { addDoc,
     deleteDoc,
     doc,
     getDoc,
-    getDocs,
+    getDocs, orderBy,
     query,
     QueryConstraint, setDoc,
     where } from "@firebase/firestore";
@@ -30,7 +30,7 @@ export async function fetchTasksByIds(ids: readonly string[]): Promise<Task[]> {
 }
 
 export async function fetchTasksWithFilter(...constraints: QueryConstraint[]): Promise<Task[]> {
-    const q = query(collection(userDoc(), "tasks").withConverter(Task.converter), ...constraints);
+    const q = query(collection(userDoc(), "tasks").withConverter(Task.converter), orderBy("text"), ...constraints);
     const snap = await getDocs(q);
     return snap.docs.map(v => v.data());
 }

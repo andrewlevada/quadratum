@@ -100,6 +100,7 @@ export class TaskTable extends LitElement {
         const fetchProjects = Object.keys(temp);
         fetchProjects.shift();
         Project.fromIds(fetchProjects).then(projects => {
+            projects.sort((a: Project, b: Project) => a.label.localeCompare(b.label));
             this.sections = [];
             for (const project of projects) this.sections.push({
                 project, tasks: temp[project.id],
