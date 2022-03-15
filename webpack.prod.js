@@ -1,6 +1,7 @@
 const TerserPlugin = require("terser-webpack-plugin");
 const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
 const FileManagerPlugin = require("filemanager-webpack-plugin");
+const SentryWebpackPlugin = require("@sentry/webpack-plugin");
 const { DuplicatesPlugin } = require("inspectpack/plugin");
 const { mergeWithRules } = require("webpack-merge");
 const common = require("./webpack.common");
@@ -32,6 +33,7 @@ const config = mergeWithRules({
         }],
     },
 
+    devtool: "source-map",
     plugins: [
         new FileManagerPlugin({
             events: {
@@ -41,6 +43,17 @@ const config = mergeWithRules({
                     ],
                 },
             },
+        }),
+        new SentryWebpackPlugin({
+            // sentry-cli configuration - can also be done directly through sentry-cli
+            // see https://docs.sentry.io/product/cli/configuration/ for details
+            authToken: process.env.SENTRY_AUTH_TOKEN,
+            org: "andrew-levada",
+            project: "quadratum",
+
+            // other SentryWebpackPlugin configuration
+            include: "/build",
+            ignore: ["node_modules", "webpack.config.js", ],
         }),
     ],
 
