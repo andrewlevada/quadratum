@@ -22,7 +22,7 @@ export class CompactList extends LitElement {
 
             <ol class="flex col">
                 ${this.items.map(item => html`
-                    <persistent-a class="flex row gap align-center" href=${item.link || "#"}>
+                    <persistent-a href=${item.link || "#"}>
                         ${item.color ? html`<span style="background: ${item.color}"></span>` : ""}
                         <p>${item.label}</p>
                     </persistent-a>

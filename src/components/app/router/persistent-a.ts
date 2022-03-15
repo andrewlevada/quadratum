@@ -1,4 +1,4 @@
-import { CSSResultGroup, LitElement, TemplateResult } from "lit";
+import { css, CSSResultGroup, LitElement, TemplateResult } from "lit";
 import { html } from "lit/static-html.js";
 import { property } from "lit/decorators.js";
 import { componentStyles } from "~src/global";
@@ -9,7 +9,11 @@ export class PersistentAnchor extends LitElement {
     @property({ type: String }) href!: string;
 
     render(): TemplateResult {
-        return html`<a @click=${this.onClick}><slot></slot></a>`;
+        return html`
+            <a @click=${this.onClick} class="flex row gap align-center">
+                <slot></slot>
+            </a>
+        `;
     }
 
     private onClick(): void {
@@ -18,6 +22,10 @@ export class PersistentAnchor extends LitElement {
     }
 
     static get styles(): CSSResultGroup {
-        return [...componentStyles];
+        return [...componentStyles, css`
+          a {
+            display: flex;
+          }
+        `];
     }
 }
