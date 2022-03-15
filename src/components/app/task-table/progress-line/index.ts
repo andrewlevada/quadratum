@@ -100,6 +100,7 @@ export class ProgressLine extends LitElement {
         if (this.origin === "sprint" && this.isCurrentSprint) return html`
             <mwc-icon-button icon="arrow_circle_down" @click=${() => {
                 for (const t of affectedTasks()) t.isInDaily = true;
+                this.requestUpdate();
             }}></mwc-icon-button>
             <mwc-icon-button icon="arrow_upward" @click=${() => {
                 for (const t of affectedTasks()) t.sprintNumber = null;
