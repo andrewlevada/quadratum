@@ -4,6 +4,7 @@ import { componentStyles } from "~src/global";
 import { defineComponent } from "~utils/components";
 import { property, state } from "lit/decorators.js";
 import Task, { ActionOrigin } from "~services/task";
+import { getCurrentSprintNumber } from "~services/sprint/data";
 import Project from "~services/project";
 import scopedStyles from "./styles.module.scss";
 import "@material/mwc-icon-button";
@@ -25,13 +26,13 @@ export class TaskTable extends LitElement {
     @property({ type: String }) origin!: ActionOrigin;
     @property({ type: Number }) globalSprintNumber?: number;
     @property({ type: String }) globalProjectId?: string;
-    @property({ type: Boolean }) isCurrentSprint?: boolean;
     @state() sections: Section[] | null = null;
+    @state() currentSprintDelta: number | null = null;
 
     render(): TemplateResult {
-        return this.sections ? html`
+        return this.canRender() ? html`
             <div class="container">
-                ${this.sections.map(section => html`
+                ${this.sections!.map(section => html`
                     ${section.tasks.map((task, i) => html`
                         ${i === 0 && !this.globalProjectId ? html`
                             <color-chip class="project" color=${section.project?.color || "#dedede"}>
@@ -55,7 +56,7 @@ export class TaskTable extends LitElement {
                         </div>
                         
                         <progress-line class="progress" .section=${section}
-                                       .task=${task} .taskIndex=${i} .isCurrentSprint=${this.isCurrentSprint}
+                                       .task=${task} .taskIndex=${i} .currentSprintDelta=${this.currentSprintDelta}
                                        .origin=${this.origin} @requestReorder=${() => {
                                            this.requestUpdate();
                         }}></progress-line>
@@ -67,6 +68,18 @@ export class TaskTable extends LitElement {
                 `)}
             </div>
         ` : html``;
+    }
+
+    private canRender(): boolean {
+        return !!this.sections && (this.globalSprintNumber === undefined || this.currentSprintDelta !== null);
+    }
+
+    protected firstUpdated(_changedProperties: PropertyValues) {
+        super.firstUpdated(_changedProperties);
+        if (this.globalSprintNumber !== undefined)
+            getCurrentSprintNumber().then(value => {
+                this.currentSprintDelta = this.globalSprintNumber! - value;
+            });
     }
 
     protected update(changedProperties: PropertyValues) {

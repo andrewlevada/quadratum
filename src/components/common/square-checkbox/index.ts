@@ -9,7 +9,7 @@ export default (): void => defineComponent("square-checkbox", SquareCheckbox);
 export class SquareCheckbox extends LitElement {
     @property({ type: Boolean }) checked: boolean = false;
     @property({ type: Boolean }) marked: boolean = false;
-    @property({ type: String }) color: string = "#000000";
+    @property({ type: String }) color: string = "#dedede";
 
     render(): TemplateResult {
         return html`

@@ -8,6 +8,7 @@ import Task, { ActionOrigin } from "~services/task";
 import { getCurrentSprintNumber } from "~services/sprint/data";
 import { Section } from "~components/app/task-table";
 import { Menu } from "@material/mwc-menu";
+import { ifDefined } from "lit/directives/if-defined.js";
 import scopedStyles from "./styles.module.scss";
 
 export default (): void => defineComponent("progress-line", ProgressLine);
@@ -16,7 +17,7 @@ export class ProgressLine extends LitElement {
     @property({ type: Object }) section!: Section;
     @property({ type: Number }) taskIndex!: number;
     @property({ type: String }) origin!: ActionOrigin;
-    @property({ type: Boolean }) isCurrentSprint!: boolean;
+    @property({ type: Number }) currentSprintDelta!: number;
 
     @query("#actions-menu") actionsMenu!: Menu;
     @query("#actions-button") actionsButton!: HTMLElement;
@@ -40,12 +41,12 @@ export class ProgressLine extends LitElement {
                     ${(this.task.progress || []).map((v, pI) => html`
                         <square-checkbox ?checked=${v}
                                          ?marked=${this.task.isInDaily && this.origin !== "daily"}
-                                         .color=${this.section.project?.color || "#000000"}
+                                         .color=${ifDefined(this.section.project?.color || undefined)}
                                          @change=${(event: CustomEvent) => {
-                            this.task.progress![pI] = event.detail.value as boolean;
-                            this.task.updateProgress();
-                            this.dispatchSimpleEvent("requestReorder");
-                        }}></square-checkbox>
+                                             this.task.progress![pI] = event.detail.value as boolean;
+                                             this.task.updateProgress();
+                                             this.dispatchSimpleEvent("requestReorder");
+                                         }}></square-checkbox>
                     `)}
 
                     <mwc-icon-button icon="add_box" @click=${() => {
@@ -76,60 +77,60 @@ export class ProgressLine extends LitElement {
         const affectedTasks = () => this.section.tasks.slice(this.taskIndex, this.taskIndex + affectedTasksNumber);
 
         if (this.origin === "daily") return html`
-            <mwc-icon-button icon="cancel" @click=${() => {
-                for (const t of affectedTasks()) t.isInDaily = false;
-                popTasks();
-            }}></mwc-icon-button>
+            <mwc-icon-button icon="close" title="Remove from daily list"
+                             @click=${() => {
+                                 for (const t of affectedTasks()) t.isInDaily = false;
+                                 popTasks();
+                             }}></mwc-icon-button>
         `;
 
         if (this.origin === "backlog") return html`
-            <mwc-icon-button icon="arrow_upward" @click=${() => {
-                getCurrentSprintNumber().then(currentSprintNumber => {
-                    for (const t of affectedTasks()) t.sprintNumber = currentSprintNumber;
-                    popTasks();
-                });
-            }}></mwc-icon-button>
-            <mwc-icon-button icon="moving" @click=${() => {
-                getCurrentSprintNumber().then(currentSprintNumber => {
-                    for (const t of affectedTasks()) t.sprintNumber = currentSprintNumber + 1;
-                    popTasks();
-                });
-            }}></mwc-icon-button>
+            <mwc-icon-button icon="expand_less" title="Move to current sprint"
+                             @click=${() => {
+                                 getCurrentSprintNumber().then(currentSprintNumber => {
+                                     for (const t of affectedTasks()) t.sprintNumber = currentSprintNumber;
+                                     popTasks();
+                                 });
+                             }}></mwc-icon-button>
+            <mwc-icon-button icon="chevron_right" title="Move to next sprint"
+                             @click=${() => {
+                                 getCurrentSprintNumber().then(currentSprintNumber => {
+                                     for (const t of affectedTasks()) t.sprintNumber = currentSprintNumber + 1;
+                                     popTasks();
+                                 });
+                             }}></mwc-icon-button>
         `;
 
-        if (this.origin === "sprint" && this.isCurrentSprint) return html`
-            <mwc-icon-button icon="arrow_circle_down" @click=${() => {
-                for (const t of affectedTasks()) t.isInDaily = true;
-                this.requestUpdate();
-            }}></mwc-icon-button>
-            <mwc-icon-button icon="arrow_upward" @click=${() => {
-                for (const t of affectedTasks()) t.sprintNumber = null;
-                for (const t of affectedTasks()) t.isInDaily = false;
-                popTasks();
-            }}></mwc-icon-button>
-            <mwc-icon-button icon="arrow_forward" @click=${() => {
-                // TODO: Add sprint existance check here
-                for (const t of affectedTasks()) t.sprintNumber! += 1;
-                for (const t of affectedTasks()) t.isInDaily = false;
-                popTasks();
-            }}></mwc-icon-button>
+        if (this.origin === "sprint" && this.currentSprintDelta === 0) return html`
+            <mwc-icon-button icon="fullscreen" title="Add to daily list"
+                             @click=${() => {
+                                 for (const t of affectedTasks()) t.isInDaily = true;
+                                 this.requestUpdate();
+                             }}></mwc-icon-button>
+            <mwc-icon-button icon="chevron_right" title="Move to next sprint"
+                             @click=${() => {
+                                 // TODO: Add sprint existance check here
+                                 for (const t of affectedTasks()) t.sprintNumber! += 1;
+                                 for (const t of affectedTasks()) t.isInDaily = false;
+                                 popTasks();
+                             }}></mwc-icon-button>
         `;
 
-        if (this.origin === "sprint" && !this.isCurrentSprint) return html`
-            <mwc-icon-button icon="arrow_back" @click=${() => {
-                // TODO: Add sprint existance check here
-                for (const t of affectedTasks()) t.sprintNumber! -= 1;
-                popTasks();
-            }}></mwc-icon-button>
-            <mwc-icon-button icon="arrow_upward" @click=${() => {
-                for (const t of affectedTasks()) t.sprintNumber = null;
-                popTasks();
-            }}></mwc-icon-button>
-            <mwc-icon-button icon="arrow_forward" @click=${() => {
-                // TODO: Add sprint existance check here
-                for (const t of affectedTasks()) t.sprintNumber! += 1;
-                popTasks();
-            }}></mwc-icon-button>
+        if (this.origin === "sprint" && this.currentSprintDelta > 0) return html`
+            <mwc-icon-button icon="expand_more" title="Move to backlog"
+                             @click=${() => {
+                                 for (const t of affectedTasks()) t.sprintNumber = null;
+                                 popTasks();
+                             }}></mwc-icon-button>
+        `;
+
+        if (this.origin === "sprint" && this.currentSprintDelta < 0) return html`
+            <mwc-icon-button icon="chevron_right" title="Move to current sprint"
+                             @click=${() => {
+                                 for (const t of affectedTasks()) t.sprintNumber! -= this.currentSprintDelta;
+                                 for (const t of affectedTasks()) t.isInDaily = false;
+                                 popTasks();
+                             }}></mwc-icon-button>
         `;
 
         throw new Error("Wrong value of origin prop in task-table");
@@ -149,6 +150,10 @@ export class ProgressLine extends LitElement {
     protected firstUpdated(_changedProperties: PropertyValues) {
         super.firstUpdated(_changedProperties);
         this.actionsMenu.anchor = this.actionsButton;
+    }
+
+    private isSub(): boolean {
+        return !!this.task.parentTaskId;
     }
 
     static get styles(): CSSResultGroup {
