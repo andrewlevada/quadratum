@@ -1,14 +1,15 @@
-import { css, CSSResultGroup, html, LitElement, TemplateResult } from "lit";
+import { css, CSSResultGroup, html, TemplateResult } from "lit";
 import { customElement, state } from "lit/decorators.js";
 import { pageStyles } from "~src/global";
 import Sprint from "~services/sprint";
 import Task from "~services/task";
 import { getCurrentSprintNumber } from "~services/sprint/data";
+import { AppPageElement } from "~components/app/router/app-router";
 
 import("~components/app/task-table").then(f => f.default());
 
 @customElement("app-page--sprint")
-export default class AppPageSprintList extends LitElement {
+export default class AppPageSprintList extends AppPageElement {
     @state() sprint: Sprint | null = null;
     @state() tasks: Task[] | null = null;
     @state() isCurrentSprint: boolean = false;
@@ -34,21 +35,19 @@ export default class AppPageSprintList extends LitElement {
         `;
     }
 
-    private pageHeader(): string {
-        if (this.sprint?.number === 0) return "Your First Sprint!";
-        return `Sprint ${this.sprint?.number || ""}`;
-    }
-
-    connectedCallback() {
-        super.connectedCallback();
+    public requestReload(): void {
         const sprintNumber = Number(window.location.pathname.split("/").last());
-
         Promise.all([Sprint.fromNumber(sprintNumber), Sprint.tasks(sprintNumber), getCurrentSprintNumber()])
             .then(([sprint, tasks, currentSprintNumber]) => {
                 this.sprint = sprint;
                 this.tasks = tasks;
                 this.isCurrentSprint = currentSprintNumber === sprintNumber;
             });
+    }
+
+    private pageHeader(): string {
+        if (this.sprint?.number === 0) return "Your First Sprint!";
+        return `Sprint ${this.sprint?.number || ""}`;
     }
 
     static get styles(): CSSResultGroup {

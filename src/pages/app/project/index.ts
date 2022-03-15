@@ -1,5 +1,4 @@
-/* eslint-disable indent */
-import { css, CSSResultGroup, html, LitElement, TemplateResult } from "lit";
+import { css, CSSResultGroup, html, TemplateResult } from "lit";
 import { customElement, state } from "lit/decorators.js";
 import { ifDefined } from "lit/directives/if-defined.js";
 import { pageStyles } from "~src/global";
@@ -12,11 +11,12 @@ import "@material/mwc-icon-button";
 import { Dialog } from "@material/mwc-dialog";
 import { createRef, ref } from "lit/directives/ref.js";
 import { TextField } from "@material/mwc-textfield";
+import { AppPageElement } from "~components/app/router/app-router";
 
 import("~components/app/task-table").then(f => f.default());
 
 @customElement("app-page--project")
-export default class AppPageProject extends LitElement {
+export default class AppPageProject extends AppPageElement {
     @state() project: Project | null = null;
     @state() tasks: Task[] | null = null;
     @state() noneProject: boolean = false;
@@ -75,8 +75,7 @@ export default class AppPageProject extends LitElement {
     private settingsDialog = createRef<Dialog>();
     private projectLabelTextfield = createRef<TextField>();
 
-    connectedCallback() {
-        super.connectedCallback();
+    public requestReload(): void {
         const projectId = window.location.pathname.split("/").last();
 
         if (projectId === "none") {

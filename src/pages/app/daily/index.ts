@@ -1,13 +1,14 @@
-import { css, CSSResultGroup, html, LitElement, TemplateResult } from "lit";
+import { css, CSSResultGroup, html, TemplateResult } from "lit";
 import { customElement, state } from "lit/decorators.js";
 import { pageStyles } from "~src/global";
 import Task from "~services/task";
 import "@material/mwc-button";
+import { AppPageElement } from "~components/app/router/app-router";
 
 import("~components/app/task-table").then(f => f.default());
 
 @customElement("app-page--daily")
-export default class AppPageDailyList extends LitElement {
+export default class AppPageDailyList extends AppPageElement {
     @state() dailyTasks: Task[] | null = null;
     @state() hasDoneTasks: boolean = false;
 
@@ -35,6 +36,9 @@ export default class AppPageDailyList extends LitElement {
             </div>
         `;
     }
+
+    // eslint-disable-next-line class-methods-use-this,@typescript-eslint/no-empty-function
+    requestReload(): void { }
 
     connectedCallback() {
         super.connectedCallback();

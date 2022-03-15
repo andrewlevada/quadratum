@@ -9,6 +9,8 @@ export interface CompactListItem {
     color?: string;
 }
 
+import("~components/app/router/persistent-a").then(f => f.default());
+
 export default (): void => defineComponent("compact-list", CompactList);
 export class CompactList extends LitElement {
     @property({ type: Object }) items!: CompactListItem[];
@@ -20,10 +22,10 @@ export class CompactList extends LitElement {
 
             <ol class="flex col">
                 ${this.items.map(item => html`
-                    <a class="flex row gap align-center" href="/app${item.link || "#"}">
+                    <persistent-a class="flex row gap align-center" href=${item.link || "#"}>
                         ${item.color ? html`<span style="background: ${item.color}"></span>` : ""}
                         <p>${item.label}</p>
-                    </a>
+                    </persistent-a>
                 `)}
             </ol>
         `;
@@ -35,8 +37,9 @@ export class CompactList extends LitElement {
             margin-bottom: 16px;
           }
           
-          a {
+          persistent-a {
             height: 30px;
+            cursor: pointer;
           }
           
           span {
