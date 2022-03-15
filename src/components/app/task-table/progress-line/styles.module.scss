@@ -14,9 +14,8 @@
 .quick-actions {
   position: relative;
 
-  &.sub {
-    opacity: 0 !important;
-    pointer-events: none !important;
+  & > span {
+    width: 24px;
   }
 
   & > mwc-icon-button {
