@@ -22,6 +22,10 @@ export class ProgressLine extends LitElement {
     @query("#actions-menu") actionsMenu!: Menu;
     @query("#actions-button") actionsButton!: HTMLElement;
 
+    private hasSiblings = false;
+    private childrenTasks: number[] = [];
+    private parentTasks: number[] = [];
+
     render(): TemplateResult {
         return html`
             <div class="progress flex row">
@@ -62,43 +66,12 @@ export class ProgressLine extends LitElement {
     }
 
     private quickActionsHtml(): TemplateResult {
-        let hasSiblings = false;
-
-        const childrenTasks: number[] = [this.taskIndex];
-        for (let i = this.taskIndex + 1; i < this.section.tasks.length; i++) {
-            const t = this.section.tasks[i];
-            if (t.parentTaskId === this.task.id) childrenTasks.push(i);
-            if (t.parentTaskId === this.task.parentTaskId && this.task.parentTaskId) hasSiblings = true;
-        }
-
-        let parentId = this.task.parentTaskId;
-        const parentTasks: number[] = [];
-        if (parentId) for (let i = this.taskIndex - 1; i >= 0; i--) {
-            const t = this.section.tasks[i];
-            if (t.id === parentId) {
-                parentTasks.push(i);
-                parentId = t.id;
-            }
-            if (t.parentTaskId === this.task.parentTaskId && this.task.parentTaskId) hasSiblings = true;
-        }
-
-        const popTasks = (additionalIndexes?: number[]) => {
-            for (let i = this.section.tasks.length - 1; i >= 0; i--)
-                if (childrenTasks.includes(i) || additionalIndexes?.includes(i))
-                    this.section.tasks.splice(i, 1);
-
-            this.dispatchSimpleEvent("requestReorder");
-        };
-
-        const getChildrenTasks = () => childrenTasks.map(index => this.section.tasks[index]);
-        const getParentTasks = () => parentTasks.map(index => this.section.tasks[index]);
-
         if (this.origin === "daily") return html`
             <mwc-icon-button icon="close" title="Remove from daily list"
                              @click=${() => {
-                                 for (const t of getChildrenTasks()) t.isInDaily = false;
-                                 if (!hasSiblings && this.task.parentTaskId) getParentTasks()[0].isInDaily = false;
-                                 popTasks(!hasSiblings && this.task.parentTaskId ? [parentTasks[0]] : []);
+                                 for (const t of this.getChildrenTasks()) t.isInDaily = false;
+                                 if (!this.hasSiblings && this.task.parentTaskId) this.getParentTasks()[0].isInDaily = false;
+                                 this.popTaskFromSection(!this.hasSiblings && this.task.parentTaskId ? [this.parentTasks[0]] : []);
                              }}></mwc-icon-button>
         `;
 
@@ -107,15 +80,15 @@ export class ProgressLine extends LitElement {
             <mwc-icon-button icon="expand_less" title="Move to current sprint"
                              @click=${() => {
                                  getCurrentSprintNumber().then(currentSprintNumber => {
-                                     for (const t of getChildrenTasks()) t.sprintNumber = currentSprintNumber;
-                                     popTasks();
+                                     for (const t of this.getChildrenTasks()) t.sprintNumber = currentSprintNumber;
+                                     this.popTaskFromSection();
                                  });
                              }}></mwc-icon-button>
             <mwc-icon-button icon="chevron_right" title="Move to next sprint"
                              @click=${() => {
                                  getCurrentSprintNumber().then(currentSprintNumber => {
-                                     for (const t of getChildrenTasks()) t.sprintNumber = currentSprintNumber + 1;
-                                     popTasks();
+                                     for (const t of this.getChildrenTasks()) t.sprintNumber = currentSprintNumber + 1;
+                                     this.popTaskFromSection();
                                  });
                              }}></mwc-icon-button>
         `;
@@ -125,21 +98,21 @@ export class ProgressLine extends LitElement {
 
             <mwc-icon-button icon="fullscreen" title="Add to daily list"
                              @click=${() => {
-                                 for (const t of getChildrenTasks()) t.isInDaily = true;
-                                 for (const t of getParentTasks()) t.isInDaily = true;
+                                 for (const t of this.getChildrenTasks()) t.isInDaily = true;
+                                 for (const t of this.getParentTasks()) t.isInDaily = true;
                                  this.requestUpdate();
                                  this.dispatchSimpleEvent("requestReorder");
                              }}></mwc-icon-button>
-            
+
             ${!this.isSub() ? html`
                 <mwc-icon-button icon="chevron_right" title="Move to next sprint"
                                  @click=${() => {
                                      // TODO: Add sprint existance check here
-                                     for (const t of getChildrenTasks()) {
+                                     for (const t of this.getChildrenTasks()) {
                                          t.sprintNumber! += 1;
                                          t.isInDaily = false;
                                      }
-                                     popTasks();
+                                     this.popTaskFromSection();
                                  }}></mwc-icon-button>
             ` : ""}
         `;
@@ -149,19 +122,19 @@ export class ProgressLine extends LitElement {
         if (this.origin === "sprint" && this.currentSprintDelta > 0) return html`
             <mwc-icon-button icon="expand_more" title="Move to backlog"
                              @click=${() => {
-                                 for (const t of getChildrenTasks()) t.sprintNumber = null;
-                                 popTasks();
+                                 for (const t of this.getChildrenTasks()) t.sprintNumber = null;
+                                 this.popTaskFromSection();
                              }}></mwc-icon-button>
         `;
 
         if (this.origin === "sprint" && this.currentSprintDelta < 0) return html`
             <mwc-icon-button icon="chevron_right" title="Move to current sprint"
                              @click=${() => {
-                                 for (const t of getChildrenTasks()) {
+                                 for (const t of this.getChildrenTasks()) {
                                      t.sprintNumber! -= this.currentSprintDelta;
                                      t.isInDaily = false;
                                  }
-                                 popTasks();
+                                 this.popTaskFromSection();
                              }}></mwc-icon-button>
         `;
 
@@ -170,23 +143,62 @@ export class ProgressLine extends LitElement {
 
     private actionsHtml(): TemplateResult {
         return html`
-            <mwc-list-item @click=${() => {
-                if (!this.task.progress) return;
-                this.task.updateProgress(this.task.progress.slice(0, this.task.progress.length - 1));
-                this.requestUpdate();
-                this.dispatchSimpleEvent("requestReorder");
-            }}>Remove progress point</mwc-list-item>
+            ${this.task.progress && this.task.progress.length > 0 ? html`
+                <mwc-list-item @click=${() => {
+                    if (!this.task.progress) return;
+                    this.task.updateProgress(this.task.progress.slice(0, this.task.progress.length - 1));
+                    this.requestUpdate();
+                    this.dispatchSimpleEvent("requestReorder");
+                }}>Remove progress point</mwc-list-item>
+            ` : ""}
+
+            ${this.origin !== "backlog" ? html`
+                <mwc-list-item @click=${() => {
+                    for (const t of this.getChildrenTasks()) t.sprintNumber = null;
+                    this.popTaskFromSection();
+                }}>Move to backlog</mwc-list-item>
+            ` : ""}
         `;
     }
 
     protected firstUpdated(_changedProperties: PropertyValues) {
         super.firstUpdated(_changedProperties);
         this.actionsMenu.anchor = this.actionsButton;
+
+        this.childrenTasks = [this.taskIndex];
+        for (let i = this.taskIndex + 1; i < this.section.tasks.length; i++) {
+            const t = this.section.tasks[i];
+            if (t.parentTaskId === this.task.id) this.childrenTasks.push(i);
+            if (t.parentTaskId === this.task.parentTaskId && this.task.parentTaskId)
+                this.hasSiblings = true;
+        }
+
+        let parentId = this.task.parentTaskId;
+        if (parentId) for (let i = this.taskIndex - 1; i >= 0; i--) {
+            const t = this.section.tasks[i];
+            if (t.id === parentId) {
+                this.parentTasks.push(i);
+                parentId = t.id;
+            }
+            if (t.parentTaskId === this.task.parentTaskId && this.task.parentTaskId)
+                this.hasSiblings = true;
+        }
     }
 
     private isSub(): boolean {
         return !!this.task.parentTaskId;
     }
+
+    private popTaskFromSection(additionalIndexes?: number[]) {
+        for (let i = this.section.tasks.length - 1; i >= 0; i--)
+            if (this.childrenTasks.includes(i) || additionalIndexes?.includes(i))
+                this.section.tasks.splice(i, 1);
+
+        this.dispatchSimpleEvent("requestReorder");
+    }
+
+    private getChildrenTasks = () => this.childrenTasks.map(index => this.section.tasks[index]);
+    private getParentTasks = () => this.parentTasks.map(index => this.section.tasks[index]);
 
     static get styles(): CSSResultGroup {
         return [...componentStyles, scopedStyles as never];
