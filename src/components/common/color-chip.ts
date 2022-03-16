@@ -20,8 +20,8 @@ export class ColorChip extends LitElement {
     @query("div", true) div!: HTMLElement;
     @query("p", true) p!: HTMLElement;
 
-    protected firstUpdated(_changedProperties: PropertyValues) {
-        super.firstUpdated(_changedProperties);
+    protected updated(_changedProperties: PropertyValues) {
+        super.updated(_changedProperties);
         if (this.color !== "#dedede") {
             const scheme = Scheme.light(Number.parseInt(this.color.substring(1), 16));
             this.div.style.background = numberToHex(scheme.primaryContainer);

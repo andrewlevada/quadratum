@@ -158,6 +158,18 @@ export class ProgressLine extends LitElement {
                     this.popTaskFromSection();
                 }}>Move to backlog</mwc-list-item>
             ` : ""}
+            
+            ${this.origin === "sprint" ? html`
+                <mwc-list-item @click=${() => {
+                    for (const t of this.getChildrenTasks()) t.sprintNumber! += 1;
+                    this.popTaskFromSection();
+                }}>Move a sprint ahead</mwc-list-item>
+
+                <mwc-list-item @click=${() => {
+                    for (const t of this.getChildrenTasks()) t.sprintNumber! -= 1;
+                    this.popTaskFromSection();
+                }}>Move a sprint behind</mwc-list-item>
+            ` : ""}
         `;
     }
 
