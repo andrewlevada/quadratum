@@ -9,7 +9,7 @@ import("~components/app/task-table").then(f => f.default());
 
 @customElement("app-page--daily")
 export default class AppPageDailyList extends AppPageElement {
-    @state() dailyTasks: Task[] | null = null;
+    @state() tasks: Task[] | null = null;
     @state() hasDoneTasks: boolean = false;
 
     render(): TemplateResult {
@@ -19,19 +19,18 @@ export default class AppPageDailyList extends AppPageElement {
                     <h4>Daily List</h4>
                     ${this.hasDoneTasks ? html`
                         <mwc-button label="Remove done" icon="grading" outlined @click=${() => {
-                            this.dailyTasks!.filter(v => v.isDone()).forEach(v => {
-                                v.isInDaily = false;
-                            });
-
-                            this.dailyTasks = this.dailyTasks!.filter(v => !v.isDone());
+                            const doneTasks = this.tasks!.filter(v => v.isDone());
+                            for (const t of doneTasks)
+                                t.removeFromDailyList(this.tasks!);
                             this.hasDoneTasks = false;
-                            this.requestUpdate();
+                            // TODO: This is infinitly ugly - fix!
+                            this.tasks = Array(...this.tasks!) as Task[];
                         }}></mwc-button>
                     ` : ""}
                 </div>
                 
-                ${this.dailyTasks ? html`
-                    <task-table .tasks=${this.dailyTasks} origin="daily"></task-table>
+                ${this.tasks ? html`
+                    <task-table .tasks=${this.tasks} origin="daily"></task-table>
                 ` : ""}
             </div>
         `;
@@ -43,8 +42,8 @@ export default class AppPageDailyList extends AppPageElement {
     connectedCallback() {
         super.connectedCallback();
         Task.daily().then(tasks => {
-            this.dailyTasks = tasks;
-            this.hasDoneTasks = this.dailyTasks.some(v => v.isDone());
+            this.tasks = tasks;
+            this.hasDoneTasks = this.tasks.some(v => v.isDone());
         });
     }
 

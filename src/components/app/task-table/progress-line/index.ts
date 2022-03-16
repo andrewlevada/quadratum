@@ -69,9 +69,8 @@ export class ProgressLine extends LitElement {
         if (this.origin === "daily") return html`
             <mwc-icon-button icon="close" title="Remove from daily list"
                              @click=${() => {
-                                 for (const t of this.getChildrenTasks()) t.isInDaily = false;
-                                 if (!this.hasSiblings && this.task.parentTaskId) this.getParentTasks()[0].isInDaily = false;
-                                 this.popTaskFromSection(!this.hasSiblings && this.task.parentTaskId ? [this.parentTasks[0]] : []);
+                                 this.task.removeFromDailyList(this.section.tasks);
+                                 this.dispatchSimpleEvent("requestReorder");
                              }}></mwc-icon-button>
         `;
 
