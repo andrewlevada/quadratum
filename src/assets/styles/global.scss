@@ -1,7 +1,9 @@
 @import "./reset";
+@import "./theming";
 
 :host {
   box-sizing: border-box;
+  line-height: 100%;
 }
 
 a {
@@ -9,9 +11,9 @@ a {
   color: #000;
 }
 
-h3, h4, h6, p {
-  font-family: Roboto, sans-serif;
-  -webkit-font-feature-settings: 'liga';
+h3, h4, h6, p, input {
+  font-family: "Noto Sans Display", sans-serif;
+  -webkit-font-feature-settings: "liga";
   -webkit-font-smoothing: antialiased;
 }
 
@@ -27,12 +29,12 @@ h4 {
 
 h6 {
   font-size: 16px;
-  line-height: 18px;
+  line-height: 100%;
   font-weight: 700;
 }
 
 p {
   font-size: 16px;
-  line-height: 18px;
+  line-height: 100%;
   font-weight: 400;
 }

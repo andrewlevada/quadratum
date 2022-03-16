@@ -44,7 +44,7 @@ export class ColorPicker extends LitElement {
         return [...componentStyles, css`
           #color-display {
             height: 56px;
-            border-radius: 12px;
+            border-radius: var(--mdc-shape-small, 16px);
           }
         `];
     }

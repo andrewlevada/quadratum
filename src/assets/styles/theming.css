@@ -1,0 +1,17 @@
+:root, :host {
+    --mdc-theme-primary: #00658f;
+    --mdc-theme-secondary: #4f616e;
+    --mdc-theme-surface: #fbfcff;
+    --mdc-theme-background: #fbfcff;
+
+    --mdc-theme-on-primary: #ffffff;
+    --mdc-theme-on-secondary: #ffffff;
+    --mdc-theme-on-surface: #191c1e;
+
+    --mdc-shape-small: 16px;
+    --mdc-shape-medium: 16px;
+    --mdc-shape-large: 0px;
+
+    --mdc-typography-font-family: "Noto Sans Display";
+    --mdc-typography-button-line-height: 100%;
+}
