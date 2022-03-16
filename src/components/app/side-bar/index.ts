@@ -3,7 +3,6 @@ import { createRef, ref } from "lit/directives/ref.js";
 import { componentStyles } from "~src/global";
 import { CompactListItem } from "~components/common/compact-list";
 import { defineComponent } from "~utils/components";
-import "@material/mwc-drawer";
 import "@material/mwc-button";
 import "@material/mwc-dialog";
 import "@material/mwc-textfield";
@@ -16,6 +15,7 @@ import scopedStyles from "./styles.module.scss";
 
 import("~components/common/color-picker").then(f => f.default());
 import("~components/common/compact-list").then(f => f.default());
+import("~components/overwrites/mwc-drawer-fixed").then(f => f.default());
 
 export default (): void => defineComponent("side-bar", SideBar);
 export class SideBar extends LitElement {
@@ -26,7 +26,7 @@ export class SideBar extends LitElement {
 
     render(): TemplateResult {
         return html`
-            <mwc-drawer>
+            <mwc-drawer-fixed>
                 <div class="flex col full-width" id="drawer-content">
                     <compact-list label="Pinned" .items=${this.pinnedCompactList()}></compact-list>
                     <compact-list label="Sprints" .items=${this.sprintsCompactList()}></compact-list>
@@ -36,7 +36,7 @@ export class SideBar extends LitElement {
                 <div id="app-content" slot="appContent">
                     <slot></slot>
                 </div>
-            </mwc-drawer>
+            </mwc-drawer-fixed>
 
             <mwc-dialog heading="Let's do something new..." ${ref(this.newProjectDialog)}>
                 <div class="flex col gap">

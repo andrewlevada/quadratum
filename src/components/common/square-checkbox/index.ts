@@ -38,35 +38,15 @@ export class SquareCheckbox extends LitElement {
             width: 18px;
             height: 18px;
             
-            border: 2px solid #000000;
+            border: 2px solid var(--mdc-theme-on-surface);
             box-sizing: border-box;
             border-radius: 2px;
             
             transition: background-color 100ms ease-out;
           }
-          
-          //span.marked {
-          //  border: 2px solid #000000;
-          //}
-          
-          //span.marked::before {
-          //  content: "";
-          //  width: 6px;
-          //  height: 6px;
-          //  position: absolute;
-          //  right: 6px;
-          //  top: 6px;
-          //  background-color: black;
-          //  border-radius: 3px;
-          //}
-          
-          //input:checked + span {
-          //  background-color: #000000;
-          //}
 
           input {
             position: absolute;
-            //z-index: -1;
             opacity: 0;
           }
         `];
