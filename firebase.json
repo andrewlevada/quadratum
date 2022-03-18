@@ -7,8 +7,7 @@
     "ignore": [
       "firebase.json",
       "**/.*",
-      "**/node_modules/**",
-      "**/*.js.map"
+      "**/node_modules/**"
     ],
     "rewrites": [{
       "source": "/app/**",
