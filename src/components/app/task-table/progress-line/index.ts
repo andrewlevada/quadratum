@@ -154,10 +154,29 @@ export class ProgressLine extends LitElement {
                     <mwc-icon slot="graphic">disabled_by_default</mwc-icon>
                 </mwc-list-item>
             ` : ""}
+            
+            ${this.origin !== "daily" ? html`
+                <mwc-list-item graphic="icon" @click=${() => {
+                    getCurrentSprintNumber().then(currentSprint => {
+                        const tasks = [...this.getChildrenTasks(), ...this.getParentTasks()];
+                        for (const t of tasks) {
+                            t.sprintNumber = currentSprint;
+                            t.isInDaily = true;
+                        }
+                        if (this.origin !== "sprint" && this.currentSprintDelta !== 0) this.popTaskFromSection();
+                    });
+                }}>
+                    <span>Add to daily list</span>
+                    <mwc-icon slot="graphic">star</mwc-icon>
+                </mwc-list-item>
+            ` : ""}
 
             ${this.origin !== "backlog" ? html`
                 <mwc-list-item graphic="icon" @click=${() => {
-                    for (const t of this.getChildrenTasks()) t.sprintNumber = null;
+                    for (const t of this.getChildrenTasks()) {
+                        t.sprintNumber = null;
+                        if (t.isInDaily) t.isInDaily = false;
+                    }
                     this.popTaskFromSection();
                 }}>
                     <span>Move to backlog</span>
