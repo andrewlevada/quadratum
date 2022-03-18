@@ -3,6 +3,7 @@ import { property, query } from "lit/decorators.js";
 import { componentStyles } from "~src/global";
 import { defineComponent } from "~utils/components";
 import "@material/mwc-icon-button";
+import "@material/mwc-icon";
 import "@material/mwc-menu";
 import Task, { ActionOrigin } from "~services/task";
 import { getCurrentSprintNumber } from "~services/sprint/data";
@@ -143,31 +144,43 @@ export class ProgressLine extends LitElement {
     private actionsHtml(): TemplateResult {
         return html`
             ${this.task.progress && this.task.progress.length > 0 ? html`
-                <mwc-list-item @click=${() => {
+                <mwc-list-item graphic="icon" @click=${() => {
                     if (!this.task.progress) return;
                     this.task.updateProgress(this.task.progress.slice(0, this.task.progress.length - 1));
                     this.requestUpdate();
                     this.dispatchSimpleEvent("requestReorder");
-                }}>Remove progress point</mwc-list-item>
+                }}>
+                    <span>Remove progress point</span>
+                    <mwc-icon slot="graphic">disabled_by_default</mwc-icon>
+                </mwc-list-item>
             ` : ""}
 
             ${this.origin !== "backlog" ? html`
-                <mwc-list-item @click=${() => {
+                <mwc-list-item graphic="icon" @click=${() => {
                     for (const t of this.getChildrenTasks()) t.sprintNumber = null;
                     this.popTaskFromSection();
-                }}>Move to backlog</mwc-list-item>
+                }}>
+                    <span>Move to backlog</span>
+                    <mwc-icon slot="graphic">archive</mwc-icon>
+                </mwc-list-item>
             ` : ""}
             
             ${this.origin === "sprint" ? html`
-                <mwc-list-item @click=${() => {
-                    for (const t of this.getChildrenTasks()) t.sprintNumber! += 1;
-                    this.popTaskFromSection();
-                }}>Move a sprint ahead</mwc-list-item>
-
-                <mwc-list-item @click=${() => {
+                <mwc-list-item graphic="icon" @click=${() => {
                     for (const t of this.getChildrenTasks()) t.sprintNumber! -= 1;
                     this.popTaskFromSection();
-                }}>Move a sprint behind</mwc-list-item>
+                }}>
+                    <span>Move a sprint behind</span>
+                    <mwc-icon slot="graphic">chevron_left</mwc-icon>
+                </mwc-list-item>
+
+                <mwc-list-item graphic="icon" @click=${() => {
+                    for (const t of this.getChildrenTasks()) t.sprintNumber! += 1;
+                    this.popTaskFromSection();
+                }}>
+                    <span>Move a sprint ahead</span>
+                    <mwc-icon slot="graphic">chevron_right</mwc-icon>
+                </mwc-list-item>
             ` : ""}
         `;
     }
