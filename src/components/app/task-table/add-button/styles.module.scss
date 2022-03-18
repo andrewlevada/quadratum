@@ -20,6 +20,12 @@ mwc-icon-button {
   @include hover-show(0.6);
 }
 
+:host([nohide]) {
+  mwc-button-small, mwc-icon-button {
+    opacity: 1 !important;
+  }
+}
+
 input {
   background: none;
   font-size: 16px;

@@ -32,7 +32,7 @@ export class TaskTable extends LitElement {
     render(): TemplateResult {
         return this.canRender() ? html`
             <div class="container">
-                ${this.sections!.map(section => html`
+                ${this.sections!.map(section => (section.tasks.length > 0 ? html`
                     ${section.tasks.map((task, i) => html`
                         ${i === 0 && !this.globalProjectId ? html`
                             <color-chip class="project" .color=${section.project?.color || "#dedede"}>
@@ -65,13 +65,29 @@ export class TaskTable extends LitElement {
                     <add-button @create=${(event: CustomEvent) => {
                         this.createTask(event.detail.value, section);
                     }}></add-button>
-                `)}
+                ` : ""))}
+                
+                ${this.isEmptyState() ? html`
+                    <add-button nohide @create=${(event: CustomEvent) => {
+                        Task.create(event.detail.value, {
+                            origin: this.origin,
+                            projectId: this.globalProjectId,
+                            sprintNumber: this.globalSprintNumber,
+                        }).then(task => {
+                            this.tasks = [task];
+                        });
+                    }}></add-button>
+                ` : ""}
             </div>
         ` : html``;
     }
 
     private canRender(): boolean {
         return !!this.sections && (this.globalSprintNumber === undefined || this.currentSprintDelta !== null);
+    }
+
+    private isEmptyState(): boolean {
+        return this.sections!.length === 0 || this.sections!.every(v => v.tasks.length === 0);
     }
 
     protected firstUpdated(_changedProperties: PropertyValues) {
@@ -106,8 +122,7 @@ export class TaskTable extends LitElement {
                 project, tasks: temp[project.id],
             });
 
-            // Always have an add button at the end
-            if (temp.none.length > 0 || fetchProjects.length === 0) this.sections.push({
+            if (temp.none.length > 0) this.sections.push({
                 project: null, tasks: temp.none,
             });
         });
