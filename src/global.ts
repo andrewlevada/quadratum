@@ -32,6 +32,12 @@ function initEnv(): void {
             dsn: "https://4a0d7f67595d4d7c8eca0ad7add1fef9@o570491.ingest.sentry.io/6256806",
             integrations: [new BrowserTracing()],
             tracesSampleRate: 0.8,
+            beforeSend: (event, hint) => {
+                const error = hint?.originalException;
+                if (error && typeof error === "object" && error.message?.endsWith("[Sentry ignore]"))
+                    return null;
+                return event;
+            },
         });
 
         onAuthStateChanged(getAuth(app), user => {

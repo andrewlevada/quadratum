@@ -1,6 +1,6 @@
-import { doc, getDoc, setDoc } from "@firebase/firestore";
+import { getDoc, setDoc } from "@firebase/firestore";
 import Sprint from "~services/sprint";
-import { db, userDoc, userId } from "~services/tools";
+import { userDoc } from "~services/tools";
 import { createNewSprint } from "~services/sprint/data";
 
 export interface UserDocument {
@@ -34,8 +34,7 @@ export async function initializeUser(userUid: string): Promise<void> {
 }
 
 export function getUserInfo(): Promise<UserDocument> {
-    return getDoc(doc(db(), "users", userId()))
-        .then(snap => snap.data() as UserDocument);
+    return getDoc(userDoc()).then(snap => snap.data() as UserDocument);
 }
 
 /*

@@ -4,10 +4,15 @@ export function db(): Firestore {
     return getFirestore();
 }
 
-export function userId(): string {
-    return localStorage.getItem("fb_user_uid") || "";
+export function userId(): string | null {
+    return localStorage.getItem("fb_user_uid") || null;
 }
 
 export function userDoc(): DocumentReference {
-    return doc(db(), "users", userId());
+    const id = userId();
+    if (id === null) {
+        window.location.pathname = "/enter";
+        throw new Error("User not authed! [Sentry ignore]");
+    }
+    return doc(db(), "users", id);
 }

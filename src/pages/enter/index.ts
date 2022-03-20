@@ -28,8 +28,9 @@ export default class EnterPage extends LitElement {
             .then(credentials => initializeUser(credentials.user.uid))
             .then(() => {
                 window.location.pathname = "/app";
-            });
-        // .catch(() => alert("Auth failed"));
+            })
+            // eslint-disable-next-line no-console
+            .catch(() => console.log("Auth failed"));
     }
 
     static get styles(): CSSResultGroup {

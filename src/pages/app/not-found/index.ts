@@ -1,9 +1,10 @@
-import { css, CSSResultGroup, html, LitElement, TemplateResult } from "lit";
+import { css, CSSResultGroup, html, TemplateResult } from "lit";
 import { customElement } from "lit/decorators.js";
 import { pageStyles } from "~src/global";
+import { AppPageElement } from "~components/app/router/app-router";
 
 @customElement("app-page--not-found")
-export default class AppPageNotFound extends LitElement {
+export default class AppPageNotFound extends AppPageElement {
     render(): TemplateResult {
         return html`
             <h4>404 - Not found</h4>
@@ -17,4 +18,7 @@ export default class AppPageNotFound extends LitElement {
           // More styles here
         `];
     }
+
+    // eslint-disable-next-line class-methods-use-this,@typescript-eslint/no-empty-function
+    public requestReload(): void { }
 }
