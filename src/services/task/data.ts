@@ -10,7 +10,7 @@ import { addDoc,
     where } from "@firebase/firestore";
 import { userDoc } from "~services/tools";
 
-type PartialTaskWithId = Partial<Task> & { id: string };
+export type PartialTaskWithId = Partial<Task> & { id: string };
 
 export async function postTask(task: Task): Promise<Task> {
     const snap = await addDoc(collection(userDoc(), "tasks").withConverter(Task.converter), task);

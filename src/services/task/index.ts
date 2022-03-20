@@ -1,8 +1,7 @@
 import { deleteTask,
     fetchTaskById,
     fetchTasksByIds,
-    fetchTasksWithFilter,
-    postTask,
+    fetchTasksWithFilter, postTask,
     updateTask } from "~services/task/data";
 import { deleteField, DocumentData,
     FirestoreDataConverter,
@@ -10,6 +9,8 @@ import { deleteField, DocumentData,
     QueryDocumentSnapshot, where,
     WithFieldValue } from "@firebase/firestore";
 import { getCurrentSprintNumber } from "~services/sprint/data";
+import { TaskContextModifier } from "~services/task/task-context-modifier";
+import { getSprintAnchorSync } from "~services/user-service";
 
 export type ActionOrigin = "daily" | "sprint" | "backlog";
 
@@ -33,8 +34,6 @@ interface TaskDocument {
     parentTaskId?: string;
 }
 
-// TODO: Use decorator to fix repetitive code in getters/setters
-
 export default class Task {
     public readonly id: string;
 
@@ -55,7 +54,7 @@ export default class Task {
     public set isInDaily(value: boolean) {
         if (this.isInDailyInner === value) return;
         this.isInDailyInner = value;
-        updateTask({ id: this.id, isInDaily: value }).then();
+        updateTask({ id: this.id, isInDaily: value, sprintNumber: getSprintAnchorSync().currentSprintNumber }).then();
     }
 
     private projectIdInner: string | null | undefined;
@@ -75,7 +74,7 @@ export default class Task {
     public set sprintNumber(value: number | null) {
         if (this.sprintNumberInner === value) return;
         this.sprintNumberInner = value;
-        updateTask({ id: this.id, sprintNumber: value }).then();
+        updateTask({ id: this.id, sprintNumber: value, isInDaily: false }).then();
     }
 
     private parentTaskIdInner: string | undefined;
@@ -118,51 +117,8 @@ export default class Task {
             && this.progressInner.filter(v => v).length === this.progressInner.length;
     }
 
-    public removeFromDailyList(group: Task[]): void {
-        this.isInDaily = false;
-        for (const t of this.getChildrenTasks(group)) t.isInDaily = false;
-        if (!this.hasSiblings(group) && this.parentTaskId) {
-            const firstParent = this.getParentTasks(group)[0];
-            firstParent.isInDaily = false;
-            this.popTaskTreeFromGroup(group, [firstParent]);
-        } else this.popTaskTreeFromGroup(group);
-    }
-
-    public getChildrenTasks(group: Task[]): Task[] {
-        const childrenTasks: Task[] = [];
-        for (let i = 0; i < group.length; i++)
-            if (group[i].parentTaskId === this.id) childrenTasks.push(group[i]);
-        return childrenTasks;
-    }
-
-    public getParentTasks(group: Task[]): Task[] {
-        const parents = [];
-        let parentId = this.parentTaskId;
-        while (parentId) {
-            // eslint-disable-next-line no-loop-func
-            const parent = group.find(v => v.id === parentId);
-            if (!parent) return parents;
-            parents.push(parent);
-            parentId = parent.parentTaskId;
-        }
-        return parents;
-    }
-
-    public hasSiblings(group: Task[]): boolean {
-        if (!this.parentTaskId) return false;
-        for (let i = 0; i < group.length; i++)
-            if (group[i].parentTaskId === this.parentTaskId && group[i].id !== this.id)
-                return true;
-        return false;
-    }
-
-    private popTaskTreeFromGroup(group: Task[], additionalPop?: Task[]) {
-        const childrenTasks = this.getChildrenTasks(group);
-        for (let i = group.length - 1; i >= 0; i--)
-            if (childrenTasks.includes(group[i])
-                || additionalPop?.includes(group[i])
-                || group[i].id === this.id)
-                group.splice(i, 1);
+    public modifier(group: Task[]): TaskContextModifier {
+        return new TaskContextModifier(this, group);
     }
 
     public static fromId(id: string): Promise<Task> {

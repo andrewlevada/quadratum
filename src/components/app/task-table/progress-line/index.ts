@@ -10,6 +10,7 @@ import { getCurrentSprintNumber } from "~services/sprint/data";
 import { Section } from "~components/app/task-table";
 import { Menu } from "@material/mwc-menu";
 import { ifDefined } from "lit/directives/if-defined.js";
+import { TaskContextModifier } from "~services/task/task-context-modifier";
 import scopedStyles from "./styles.module.scss";
 
 export default (): void => defineComponent("progress-line", ProgressLine);
@@ -23,9 +24,7 @@ export class ProgressLine extends LitElement {
     @query("#actions-menu") actionsMenu!: Menu;
     @query("#actions-button") actionsButton!: HTMLElement;
 
-    private hasSiblings = false;
-    private childrenTasks: number[] = [];
-    private parentTasks: number[] = [];
+    private taskModifier!: TaskContextModifier;
 
     render(): TemplateResult {
         return html`
@@ -70,7 +69,7 @@ export class ProgressLine extends LitElement {
         if (this.origin === "daily") return html`
             <mwc-icon-button icon="close" title="Remove from daily list"
                              @click=${() => {
-                                 this.task.removeFromDailyList(this.section.tasks);
+                                 this.taskModifier.setIsInDaily(false, true);
                                  this.dispatchSimpleEvent("requestReorder");
                              }}></mwc-icon-button>
         `;
@@ -80,15 +79,15 @@ export class ProgressLine extends LitElement {
             <mwc-icon-button icon="expand_less" title="Move to current sprint"
                              @click=${() => {
                                  getCurrentSprintNumber().then(currentSprintNumber => {
-                                     for (const t of this.getChildrenTasks()) t.sprintNumber = currentSprintNumber;
-                                     this.popTaskFromSection();
+                                     this.taskModifier.setSprintNumber(currentSprintNumber);
+                                     this.dispatchSimpleEvent("requestReorder");
                                  });
                              }}></mwc-icon-button>
             <mwc-icon-button icon="chevron_right" title="Move to next sprint"
                              @click=${() => {
                                  getCurrentSprintNumber().then(currentSprintNumber => {
-                                     for (const t of this.getChildrenTasks()) t.sprintNumber = currentSprintNumber + 1;
-                                     this.popTaskFromSection();
+                                     this.taskModifier.setSprintNumber(currentSprintNumber + 1);
+                                     this.dispatchSimpleEvent("requestReorder");
                                  });
                              }}></mwc-icon-button>
         `;
@@ -98,8 +97,7 @@ export class ProgressLine extends LitElement {
 
             <mwc-icon-button icon="fullscreen" title="Add to daily list"
                              @click=${() => {
-                                 for (const t of this.getChildrenTasks()) t.isInDaily = true;
-                                 for (const t of this.getParentTasks()) t.isInDaily = true;
+                                 this.taskModifier.setIsInDaily(true, false);
                                  this.requestUpdate();
                                  this.dispatchSimpleEvent("requestReorder");
                              }}></mwc-icon-button>
@@ -107,12 +105,8 @@ export class ProgressLine extends LitElement {
             ${!this.isSub() ? html`
                 <mwc-icon-button icon="chevron_right" title="Move to next sprint"
                                  @click=${() => {
-                                     // TODO: Add sprint existance check here
-                                     for (const t of this.getChildrenTasks()) {
-                                         t.sprintNumber! += 1;
-                                         t.isInDaily = false;
-                                     }
-                                     this.popTaskFromSection();
+                                     this.taskModifier.setSprintNumber(this.task.sprintNumber! + 1);
+                                     this.dispatchSimpleEvent("requestReorder");
                                  }}></mwc-icon-button>
             ` : ""}
         `;
@@ -122,19 +116,16 @@ export class ProgressLine extends LitElement {
         if (this.origin === "sprint" && this.currentSprintDelta > 0) return html`
             <mwc-icon-button icon="expand_more" title="Move to backlog"
                              @click=${() => {
-                                 for (const t of this.getChildrenTasks()) t.sprintNumber = null;
-                                 this.popTaskFromSection();
+                                 this.taskModifier.setSprintNumber(null);
+                                 this.dispatchSimpleEvent("requestReorder");
                              }}></mwc-icon-button>
         `;
 
         if (this.origin === "sprint" && this.currentSprintDelta < 0) return html`
             <mwc-icon-button icon="chevron_right" title="Move to current sprint"
                              @click=${() => {
-                                 for (const t of this.getChildrenTasks()) {
-                                     t.sprintNumber! -= this.currentSprintDelta;
-                                     t.isInDaily = false;
-                                 }
-                                 this.popTaskFromSection();
+                                 this.taskModifier.setSprintNumber(this.task.sprintNumber! - this.currentSprintDelta);
+                                 this.dispatchSimpleEvent("requestReorder");
                              }}></mwc-icon-button>
         `;
 
@@ -154,17 +145,12 @@ export class ProgressLine extends LitElement {
                     <mwc-icon slot="graphic">disabled_by_default</mwc-icon>
                 </mwc-list-item>
             ` : ""}
-            
+
             ${this.origin !== "daily" ? html`
                 <mwc-list-item graphic="icon" @click=${() => {
-                    getCurrentSprintNumber().then(currentSprint => {
-                        const tasks = [...this.getChildrenTasks(), ...this.getParentTasks()];
-                        for (const t of tasks) {
-                            t.sprintNumber = currentSprint;
-                            t.isInDaily = true;
-                        }
-                        if (this.origin !== "sprint" && this.currentSprintDelta !== 0) this.popTaskFromSection();
-                    });
+                    this.taskModifier.setIsInDaily(true, this.origin !== "sprint" && this.currentSprintDelta !== 0);
+                    this.requestUpdate();
+                    this.dispatchSimpleEvent("requestReorder");
                 }}>
                     <span>Add to daily list</span>
                     <mwc-icon slot="graphic">star</mwc-icon>
@@ -173,29 +159,26 @@ export class ProgressLine extends LitElement {
 
             ${this.origin !== "backlog" ? html`
                 <mwc-list-item graphic="icon" @click=${() => {
-                    for (const t of this.getChildrenTasks()) {
-                        t.sprintNumber = null;
-                        if (t.isInDaily) t.isInDaily = false;
-                    }
-                    this.popTaskFromSection();
+                    this.taskModifier.setSprintNumber(null);
+                    this.dispatchSimpleEvent("requestReorder");
                 }}>
                     <span>Move to backlog</span>
                     <mwc-icon slot="graphic">archive</mwc-icon>
                 </mwc-list-item>
             ` : ""}
-            
+
             ${this.origin === "sprint" ? html`
                 <mwc-list-item graphic="icon" @click=${() => {
-                    for (const t of this.getChildrenTasks()) t.sprintNumber! -= 1;
-                    this.popTaskFromSection();
+                    this.taskModifier.setSprintNumber(this.task.sprintNumber! - 1);
+                    this.dispatchSimpleEvent("requestReorder");
                 }}>
                     <span>Move a sprint behind</span>
                     <mwc-icon slot="graphic">chevron_left</mwc-icon>
                 </mwc-list-item>
 
                 <mwc-list-item graphic="icon" @click=${() => {
-                    for (const t of this.getChildrenTasks()) t.sprintNumber! += 1;
-                    this.popTaskFromSection();
+                    this.taskModifier.setSprintNumber(this.task.sprintNumber! + 1);
+                    this.dispatchSimpleEvent("requestReorder");
                 }}>
                     <span>Move a sprint ahead</span>
                     <mwc-icon slot="graphic">chevron_right</mwc-icon>
@@ -207,41 +190,17 @@ export class ProgressLine extends LitElement {
     protected firstUpdated(_changedProperties: PropertyValues) {
         super.firstUpdated(_changedProperties);
         this.actionsMenu.anchor = this.actionsButton;
+    }
 
-        this.childrenTasks = [this.taskIndex];
-        for (let i = this.taskIndex + 1; i < this.section.tasks.length; i++) {
-            const t = this.section.tasks[i];
-            if (t.parentTaskId === this.task.id) this.childrenTasks.push(i);
-            if (t.parentTaskId === this.task.parentTaskId && this.task.parentTaskId)
-                this.hasSiblings = true;
-        }
-
-        let parentId = this.task.parentTaskId;
-        if (parentId) for (let i = this.taskIndex - 1; i >= 0; i--) {
-            const t = this.section.tasks[i];
-            if (t.id === parentId) {
-                this.parentTasks.push(i);
-                parentId = t.id;
-            }
-            if (t.parentTaskId === this.task.parentTaskId && this.task.parentTaskId)
-                this.hasSiblings = true;
-        }
+    protected updated(_changedProperties: PropertyValues) {
+        super.updated(_changedProperties);
+        if (_changedProperties.has("task"))
+            this.taskModifier = this.task.modifier(this.section.tasks);
     }
 
     private isSub(): boolean {
         return !!this.task.parentTaskId;
     }
-
-    private popTaskFromSection(additionalIndexes?: number[]) {
-        for (let i = this.section.tasks.length - 1; i >= 0; i--)
-            if (this.childrenTasks.includes(i) || additionalIndexes?.includes(i))
-                this.section.tasks.splice(i, 1);
-
-        this.dispatchSimpleEvent("requestReorder");
-    }
-
-    private getChildrenTasks = () => this.childrenTasks.map(index => this.section.tasks[index]);
-    private getParentTasks = () => this.parentTasks.map(index => this.section.tasks[index]);
 
     static get styles(): CSSResultGroup {
         return [...componentStyles, scopedStyles as never];

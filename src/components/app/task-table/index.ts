@@ -90,18 +90,15 @@ export class TaskTable extends LitElement {
         return this.sections!.length === 0 || this.sections!.every(v => v.tasks.length === 0);
     }
 
-    protected firstUpdated(_changedProperties: PropertyValues) {
-        super.firstUpdated(_changedProperties);
-        if (this.globalSprintNumber !== undefined)
-            getCurrentSprintNumber().then(value => {
-                this.currentSprintDelta = this.globalSprintNumber! - value;
-            });
-    }
-
     protected update(changedProperties: PropertyValues) {
         super.update(changedProperties);
         if (!this.tasks) throw new Error("tasks-table requires property tasks, but it's not set");
         if (!changedProperties.has("tasks")) return;
+
+        if (this.globalSprintNumber !== undefined)
+            getCurrentSprintNumber().then(value => {
+                this.currentSprintDelta = this.globalSprintNumber! - value;
+            });
 
         const temp: Record<string, Task[]> = { none: [] };
         for (const task of this.tasks) {
