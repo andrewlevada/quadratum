@@ -21,7 +21,7 @@ export default class AppPageDailyList extends AppPageElement {
                         <mwc-button label="Remove done" icon="grading" outlined @click=${() => {
                             const doneTasks = this.tasks!.filter(v => v.isDone());
                             for (const t of doneTasks)
-                                t.removeFromDailyList(this.tasks!);
+                                t.modifier(this.tasks!).setIsInDaily(false, true);
                             this.hasDoneTasks = false;
                             // TODO: This is infinitly ugly - fix!
                             this.tasks = Array(...this.tasks!) as Task[];

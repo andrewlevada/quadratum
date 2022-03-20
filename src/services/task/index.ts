@@ -168,7 +168,7 @@ export default class Task {
                 payload.isDone = deleteField();
             } else if (o.progress) {
                 payload.progress = o.progress as boolean[];
-                payload.isDone = o.progress.every(v => v);
+                payload.isDone = o.progress.length > 0 && o.progress.every(v => v);
             }
 
             return payload;
