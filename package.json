@@ -14,7 +14,6 @@
     "./src/utils/prototypes/*.ts"
   ],
   "dependencies": {
-    "@firebase/analytics": "^0.7.5",
     "@firebase/app": "^0.7.17",
     "@firebase/auth": "^0.19.9",
     "@firebase/firestore": "^3.4.5",

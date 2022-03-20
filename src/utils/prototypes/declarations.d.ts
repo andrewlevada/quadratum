@@ -13,4 +13,9 @@ declare global {
         week(): number;
         absoluteDay(): number;
     }
+
+    interface Window {
+        dataLayer: unknown[];
+        gtag: (...args: unknown[])=> void;
+    }
 }
