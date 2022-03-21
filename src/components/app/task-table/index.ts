@@ -57,9 +57,8 @@ export class TaskTable extends LitElement {
                         
                         <progress-line class="progress" .section=${section} .contextTasks=${this.tasks}
                                        .task=${task} .taskIndex=${i} .currentSprintDelta=${this.currentSprintDelta}
-                                       .origin=${this.origin} @requestReorder=${() => {
-                                    this.requestUpdate("tasks");
-                        }}></progress-line>
+                                       .origin=${this.origin} @requestReorder=${() => this.requestUpdate("tasks")}
+                                       @taskChange=${() => this.requestUpdate()}></progress-line>
                     `)}
 
                     <add-button @create=${(event: CustomEvent) => {

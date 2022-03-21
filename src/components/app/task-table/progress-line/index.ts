@@ -50,7 +50,7 @@ export class ProgressLine extends LitElement {
                                          @change=${(event: CustomEvent) => {
                                              this.task.progress![pI] = event.detail.value as boolean;
                                              this.task.updateProgress();
-                                             this.dispatchSimpleEvent("requestReorder");
+                                             this.dispatchSimpleEvent("taskChange");
                                          }}></square-checkbox>
                     `)}
 
@@ -59,7 +59,7 @@ export class ProgressLine extends LitElement {
                         progress.push(false);
                         this.task.updateProgress(progress);
                         this.requestUpdate();
-                        this.dispatchSimpleEvent("requestReorder");
+                        this.dispatchSimpleEvent("taskChange");
                     }}></mwc-icon-button>
                 </div>
             </div>
