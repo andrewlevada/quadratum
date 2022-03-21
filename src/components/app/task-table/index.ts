@@ -46,7 +46,7 @@ export class TaskTable extends LitElement {
                                                @update=${(event: CustomEvent) => {
                                 task.text = (event.detail.value as string).trim();
                             }} @clear=${() => {
-                                section.tasks.splice(i, 1)[0].delete().then();
+                                task.modifier(this.tasks).deleteTree();
                                 this.requestUpdate();
                             }}></inline-text-input>
                             
@@ -55,10 +55,10 @@ export class TaskTable extends LitElement {
                             }}></add-button>
                         </div>
                         
-                        <progress-line class="progress" .section=${section}
+                        <progress-line class="progress" .section=${section} .contextTasks=${this.tasks}
                                        .task=${task} .taskIndex=${i} .currentSprintDelta=${this.currentSprintDelta}
                                        .origin=${this.origin} @requestReorder=${() => {
-                                           this.requestUpdate();
+                                    this.requestUpdate("tasks");
                         }}></progress-line>
                     `)}
 
@@ -132,9 +132,8 @@ export class TaskTable extends LitElement {
             sprintNumber: this.globalSprintNumber,
             parentTaskId,
         }).then(task => {
-            section.tasks.push(task);
-            section.tasks = TaskTable.reorderTasks(section.tasks);
-            this.requestUpdate();
+            this.tasks.push(task);
+            this.requestUpdate("tasks");
         });
     }
 

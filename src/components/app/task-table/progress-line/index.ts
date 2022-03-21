@@ -16,6 +16,7 @@ import scopedStyles from "./styles.module.scss";
 export default (): void => defineComponent("progress-line", ProgressLine);
 export class ProgressLine extends LitElement {
     @property({ type: Object }) task!: Task;
+    @property({ type: Array }) contextTasks!: Task[];
     @property({ type: Object }) section!: Section;
     @property({ type: Number }) taskIndex!: number;
     @property({ type: String }) origin!: ActionOrigin;
@@ -184,6 +185,14 @@ export class ProgressLine extends LitElement {
                     <mwc-icon slot="graphic">chevron_right</mwc-icon>
                 </mwc-list-item>
             ` : ""}
+
+            <mwc-list-item graphic="icon" @click=${() => {
+                this.taskModifier.deleteTree();
+                this.dispatchSimpleEvent("requestReorder");
+            }}>
+                <span>Delete task</span>
+                <mwc-icon slot="graphic">delete</mwc-icon>
+            </mwc-list-item>
         `;
     }
 
@@ -195,7 +204,7 @@ export class ProgressLine extends LitElement {
     protected updated(_changedProperties: PropertyValues) {
         super.updated(_changedProperties);
         if (_changedProperties.has("task"))
-            this.taskModifier = this.task.modifier(this.section.tasks);
+            this.taskModifier = this.task.modifier(this.contextTasks);
     }
 
     private isSub(): boolean {

@@ -32,8 +32,8 @@ export class InlineTextInput extends LitElement {
         `;
     }
 
-    protected firstUpdated(_changedProperties: PropertyValues) {
-        super.firstUpdated(_changedProperties);
+    protected updated(_changedProperties: PropertyValues) {
+        super.updated(_changedProperties);
         this.keyUpOldValue = this.value;
     }
 

@@ -13,10 +13,12 @@ export class TaskContextModifier {
         this.task.isInDaily = value;
         for (const t of this.getChildrenTasks()) t.isInDaily = value;
 
-        if (!this.hasSiblings() && this.task.parentTaskId) {
-            for (const t of this.getParentTasks()) t.isInDaily = value;
-            if (pop) this.popTaskTreeFromGroup(this.getParentTasks());
-        } else if (pop) this.popTaskTreeFromGroup();
+        const parents = this.getParentTasks();
+
+        if (value) for (const t of this.getParentTasks()) t.isInDaily = true;
+        else if (this.isOnlyChild()) parents[0].isInDaily = false;
+
+        if (pop) this.popTaskTreeFromGroup(this.isOnlyChild() ? [parents[0]] : []);
     }
 
     // TODO: Add sprint existence check here
@@ -29,7 +31,13 @@ export class TaskContextModifier {
         this.popTaskTreeFromGroup();
     }
 
-    public getChildrenTasks(): Task[] {
+    public deleteTree(): void {
+        this.task.delete().then();
+        for (const t of this.getChildrenTasks()) t.delete().then();
+        this.popTaskTreeFromGroup();
+    }
+
+    private getChildrenTasks(): Task[] {
         const childrenTasks: Task[] = [];
         for (let i = 0; i < this.group.length; i++)
             if (this.group[i].parentTaskId === this.task.id)
@@ -37,7 +45,7 @@ export class TaskContextModifier {
         return childrenTasks;
     }
 
-    public getParentTasks(): Task[] {
+    private getParentTasks(): Task[] {
         const parents = [];
         let parentId = this.task.parentTaskId;
         while (parentId) {
@@ -50,12 +58,16 @@ export class TaskContextModifier {
         return parents;
     }
 
-    public hasSiblings(): boolean {
+    private hasSiblings(): boolean {
         if (!this.task.parentTaskId) return false;
         for (let i = 0; i < this.group.length; i++)
             if (this.group[i].parentTaskId === this.task.parentTaskId && this.group[i].id !== this.task.id)
                 return true;
         return false;
+    }
+
+    private isOnlyChild(): boolean {
+        return !this.hasSiblings() && !!this.task.parentTaskId;
     }
 
     private popTaskTreeFromGroup(additionalPop?: Task[]) {
