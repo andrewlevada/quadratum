@@ -31,7 +31,10 @@ export default class AppPageProject extends AppPageElement {
                         <span class="color-indicator" style="background: ${this.project?.color || "#dedede"}"></span>
                         <h4>Project: ${this.project?.label || ""} ${this.project?.isArchived ? "(Archived)" : ""}</h4>
                     </div>
-                    <mwc-icon-button icon="settings" @click=${() => this.openSettingsDialog()}></mwc-icon-button>
+
+                    ${this.project ? html`
+                        <mwc-icon-button icon="settings" @click=${() => this.openSettingsDialog()}></mwc-icon-button>
+                    ` : ""}
                 </div>
 
                 ${this.tasks ? html`
