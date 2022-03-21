@@ -9,6 +9,14 @@ export class TaskContextModifier {
         this.group = group;
     }
 
+    public isDoneTree(): boolean {
+        const children = this.getChildrenTasks();
+        if (children.length === 0) return this.task.isDone();
+        if (this.task.progress && this.task.progress.length > 0)
+            return this.task.isDone() && children.every(t => t.isDone());
+        return children.every(t => t.isDone());
+    }
+
     public setIsInDaily(value: boolean, pop: boolean): void {
         this.task.isInDaily = value;
         for (const t of this.getChildrenTasks()) t.isInDaily = value;
