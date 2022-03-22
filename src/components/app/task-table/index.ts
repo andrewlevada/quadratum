@@ -40,7 +40,7 @@ export class TaskTable extends LitElement {
                             </color-chip>
                         ` : ""}
 
-                        <div class="text flex row align-center ${task.parentTaskId ? "sub" : ""}">
+                        <div class="text flex row align-center ${task.parentTaskId ? "sub" : ""} ${TaskTable.isLastChild(section, i) ? "gap" : ""}">
                             <inline-text-input value=${task.text}
                                                class=${task.modifier(this.tasks).isDoneTree() ? "fade" : ""}
                                                @update=${(event: CustomEvent) => {
@@ -165,6 +165,12 @@ export class TaskTable extends LitElement {
                 tasks.push(t, ...this.constructSubTree(heap, t.id));
 
         return tasks;
+    }
+
+    private static isLastChild(section: Section, taskIndex: number): boolean {
+        const isChild = !!section.tasks[taskIndex].parentTaskId;
+        const isNextNotChild = section.tasks.length > taskIndex + 1 && !section.tasks[taskIndex + 1].parentTaskId;
+        return isChild && isNextNotChild;
     }
 
     static get styles(): CSSResultGroup {

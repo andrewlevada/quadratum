@@ -23,10 +23,25 @@
   }
 
   & > .text {
+    position: relative;
     grid-column: 2;
 
+    &.gap {
+      margin-bottom: 8px;
+    }
+
     &.sub {
-      margin-left: 16px;
+      margin-left: 20px;
+
+      &::before {
+        content: "remove";
+        font-family: "Material Icons", sans-serif;
+        color: var(--mdc-theme-on-surface);
+
+        position: absolute;
+        left: -20px;
+        opacity: 0.4;
+      }
     }
   }
 

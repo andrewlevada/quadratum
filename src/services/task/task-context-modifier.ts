@@ -9,6 +9,13 @@ export class TaskContextModifier {
         this.group = group;
     }
 
+    public isParent(): boolean {
+        for (let i = 0; i < this.group.length; i++)
+            if (this.group[i].parentTaskId === this.task.id)
+                return true;
+        return false;
+    }
+
     public isDoneTree(): boolean {
         const children = this.getChildrenTasks();
         if (children.length === 0) return this.task.isDone();

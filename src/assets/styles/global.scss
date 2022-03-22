@@ -11,6 +11,10 @@ a {
   color: #000;
 }
 
+.material-icons {
+  font-family: "Material Icons", sans-serif;
+}
+
 p, h1, h2, h3, h4, h5, h6, a, input {
   color: var(--mdc-theme-on-surface);
   font-family: "Noto Sans Display", sans-serif;
