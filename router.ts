@@ -12,10 +12,14 @@
 //
 // outputPath - (optional) overrides url set from source
 
-module.exports = [
+export default [
     // Here outputPath is optional
     // If it's not set, output will be the same as source
     { source: "/landing", title: "Quadratum Tack Tracker", outputPath: "/" },
     { source: "/app", title: "Quadratum Tack Tracker" },
     { source: "/enter", title: "Sign in to Quadratum" },
-];
+] as {
+    source: string;
+    title: string;
+    outputPath?: string;
+}[];

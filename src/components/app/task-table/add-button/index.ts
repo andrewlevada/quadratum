@@ -1,5 +1,5 @@
 /* eslint-disable */
-import { CSSResultGroup, html, LitElement, PropertyValues, TemplateResult } from "lit";
+import { CSSResultGroup, html, LitElement, PropertyValues, TemplateResult, unsafeCSS } from "lit";
 import { property, query } from "lit/decorators.js";
 import { componentStyles } from "~src/global";
 import { defineComponent } from "~utils/components";
@@ -57,6 +57,6 @@ export class AddButton extends LitElement {
     }
 
     static get styles(): CSSResultGroup {
-        return [...componentStyles, scopedStyles as never];
+        return [...componentStyles, unsafeCSS(scopedStyles)];
     }
 }

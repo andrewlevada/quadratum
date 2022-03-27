@@ -96,6 +96,7 @@ export default class Project {
 
             if (o.label) payload.label = o.label;
             if (o.color) payload.color = o.color;
+            if (o.isArchived !== undefined) payload.isArchived = o.isArchived;
 
             return payload;
         },

@@ -42,7 +42,7 @@ export default class EnterPage extends LitElement {
     static get styles(): CSSResultGroup {
         // Styles can either be in this file (only css)
         // or imported from another file (scss in this case)
-        return [...pageStyles, scopedStyles as never, css`
+        return [...pageStyles, unsafeCSS(scopedStyles), css`
           #logo {
             position: absolute;
             left: 80px;

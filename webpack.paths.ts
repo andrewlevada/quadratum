@@ -1,6 +1,5 @@
-const path = require("path");
+import path from "path";
 
-// noinspection WebpackConfigHighlighting
 const paths = {
     src: path.join(__dirname, "/src"),
     build: path.join(__dirname, "/build"),
@@ -8,4 +7,4 @@ const paths = {
     pages: path.join(__dirname, "/src/pages"),
 };
 
-module.exports = paths;
+export default paths;

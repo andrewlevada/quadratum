@@ -1,8 +1,10 @@
-const { merge } = require("webpack-merge");
-const paths = require("./webpack.paths");
-const common = require("./webpack.common");
+import { merge } from "webpack-merge";
+import paths from "./webpack.paths";
+import common from "./webpack.common";
+import { Configuration } from "webpack";
+import "webpack-dev-server";
 
-const config = merge(common, {
+const config: Configuration = merge<any>(common, {
     mode: "development",
 
     devServer: {
@@ -15,7 +17,7 @@ const config = merge(common, {
             rewrites: [
                 {
                     from: /^\/app\/.*/,
-                    to: function (context) {
+                    to: function (context: any) {
                         return context.parsedUrl.pathname.includes(".") ? context.parsedUrl.pathname : "/app/index.html";
                     },
                 },
@@ -24,4 +26,4 @@ const config = merge(common, {
     },
 });
 
-module.exports = config;
+export default config;

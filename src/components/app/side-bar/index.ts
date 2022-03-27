@@ -1,4 +1,4 @@
-import { CSSResultGroup, html, LitElement, TemplateResult } from "lit";
+import { CSSResultGroup, html, LitElement, TemplateResult, unsafeCSS } from "lit";
 import { createRef, ref } from "lit/directives/ref.js";
 import { componentStyles } from "~src/global";
 import { CompactListItem } from "~components/common/compact-list";
@@ -110,6 +110,6 @@ export class SideBar extends LitElement {
     }
 
     static get styles(): CSSResultGroup {
-        return [...componentStyles, scopedStyles as never];
+        return [...componentStyles, unsafeCSS(scopedStyles)];
     }
 }

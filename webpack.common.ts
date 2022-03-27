@@ -1,17 +1,21 @@
-const fs = require("fs");
-const TsconfigPathsPlugin = require("tsconfig-paths-webpack-plugin");
-const HtmlWebpackPlugin = require("html-webpack-plugin");
-const FileManagerPlugin = require("filemanager-webpack-plugin");
-const SimpleProgressWebpackPlugin = require("simple-progress-webpack-plugin");
-const { DefinePlugin } = require("webpack");
-const router = require("./router");
-const paths = require("./webpack.paths");
+import fs from "fs";
+import TsconfigPathsPlugin from "tsconfig-paths-webpack-plugin";
+import HtmlWebpackPlugin from "html-webpack-plugin";
+import FileManagerPlugin from "filemanager-webpack-plugin";
+import SimpleProgressWebpackPlugin from "simple-progress-webpack-plugin";
+import { DefinePlugin } from "webpack";
+import router from "./router";
+import paths from "./webpack.paths";
 
 const pages = router.map(config => ({
     ...config,
     keyName: config.source.replace(/\//g, "sl").replace(/-/g, ""),
-    component: fs.readFileSync(`${paths.pages}${config.source}/index.ts`).toString().match(/@customElement\("([^"]+)"\)/)[1],
+    component: fs.readFileSync(`${paths.pages}${config.source}/index.ts`).toString().match(/@customElement\("([^"]+)"\)/)![1],
+    description: "",
 }));
+
+if (!process.env.NODE_ENV)
+    process.env.NODE_ENV = "development";
 
 for (let i = 0; i < pages.length; i++)
     pages[i].outputPath = pages[i].outputPath === undefined ? pages[i].source : pages[i].outputPath;
@@ -69,12 +73,15 @@ const config = {
         }, {
             test: /.(scss|css)$/,
             use: [
-                { loader: "lit-css-loader" },
+                { loader: "css-loader", options: { modules: "global", importLoaders: 1 }},
                 { loader: "sass-loader" },
             ],
         }, {
-            test: /\.(png|svg|jpg|jpeg|gif)$/,
+            test: /\.(png|svg|jpg|jpeg|gif)$/i,
             type: "asset/resource",
+        }, {
+            test: /\.(woff|woff2|eot|ttf|otf)$/i,
+            type: 'asset/resource',
         }],
     },
 
@@ -86,6 +93,6 @@ const config = {
 
 // This plugin brakes stats.json
 if (!process.env.NODE_ENV.endsWith("stats"))
-    config.plugins.push(new SimpleProgressWebpackPlugin());
+    config.plugins.push(new SimpleProgressWebpackPlugin({}));
 
-module.exports = config;
+export default config;

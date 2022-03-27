@@ -1,5 +1,5 @@
 /* eslint-disable indent */
-import { CSSResultGroup, html, LitElement, PropertyValues, TemplateResult } from "lit";
+import { CSSResultGroup, html, LitElement, PropertyValues, TemplateResult, unsafeCSS } from "lit";
 import { componentStyles } from "~src/global";
 import { defineComponent } from "~utils/components";
 import { property, state } from "lit/decorators.js";
@@ -174,6 +174,6 @@ export class TaskTable extends LitElement {
     }
 
     static get styles(): CSSResultGroup {
-        return [...componentStyles, scopedStyles as never];
+        return [...componentStyles, unsafeCSS(scopedStyles)];
     }
 }

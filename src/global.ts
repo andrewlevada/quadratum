@@ -6,9 +6,17 @@ import { getAuth, onAuthStateChanged } from "@firebase/auth";
 import { BrowserTracing } from "@sentry/tracing";
 import { init, setUser } from "@sentry/browser";
 import "~utils/prototypes";
+import { css, unsafeCSS } from "lit";
+import gropledFont from "./assets/fonts/Gropled-Bold.otf";
 
-export const componentStyles = [globalStyles, layoutHelperStyles];
-export const pageStyles = [globalStyles, globalPageStyles, layoutHelperStyles];
+export const componentStyles = [unsafeCSS(globalStyles), unsafeCSS(layoutHelperStyles), css`
+  @font-face {
+    font-family: "Gropled";
+    src: url(${unsafeCSS(gropledFont)}) format("otf");
+  }
+`];
+
+export const pageStyles = [...componentStyles, unsafeCSS(globalPageStyles)];
 
 initEnv();
 function initEnv(): void {
