@@ -25,7 +25,7 @@ export default class AppPageSprintList extends AppPageElement {
                         this.hideDoneTasks = !this.hideDoneTasks;
                     }}></mwc-button>
                 </div>
-                
+
                 ${this.sprint ? html`
                     <task-table .tasks=${this.hideDoneTasks ? this.tasks!.filter(v => !v.isDone()) : this.tasks}
                                 origin="sprint" .isCurrentSprint=${this.isCurrentSprint}
@@ -35,14 +35,17 @@ export default class AppPageSprintList extends AppPageElement {
         `;
     }
 
-    public requestReload(): void {
-        const sprintNumber = Number(window.location.pathname.split("/").last());
+    requestReload() {
+        super.requestReload();
+        const path = window.location.pathname.split("/");
+        if (path.length !== 4 || path[2] !== "sprint") return;
+        const sprintNumber = Number(path.last());
         Promise.all([Sprint.fromNumber(sprintNumber), Sprint.tasks(sprintNumber), getCurrentSprintNumber()])
             .then(([sprint, tasks, currentSprintNumber]) => {
                 this.sprint = sprint;
                 this.tasks = tasks;
                 this.isCurrentSprint = currentSprintNumber === sprintNumber;
-            });
+            }).catch();
     }
 
     private pageHeader(): string {

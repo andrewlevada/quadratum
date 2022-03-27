@@ -1,4 +1,4 @@
-import { css, CSSResultGroup, html, LitElement, TemplateResult, unsafeCSS } from "lit";
+import { css, CSSResultGroup, html, TemplateResult, unsafeCSS } from "lit";
 import { customElement } from "lit/decorators.js";
 import { pageStyles } from "~src/global";
 import googleIcon from "~assets/icons/logo_google.svg";
@@ -6,11 +6,12 @@ import { getAuth, GoogleAuthProvider, signInWithPopup } from "@firebase/auth";
 import { initializeUser } from "~services/user-service";
 import backgroundImage from "~assets/images/enter-bg.png";
 import logoImage from "~assets/icons/logo.svg";
+import { AppPageElement } from "~components/app/router/app-router";
 import scopedStyles from "./styles.lit.scss";
 import "@material/mwc-fab";
 
-@customElement("enter-page")
-export default class EnterPage extends LitElement {
+@customElement("app-page--enter")
+export default class EnterPage extends AppPageElement {
     render(): TemplateResult {
         return html`
             <div class="flex row justify-end align-center full-width full-height wrapper">

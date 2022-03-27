@@ -1,5 +1,5 @@
 import globalStyles from "~src/styles/global.lit.scss";
-import globalPageStyles from "~src/pages/global-styles.scss";
+import globalPageStyles from "~src/pages/global-styles.lit.scss";
 import layoutHelperStyles from "~src/styles/tiny-layout-helper.lit.scss";
 import { initializeApp } from "@firebase/app";
 import { getAuth, onAuthStateChanged } from "@firebase/auth";

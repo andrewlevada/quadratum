@@ -5,26 +5,27 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title><%= title %></title>
-    <meta name="description" content="<%= description %>">
+    <title>Quadratum</title>
+    <meta name="description" content="TODO">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Display:wght@400;500&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Material+Icons&display=block" rel="stylesheet">
 
+    <!--suppress HtmlUnknownTarget (load default components)-->
+    <script type="module" src="/build/default-script.js"></script>
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-66V8TPLHHX"></script>
     <script>
 		window.dataLayer = window.dataLayer || [];
 		function gtag() { dataLayer.push(arguments); }
         window.gtag = gtag;
-		// gtag("config", "G-66V8TPLHHX");
     </script>
 </head>
 
 <body>
 
-<%= component %>
+<app-router></app-router>
 
 </body>
 

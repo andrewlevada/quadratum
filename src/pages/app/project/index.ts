@@ -27,7 +27,7 @@ export default class AppPageProject extends AppPageElement {
         return html`
             <div class="flex col app-page">
                 <div class="flex row justify-between align-center full-width">
-                    <div class="flex row">
+                    <div class="flex row align-center">
                         <span class="color-indicator" style="background: ${this.project?.color || "#dedede"}"></span>
                         <h4>Project: ${this.project?.label || ""} ${this.project?.isArchived ? "(Archived)" : ""}</h4>
                     </div>
@@ -79,18 +79,21 @@ export default class AppPageProject extends AppPageElement {
     private projectLabelTextfield = createRef<TextField>();
 
     public requestReload(): void {
-        const projectId = window.location.pathname.split("/").last();
+        super.requestReload();
+        const path = window.location.pathname.split("/");
+        if (path.length !== 4 || path[2] !== "project") return;
+        const projectId = path.last();
 
         if (projectId === "none") {
             this.noneProject = true;
             Project.backlogTasks("none").then(tasks => {
                 this.tasks = tasks;
-            });
+            }).catch();
         } else Promise.all([Project.fromId(projectId), Project.backlogTasks(projectId)])
             .then(([project, tasks]) => {
                 this.project = project;
                 this.tasks = tasks;
-            });
+            }).catch();
     }
 
     private openSettingsDialog(): void {

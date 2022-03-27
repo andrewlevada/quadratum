@@ -28,16 +28,13 @@ export default class AppPageDailyList extends AppPageElement {
                         }}></mwc-button>
                     ` : ""}
                 </div>
-                
+
                 ${this.tasks ? html`
                     <task-table .tasks=${this.tasks} origin="daily"></task-table>
                 ` : ""}
             </div>
         `;
     }
-
-    // eslint-disable-next-line class-methods-use-this,@typescript-eslint/no-empty-function
-    requestReload(): void { }
 
     connectedCallback() {
         super.connectedCallback();

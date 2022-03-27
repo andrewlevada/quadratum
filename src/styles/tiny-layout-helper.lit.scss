@@ -1,4 +1,4 @@
-@import "global.lit";
+@import "./global.lit";
 
 @mixin flex-gap($margin) {
   & > *:not(:last-child) {

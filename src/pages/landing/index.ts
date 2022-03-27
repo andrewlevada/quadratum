@@ -1,11 +1,12 @@
-import { css, CSSResultGroup, html, LitElement, TemplateResult } from "lit";
+import { css, CSSResultGroup, html, TemplateResult } from "lit";
 import { customElement } from "lit/decorators.js";
 import { pageStyles } from "~src/global";
 import { getAuth } from "@firebase/auth";
+import { AppPageElement } from "~components/app/router/app-router";
 import scopedStyles from "./styles.lit.scss";
 
-@customElement("landing-page")
-export default class LandingPage extends LitElement {
+@customElement("app-page--landing")
+export default class LandingPage extends AppPageElement {
     render(): TemplateResult {
         return html`
             <div class="container">

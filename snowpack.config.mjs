@@ -6,7 +6,6 @@ export default {
   },
   plugins: [
     'snowpack-lit-scss-plugin',
-    "tsconfig-paths-snowpack-plugin",
     [
       '@snowpack/plugin-typescript',
       {
@@ -14,23 +13,28 @@ export default {
         ...(process.versions.pnp ? { tsc: 'yarn pnpify tsc' } : {}),
       },
     ],
+    [
+      'snowpack-plugin-replace',
+      {
+        list: [
+          {
+            from: 'PRODUCTION',
+            to: isProduction()
+          }
+        ],
+      },
+    ]
   ],
   routes: [
     /* Enable an SPA Fallback in development: */
     { "match": "routes", "src": ".*", "dest": "/index.html" },
   ],
   optimize: {
-    /* Example: Bundle your final build: */
-    // "bundle": true,
-  },
-  packageOptions: {
-    /* ... */
+    "bundle": isProduction(),
   },
   devOptions: {
-    /* ... */
-  },
-  buildOptions: {
-    /* ... */
+    port: 2797,
+    open: "none",
   },
   alias: {
     "~services": "./src/services",
@@ -40,3 +44,7 @@ export default {
     "~src": "./src"
   },
 };
+
+function isProduction() {
+  return process.env.NODE_ENV === "production";
+}
