@@ -1,6 +1,4 @@
-import { createNewSprint,
-    fetchSprintByNumber,
-    getCurrentSprintNumber } from "~services/sprint/data";
+import { createNewSprint, fetchSprintByNumber, getCurrentSprintNumber } from "~services/sprint/data";
 import { getSprintAnchor } from "~services/user-service";
 import Task from "~services/task";
 import { fetchTasksWithFilter } from "~services/task/data";

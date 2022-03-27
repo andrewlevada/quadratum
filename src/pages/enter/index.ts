@@ -1,12 +1,12 @@
 import { css, CSSResultGroup, html, LitElement, TemplateResult, unsafeCSS } from "lit";
 import { customElement } from "lit/decorators.js";
 import { pageStyles } from "~src/global";
-import googleIcon from "~src/assets/icons/logo_google.svg";
+import googleIcon from "~assets/icons/logo_google.svg";
 import { getAuth, GoogleAuthProvider, signInWithPopup } from "@firebase/auth";
 import { initializeUser } from "~services/user-service";
-import backgroundImage from "~src/assets/images/enter-bg.png";
-import logoImage from "~src/assets/icons/logo.svg";
-import scopedStyles from "./styles.module.scss";
+import backgroundImage from "~assets/images/enter-bg.png";
+import logoImage from "~assets/icons/logo.svg";
+import scopedStyles from "./styles.lit.scss";
 import "@material/mwc-fab";
 
 @customElement("enter-page")
@@ -42,7 +42,7 @@ export default class EnterPage extends LitElement {
     static get styles(): CSSResultGroup {
         // Styles can either be in this file (only css)
         // or imported from another file (scss in this case)
-        return [...pageStyles, unsafeCSS(scopedStyles), css`
+        return [...pageStyles, scopedStyles, css`
           #logo {
             position: absolute;
             left: 80px;

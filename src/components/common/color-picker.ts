@@ -4,7 +4,7 @@ import { defineComponent } from "~utils/components";
 import { property } from "lit/decorators.js";
 import { getNiceColor, hexToNumber } from "~utils/color";
 import { Slider } from "@material/mwc-slider";
-import { ref, createRef } from "lit/directives/ref.js";
+import { createRef, ref } from "lit/directives/ref.js";
 import "@material/mwc-slider";
 import { HCT } from "@material/material-color-utilities";
 

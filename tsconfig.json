@@ -6,27 +6,17 @@
     "module": "ESNext",
     "baseUrl": ".",
     "paths": {
-      "~services/*": [
-        "./src/services/*"
-      ],
-      "~components/*": [
-        "./src/components/*"
-      ],
-      "~utils/*": [
-        "./src/utils/*"
-      ],
-      "~styles/*": [
-        "./src/assets/styles/*"
-      ],
-      "~src/*": [
-        "./src/*"
-      ]
+      "~services/*": ["./src/services/*"],
+      "~components/*": ["./src/components/*"],
+      "~utils/*": ["./src/utils/*"],
+      "~assets/*": ["./assets/*"],
+      "~src/*": ["./src/*"]
     },
     "strict": true,
     "allowSyntheticDefaultImports": true,
     "moduleResolution": "node",
     "sourceMap": true,
     "inlineSources": true,
-    "esModuleInterop": true,
-  },
+    "esModuleInterop": true
+  }
 }

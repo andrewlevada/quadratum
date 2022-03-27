@@ -1,12 +1,15 @@
 import { deleteTask,
     fetchTaskById,
     fetchTasksByIds,
-    fetchTasksWithFilter, postTask,
+    fetchTasksWithFilter,
+    postTask,
     updateTask } from "~services/task/data";
-import { deleteField, DocumentData,
+import { deleteField,
+    DocumentData,
     FirestoreDataConverter,
     PartialWithFieldValue,
-    QueryDocumentSnapshot, where,
+    QueryDocumentSnapshot,
+    where,
     WithFieldValue } from "@firebase/firestore";
 import { getCurrentSprintNumber } from "~services/sprint/data";
 import { TaskContextModifier } from "~services/task/task-context-modifier";

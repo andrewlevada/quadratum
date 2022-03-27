@@ -1,4 +1,4 @@
-import { CSSResultGroup, html, LitElement, TemplateResult, unsafeCSS } from "lit";
+import { CSSResultGroup, html, LitElement, TemplateResult } from "lit";
 import { createRef, ref } from "lit/directives/ref.js";
 import { componentStyles } from "~src/global";
 import { CompactListItem } from "~components/common/compact-list";
@@ -11,7 +11,7 @@ import Project from "~services/project";
 import Sprint from "~services/sprint";
 import { Dialog } from "@material/mwc-dialog";
 import { TextField } from "@material/mwc-textfield";
-import scopedStyles from "./styles.module.scss";
+import scopedStyles from "./styles.lit.scss";
 
 import("~components/common/color-picker").then(f => f.default());
 import("~components/common/compact-list").then(f => f.default());
@@ -110,6 +110,6 @@ export class SideBar extends LitElement {
     }
 
     static get styles(): CSSResultGroup {
-        return [...componentStyles, unsafeCSS(scopedStyles)];
+        return [...componentStyles, scopedStyles];
     }
 }

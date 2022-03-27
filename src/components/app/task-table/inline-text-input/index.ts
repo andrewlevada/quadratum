@@ -1,9 +1,9 @@
 /* eslint-disable */
-import { CSSResultGroup, html, LitElement, PropertyValues, TemplateResult, unsafeCSS } from "lit";
+import { CSSResultGroup, html, LitElement, PropertyValues, TemplateResult } from "lit";
 import { property, query } from "lit/decorators.js";
 import { componentStyles } from "~src/global";
 import { defineComponent } from "~utils/components";
-import scopedStyles from "./styles.module.scss";
+import scopedStyles from "./styles.lit.scss";
 
 export default (): void => defineComponent("inline-text-input", InlineTextInput);
 export class InlineTextInput extends LitElement {
@@ -38,6 +38,6 @@ export class InlineTextInput extends LitElement {
     }
 
     static get styles(): CSSResultGroup {
-        return [...componentStyles, unsafeCSS(scopedStyles)];
+        return [...componentStyles, scopedStyles];
     }
 }

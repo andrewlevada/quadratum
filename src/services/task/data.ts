@@ -4,9 +4,11 @@ import { addDoc,
     deleteDoc,
     doc,
     getDoc,
-    getDocs, orderBy,
+    getDocs,
+    orderBy,
     query,
-    QueryConstraint, setDoc,
+    QueryConstraint,
+    setDoc,
     where } from "@firebase/firestore";
 import { userDoc } from "~services/tools";
 

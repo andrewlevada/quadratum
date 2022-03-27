@@ -1,12 +1,12 @@
 /* eslint-disable indent */
-import { CSSResultGroup, html, LitElement, PropertyValues, TemplateResult, unsafeCSS } from "lit";
+import { CSSResultGroup, html, LitElement, PropertyValues, TemplateResult } from "lit";
 import { componentStyles } from "~src/global";
 import { defineComponent } from "~utils/components";
 import { property, state } from "lit/decorators.js";
 import Task, { ActionOrigin } from "~services/task";
 import { getCurrentSprintNumber } from "~services/sprint/data";
 import Project from "~services/project";
-import scopedStyles from "./styles.module.scss";
+import scopedStyles from "./styles.lit.scss";
 import "@material/mwc-icon-button";
 
 import("~components/common/color-chip").then(f => f.default());
@@ -174,6 +174,6 @@ export class TaskTable extends LitElement {
     }
 
     static get styles(): CSSResultGroup {
-        return [...componentStyles, unsafeCSS(scopedStyles)];
+        return [...componentStyles, scopedStyles];
     }
 }

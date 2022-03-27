@@ -1,22 +1,14 @@
-import globalStyles from "~styles/global.scss";
+import globalStyles from "~src/styles/global.lit.scss";
 import globalPageStyles from "~src/pages/global-styles.scss";
-import layoutHelperStyles from "~styles/tiny-layout-helper.scss";
+import layoutHelperStyles from "~src/styles/tiny-layout-helper.lit.scss";
 import { initializeApp } from "@firebase/app";
 import { getAuth, onAuthStateChanged } from "@firebase/auth";
 import { BrowserTracing } from "@sentry/tracing";
 import { init, setUser } from "@sentry/browser";
 import "~utils/prototypes";
-import { css, unsafeCSS } from "lit";
-import gropledFont from "./assets/fonts/Gropled-Bold.otf";
 
-export const componentStyles = [unsafeCSS(globalStyles), unsafeCSS(layoutHelperStyles), css`
-  @font-face {
-    font-family: "Gropled";
-    src: url(${unsafeCSS(gropledFont)}) format("otf");
-  }
-`];
-
-export const pageStyles = [...componentStyles, unsafeCSS(globalPageStyles)];
+export const componentStyles = [globalStyles, layoutHelperStyles];
+export const pageStyles = [...componentStyles, globalPageStyles];
 
 initEnv();
 function initEnv(): void {

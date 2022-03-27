@@ -1,9 +1,14 @@
-@import "./reset";
-@import "./theming";
+@import "reset.css";
+@import "theming.lit";
 
 :host {
   box-sizing: border-box;
   line-height: 100%;
+}
+
+@font-face {
+  font-family: "Gropled";
+  src: url("../../assets/fonts/Gropled-Bold.otf") format("otf");
 }
 
 a {

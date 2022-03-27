@@ -1,4 +1,4 @@
-import { CSSResultGroup, html, LitElement, PropertyValues, TemplateResult, unsafeCSS } from "lit";
+import { CSSResultGroup, html, LitElement, PropertyValues, TemplateResult } from "lit";
 import { property, query } from "lit/decorators.js";
 import { componentStyles } from "~src/global";
 import { defineComponent } from "~utils/components";
@@ -11,7 +11,7 @@ import { Section } from "~components/app/task-table";
 import { Menu } from "@material/mwc-menu";
 import { ifDefined } from "lit/directives/if-defined.js";
 import { TaskContextModifier } from "~services/task/task-context-modifier";
-import scopedStyles from "./styles.module.scss";
+import scopedStyles from "./styles.lit.scss";
 
 export default (): void => defineComponent("progress-line", ProgressLine);
 export class ProgressLine extends LitElement {
@@ -212,6 +212,6 @@ export class ProgressLine extends LitElement {
     }
 
     static get styles(): CSSResultGroup {
-        return [...componentStyles, unsafeCSS(scopedStyles)];
+        return [...componentStyles, scopedStyles];
     }
 }
