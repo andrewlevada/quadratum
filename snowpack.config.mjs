@@ -30,7 +30,7 @@ export default {
     { "match": "routes", "src": ".*", "dest": "/index.html" },
   ],
   optimize: {
-    "bundle": isProduction(),
+    "bundle": false, // TODO: Fix bundling side effects
   },
   devOptions: {
     port: 2797,
