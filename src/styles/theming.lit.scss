@@ -1,13 +1,13 @@
 :root, :host {
     --mdc-theme-primary: var(--md-sys-color-primary);
     --mdc-theme-secondary: var(--md-sys-color-secondary);
-    --mdc-theme-surface: var(--md-sys-color-surface);
+    --mdc-theme-surface: var(--md-sys-color-surface-variant);
     --mdc-theme-background: var(--md-sys-color-background);
     --mdc-theme-outline: var(--md-sys-color-outline);
 
     --mdc-theme-on-primary: var(--md-sys-color-on-primary);
     --mdc-theme-on-secondary: var(--md-sys-color-on-secondary);
-    --mdc-theme-on-surface: var(--md-sys-color-on-surface);
+    --mdc-theme-on-surface: var(--md-sys-color-on-surface-variant);
 
     --mdc-shape-small: 16px;
     --mdc-shape-medium: 16px;
@@ -16,11 +16,21 @@
     --mdc-typography-font-family: "Noto Sans Display";
     --mdc-typography-button-line-height: 100%;
     --mdc-icon-font: "Material Icons Round";
+    --mdc-theme-text-primary-on-background: var(--md-sys-color-on-surface-variant);
+    --mdc-theme-text-icon-on-background: var(--md-sys-color-on-surface-variant);
+    --mdc-dialog-heading-ink-color: var(--md-sys-color-on-surface);
+    --mdc-text-field-fill-color: var(--md-sys-color-surface-variant);
+    --mdc-text-field-ink-color: var(--md-sys-color-on-surface-variant);
 
     --mdc-list-item-graphic-margin: 16px;
+}
 
-    // M3 Styles
+mwc-dialog {
+    --mdc-theme-surface: var(--md-sys-color-surface);
+}
 
+// M3 Styles
+:root, :host {
     --md-sys-color-primary-light: #006874;
     --md-sys-color-on-primary-light: #ffffff;
     --md-sys-color-primary-container-light: #8ef1ff;
@@ -127,5 +137,4 @@
         --md-sys-color-inverse-surface: var(--md-sys-color-inverse-surface-dark);
         --md-sys-color-inverse-on-surface: var(--md-sys-color-inverse-on-surface-dark);
     }
-
 }

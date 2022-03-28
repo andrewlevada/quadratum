@@ -22,14 +22,14 @@ export class ColorChip extends LitElement {
 
     protected updated(_changedProperties: PropertyValues) {
         super.updated(_changedProperties);
-        if (this.color !== "#dedede") {
-            const scheme = Scheme.light(Number.parseInt(this.color.substring(1), 16));
-            this.div.style.background = numberToHex(scheme.primaryContainer);
-            this.p.style.color = numberToHex(scheme.onPrimaryContainer);
-        } else {
-            this.div.style.background = this.color;
-            this.p.style.color = "#111111";
-        }
+        const color = Number.parseInt(this.color.substring(1), 16);
+        const scheme = ColorChip.isDark() ? Scheme.dark(color) : Scheme.light(color);
+        this.div.style.background = numberToHex(scheme.primaryContainer);
+        this.p.style.color = numberToHex(scheme.onPrimaryContainer);
+    }
+
+    private static isDark() {
+        return window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
     }
 
     static get styles(): CSSResultGroup {
@@ -39,17 +39,17 @@ export class ColorChip extends LitElement {
             flex-direction: row;
             align-items: center;
           }
-          
+
           div {
             width: fit-content;
             height: 32px;
-            
+
             padding-left: 16px;
             padding-right: 16px;
-            
+
             border-radius: 8px;
           }
-          
+
           p {
             font-size: 15px;
           }

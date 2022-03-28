@@ -83,8 +83,13 @@ export class AppRouter extends LitElement {
 
     static get styles(): CSSResultGroup {
         return [...componentStyles, css`
-          width: 100%;
-          height: 100%;
+          :host {
+            background-color: var(--md-sys-color-background);
+            color: var(--mdc-theme-on-surface);
+            width: 100%;
+            height: 100%;
+            display: block;
+          }
         `];
     }
 

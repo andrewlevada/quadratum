@@ -9,6 +9,7 @@ export class DrawerFixed extends Drawer {
         return [...Drawer.styles, css`
           .mdc-drawer {
             border: none !important;
+            background: var(--md-sys-color-background);
           }
         `];
     }
