@@ -1,6 +1,6 @@
 // eslint-disable-next-line max-classes-per-file
-import { css, CSSResultGroup, LitElement, PropertyValues, TemplateResult } from "lit";
-import { html, unsafeStatic } from "lit/static-html.js";
+import { css, CSSResultGroup, LitElement, PropertyValues, TemplateResult, html } from "lit";
+import { html as staticHtml, unsafeStatic } from "lit/static-html.js";
 import { query, state } from "lit/decorators.js";
 import { componentStyles } from "~src/global";
 import { defineComponent } from "~utils/components";
@@ -26,16 +26,20 @@ export class AppRouter extends LitElement {
     @state() withSidebar: boolean = false;
 
     @query("#page-element") pageElement!: AppPageElement;
+    @query("side-bar") sideBarElement!: LitElement;
+
+    private static memoryLeak: AppRouter;
 
     render(): TemplateResult {
         if (!this.page) return html``;
 
         const tag = unsafeStatic(`app-page--${this.page.tag}`);
         return this.withSidebar ? html`
-            <side-bar>
+            <side-bar .pageTag=${this.page.tag}>${staticHtml`
                 <${tag} id="page-element"></${tag}>
+               `}
             </side-bar>
-        ` : html`
+        ` : staticHtml`
             <${tag} id="page-element"></${tag}>
         `;
     }
@@ -43,13 +47,14 @@ export class AppRouter extends LitElement {
     connectedCallback() {
         super.connectedCallback();
         this.updatePage();
-        window.addEventListener("history_push", () => this.updatePage());
+        AppRouter.memoryLeak = this;
     }
 
     private updatePage(): void {
         const newPage = this.choosePage();
         if (this.page && this.page.tag === newPage.tag) {
             this.pageElement.requestReload();
+            this.sideBarElement.requestUpdate();
             return;
         }
 
@@ -81,5 +86,10 @@ export class AppRouter extends LitElement {
           width: 100%;
           height: 100%;
         `];
+    }
+
+    public static goTo(href: string): void {
+        window.history.pushState(null, "Quadratum", href);
+        AppRouter.memoryLeak.updatePage();
     }
 }

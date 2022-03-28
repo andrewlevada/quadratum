@@ -1,20 +1,49 @@
-$margin: 24px;
-
 #drawer-content {
-  padding-left: $margin;
-  padding-right: $margin;
+  padding-left: 12px;
+  padding-right: 12px;
+
+  background-color: var(--md-sys-color-surface);
 
   & > * {
-    margin-top: $margin;
     width: 100%;
+    height: 56px;
+
+    padding-left: 16px;
+    padding-right: 16px;
+
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+    border-radius: 28px;
+
+    color: var(--md-sys-color-on-surface);
+
+    &.active {
+      background-color: var(--md-sys-color-primary-container);
+
+      & > * {
+        color: var(--md-sys-color-on-primary-container) !important;
+      }
+    }
 
     &:last-child {
-      margin-bottom: $margin;
+      margin-bottom: 28px;
+    }
+
+    span {
+      font-size: 24px;
+      margin-right: 12px;
     }
   }
 }
 
+#title-text {
+  font-family: "Gropled", serif;
+  font-size: 20px;
+}
+
 #app-content {
-  padding-left: 60px;
-  padding-right: 60px;
+  padding-left: 56px;
+  padding-right: 56px;
 }

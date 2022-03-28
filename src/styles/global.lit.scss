@@ -12,11 +12,12 @@ a {
 }
 
 .material-icons {
-  font-family: "Material Icons", sans-serif;
+  font-family: "Material Icons Round", sans-serif;
+  pointer-events: none;
 }
 
 p, h1, h2, h3, h4, h5, h6, a, input {
-  color: var(--mdc-theme-on-surface);
+  //color: var(--mdc-theme-on-surface);
   font-family: "Noto Sans Display", sans-serif;
   -webkit-font-feature-settings: "liga";
   -webkit-font-smoothing: antialiased;
