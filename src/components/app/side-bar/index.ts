@@ -37,6 +37,8 @@ export class SideBar extends LitElement {
                     ${SideBar.markActive(this.getProjectsList()).map(item => html`
                         <side-bar--item .item=${item}></side-bar--item>
                     `)}
+
+                    <mwc-button label="Create project" icon="add" @click=${() => this.newProjectDialogState(true)}></mwc-button>
                 </div>
                 <div id="app-content" slot="appContent">
                     <slot></slot>

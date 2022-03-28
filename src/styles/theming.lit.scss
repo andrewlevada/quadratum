@@ -1,13 +1,13 @@
 :root, :host {
-    --mdc-theme-primary: #944b00;
-    --mdc-theme-secondary: #755945;
-    --mdc-theme-surface: #fcfcfc;
-    --mdc-theme-background: #fcfcfc;
-    --mdc-theme-outline: #84746a1F;
+    --mdc-theme-primary: var(--md-sys-color-primary);
+    --mdc-theme-secondary: var(--md-sys-color-secondary);
+    --mdc-theme-surface: var(--md-sys-color-surface);
+    --mdc-theme-background: var(--md-sys-color-background);
+    --mdc-theme-outline: var(--md-sys-color-outline);
 
-    --mdc-theme-on-primary: #ffffff;
-    --mdc-theme-on-secondary: #ffffff;
-    --mdc-theme-on-surface: #201a17;
+    --mdc-theme-on-primary: var(--md-sys-color-on-primary);
+    --mdc-theme-on-secondary: var(--md-sys-color-on-secondary);
+    --mdc-theme-on-surface: var(--md-sys-color-on-surface);
 
     --mdc-shape-small: 16px;
     --mdc-shape-medium: 16px;

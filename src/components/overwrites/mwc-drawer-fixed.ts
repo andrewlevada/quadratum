@@ -8,7 +8,7 @@ export class DrawerFixed extends Drawer {
     static get styles(): CSSResult[] {
         return [...Drawer.styles, css`
           .mdc-drawer {
-            border-color: var(--mdc-theme-outline, rgba(0, 0, 0, 0.12)) !important;
+            border: none !important;
           }
         `];
     }
