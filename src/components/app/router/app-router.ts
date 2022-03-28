@@ -6,11 +6,9 @@ import { componentStyles } from "~src/global";
 import { defineComponent } from "~utils/components";
 
 interface PageInfo {
-    tag: PageTag;
+    tag: string;
     importPath?: string;
 }
-
-type PageTag = "landing" | "enter" | "sprint" | "daily" | "project" | "not-found";
 
 export abstract class AppPageElement extends LitElement {
     // eslint-disable-next-line class-methods-use-this,@typescript-eslint/no-empty-function
@@ -70,6 +68,7 @@ export class AppRouter extends LitElement {
         if (path === "/") return { tag: "landing" };
 
         this.withSidebar = path.startsWith("/app");
+        if (path === "/app") return { tag: "home", importPath: "/app" };
         if (path === "/app/daily") return { tag: "daily", importPath: "/app" };
         if (path.startsWith("/app/sprint/")) return { tag: "sprint", importPath: "/app" };
         if (path.startsWith("/app/project/")) return { tag: "project", importPath: "/app" };
