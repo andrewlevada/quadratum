@@ -36,6 +36,9 @@ export default {
     port: 2797,
     open: "none",
   },
+  packageOptions: {
+    knownEntrypoints: ["lit-element", "@lit/reactive-element/decorators/base.js"]
+  },
   alias: {
     "~services": "./src/services",
     "~components": "./src/components",

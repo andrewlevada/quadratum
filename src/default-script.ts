@@ -1,1 +1,3 @@
-import("~components/app/router/app-router").then(f => f.default());
+import appRouter from "~components/app/router/app-router";
+
+appRouter();
