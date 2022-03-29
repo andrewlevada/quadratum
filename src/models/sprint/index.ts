@@ -1,7 +1,7 @@
-import { createNewSprint, fetchSprintByNumber, getCurrentSprintNumber } from "~services/sprint/data";
-import { getSprintAnchor } from "~services/user-service";
-import Task from "~services/task";
-import { fetchTasksWithFilter } from "~services/task/data";
+import { createNewSprint, fetchSprintByNumber, getCurrentSprintNumber } from "~src/models/sprint/data";
+import { getSprintAnchor } from "~src/models/user-service";
+import Task from "~src/models/task";
+import { fetchTasksWithFilter } from "~src/models/task/data";
 import { DocumentData,
     FirestoreDataConverter,
     PartialWithFieldValue,

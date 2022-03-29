@@ -3,7 +3,7 @@ import { deleteTask,
     fetchTasksByIds,
     fetchTasksWithFilter,
     postTask,
-    updateTask } from "~services/task/data";
+    updateTask } from "~src/models/task/data";
 import { deleteField,
     DocumentData,
     FirestoreDataConverter,
@@ -11,9 +11,9 @@ import { deleteField,
     QueryDocumentSnapshot,
     where,
     WithFieldValue } from "@firebase/firestore";
-import { getCurrentSprintNumber } from "~services/sprint/data";
-import { TaskContextModifier } from "~services/task/task-context-modifier";
-import { getSprintAnchorSync } from "~services/user-service";
+import { getCurrentSprintNumber } from "~src/models/sprint/data";
+import { TaskContextModifier } from "~src/models/task/task-context-modifier";
+import { getSprintAnchorSync } from "~src/models/user-service";
 
 export type ActionOrigin = "daily" | "sprint" | "backlog";
 

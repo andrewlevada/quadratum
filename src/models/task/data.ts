@@ -1,4 +1,4 @@
-import Task from "~services/task";
+import Task from "~src/models/task";
 import { addDoc,
     collection,
     deleteDoc,
@@ -10,7 +10,7 @@ import { addDoc,
     QueryConstraint,
     setDoc,
     where } from "@firebase/firestore";
-import { userDoc } from "~services/tools";
+import { userDoc } from "~src/models/tools";
 
 export type PartialTaskWithId = Partial<Task> & { id: string };
 

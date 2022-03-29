@@ -1,7 +1,7 @@
 import { getDoc, setDoc } from "@firebase/firestore";
-import Sprint from "~services/sprint";
-import { userDoc } from "~services/tools";
-import { createNewSprint } from "~services/sprint/data";
+import Sprint from "./sprint";
+import { userDoc } from "./tools";
+import { createNewSprint } from "./sprint/data";
 
 export interface UserDocument {
     sprintAnchor: SprintAnchor;

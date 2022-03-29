@@ -1,7 +1,7 @@
 import { css, CSSResultGroup, html, TemplateResult } from "lit";
 import { customElement, state } from "lit/decorators.js";
 import { pageStyles } from "~src/global";
-import Task from "~services/task";
+import Task from "~src/models/task";
 import "@material/mwc-button";
 import { AppPageElement } from "~components/app/router/app-router";
 

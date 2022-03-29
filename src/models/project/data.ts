@@ -1,6 +1,6 @@
-import Project from "~services/project";
+import Project from "~src/models/project";
 import { addDoc, collection, doc, getDoc, getDocs, orderBy, query, setDoc } from "@firebase/firestore";
-import { userDoc } from "~services/tools";
+import { userDoc } from "~src/models/tools";
 
 export async function postProject(project: Project): Promise<Project> {
     const snap = await addDoc(collection(userDoc(), "projects").withConverter(Project.converter), project);

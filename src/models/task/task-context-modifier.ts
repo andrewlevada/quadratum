@@ -1,4 +1,4 @@
-import Task from "~services/task/index";
+import Task from "~src/models/task/index";
 
 export class TaskContextModifier {
     private readonly task: Task;

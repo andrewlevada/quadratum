@@ -1,6 +1,6 @@
-import { fetchAllProjects, fetchProjectById, postProject, updateProject } from "~services/project/data";
-import Task from "~services/task";
-import { fetchTasksWithFilter } from "~services/task/data";
+import { fetchAllProjects, fetchProjectById, postProject, updateProject } from "~src/models/project/data";
+import Task from "~src/models/task";
+import { fetchTasksWithFilter } from "~src/models/task/data";
 import { DocumentData,
     FirestoreDataConverter,
     PartialWithFieldValue,

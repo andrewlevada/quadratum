@@ -3,9 +3,9 @@ import { CSSResultGroup, html, LitElement, PropertyValues, TemplateResult } from
 import { componentStyles } from "~src/global";
 import { defineComponent } from "~utils/components";
 import { property, state } from "lit/decorators.js";
-import Task, { ActionOrigin } from "~services/task";
-import { getCurrentSprintNumber } from "~services/sprint/data";
-import Project from "~services/project";
+import Task, { ActionOrigin } from "~src/models/task";
+import { getCurrentSprintNumber } from "~src/models/sprint/data";
+import Project from "~src/models/project";
 import scopedStyles from "./styles.lit.scss";
 import "@material/mwc-icon-button";
 

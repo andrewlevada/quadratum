@@ -5,12 +5,12 @@ import { defineComponent } from "~utils/components";
 import "@material/mwc-icon-button";
 import "@material/mwc-icon";
 import "@material/mwc-menu";
-import Task, { ActionOrigin } from "~services/task";
-import { getCurrentSprintNumber } from "~services/sprint/data";
+import Task, { ActionOrigin } from "~src/models/task";
+import { getCurrentSprintNumber } from "~src/models/sprint/data";
 import { Section } from "~components/app/task-table";
 import { Menu } from "@material/mwc-menu";
 import { ifDefined } from "lit/directives/if-defined.js";
-import { TaskContextModifier } from "~services/task/task-context-modifier";
+import { TaskContextModifier } from "~src/models/task/task-context-modifier";
 import scopedStyles from "./styles.lit.scss";
 
 export default (): void => defineComponent("progress-line", ProgressLine);
