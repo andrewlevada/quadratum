@@ -33,7 +33,7 @@ export class SideBar extends LitElement {
                     ${SideBar.markActive(this.getItems()).map(item => html`
                         <side-bar--item .item=${item}></side-bar--item>
                     `)}
-                    <div class="header"><p>Projects</p></div>
+                    <div class="header"><p>${SideBar.isNewDesign() ? "Scopes of focus" : "Projects"}</p></div>
                     ${SideBar.markActive(this.getProjectsList()).map(item => html`
                         <side-bar--item .item=${item}></side-bar--item>
                     `)}
@@ -74,7 +74,7 @@ export class SideBar extends LitElement {
     }
 
     private getItems(): Item[] {
-        if (localStorage.getItem("qu-new-design")) return [
+        if (SideBar.isNewDesign()) return [
             { icon: "home", label: "Home", link: "" },
             { icon: "account_tree", label: "Life Map", link: "/map" },
             { icon: "flag", label: "Milestones", link: "/milestones" },
@@ -95,6 +95,7 @@ export class SideBar extends LitElement {
 
     connectedCallback() {
         super.connectedCallback();
+        if (SideBar.isNewDesign()) return;
         const [lastWeekDate, nextWeekDate] = [new Date(), new Date()];
         lastWeekDate.setDate(lastWeekDate.getDate() - 7);
         nextWeekDate.setDate(nextWeekDate.getDate() + 7);
@@ -117,6 +118,10 @@ export class SideBar extends LitElement {
             this.projects.push(project);
             this.requestUpdate();
         });
+    }
+
+    private static isNewDesign(): boolean {
+        return !!localStorage.getItem("qu-new-design");
     }
 
     static get styles(): CSSResultGroup {
