@@ -23,6 +23,6 @@ export default class CompletedState extends TaskState {
 
         await this.task.edit({
             isCompleted: false, progress: value, sessions: value.length,
-        }).then(() => this.task.setState(new NormalState(this.task)));
+        }).then(() => this.task.setState(new NormalState(this.task, { progress: value })));
     }
 }

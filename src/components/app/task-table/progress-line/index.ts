@@ -139,10 +139,10 @@ export class ProgressLine extends LitElement {
 
     private actionsHtml(): TemplateResult {
         return html`
-            ${this.task.progress && this.task.progress.length > 0 ? html`
+            ${this.task.sessions > 0 ? html`
                 <mwc-list-item graphic="icon" @click=${() => {
                     if (!this.task.progress) return;
-                    this.task.updateProgress(this.task.progress.slice(0, this.task.progress.length - 1));
+                    this.task.updateProgress(this.task.progress.slice(0, this.task.progress.length - 1)).then();
                     this.requestUpdate();
                     this.dispatchSimpleEvent("requestReorder");
                 }}>

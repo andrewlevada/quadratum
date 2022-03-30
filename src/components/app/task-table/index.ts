@@ -43,7 +43,7 @@ export class TaskTable extends LitElement {
 
                         <div class="text flex row align-center ${task.parentTaskId ? "sub" : ""} ${TaskTable.isLastChild(section, i) ? "gap" : ""}">
                             <inline-text-input value=${task.text}
-                                               class=${task.modifier(this.tasks).isDoneTree() ? "fade" : ""}
+                                               class=${task.modifier(this.tasks).isCompletedTree() ? "fade" : ""}
                                                @update=${(event: CustomEvent) => {
                                                    task.text = (event.detail.value as string).trim();
                                                }} @clear=${() => {

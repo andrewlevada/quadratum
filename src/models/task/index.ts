@@ -90,7 +90,7 @@ export default class Task {
         this.sessionsInner = data.sessions || 0;
         this.parentTaskIdInner = data.parentTaskId;
 
-        this.state = data.isCompleted ? new NormalState(this, data) : new CompletedState(this, data);
+        this.state = data.isCompleted ? new CompletedState(this, data) : new NormalState(this, data);
 
         // Legacy
         this.projectIdInner = data.projectId;
@@ -119,12 +119,18 @@ export default class Task {
         },
 
         toFirestore(modelObject: WithFieldValue<Task> | PartialWithFieldValue<Task>): DocumentData {
-            const o = modelObject as Partial<Task>;
-            const payload: PartialWithFieldValue<BaseTaskDocument> = {};
+            const o = modelObject as Partial<Task & PendingTaskDocumentPart & CompletedTaskDocumentPart>;
+            const payload: PartialWithFieldValue<PendingTaskDocument | CompletedTaskDocument> = {};
 
-            if (o.text) payload.text = o.text;
-            if (o.sessions) payload.sessions = o.sessions;
-            if (o.parentTaskId) payload.parentTaskId = o.parentTaskId;
+            if (o.text !== undefined) payload.text = o.text;
+            if (o.sessions !== undefined) payload.sessions = o.sessions;
+            if (o.parentTaskId !== undefined) payload.parentTaskId = o.parentTaskId;
+            if (o.isCompleted !== undefined) payload.isCompleted = o.isCompleted;
+
+            if (o.progress !== undefined) {
+                if (o.progress === null) payload.progress = deleteField();
+                else payload.progress = o.progress;
+            }
 
             // Legacy
             if (o.projectId !== undefined) payload.projectId = o.projectId || deleteField();

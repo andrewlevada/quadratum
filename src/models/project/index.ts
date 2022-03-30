@@ -58,9 +58,9 @@ export default class Project {
         return Project.tasks(this.id, doneState);
     }
 
-    public static tasks(projectId: string, doneState?: boolean): Promise<Task[]> {
-        return doneState !== undefined
-            ? fetchTasksWithFilter(where("projectId", "==", projectId), where("isDone", "==", doneState))
+    public static tasks(projectId: string, completedState?: boolean): Promise<Task[]> {
+        return completedState !== undefined
+            ? fetchTasksWithFilter(where("projectId", "==", projectId), where("isCompleted", "==", completedState))
             : fetchTasksWithFilter(where("projectId", "==", projectId));
     }
 

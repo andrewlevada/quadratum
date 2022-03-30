@@ -4,10 +4,10 @@ last() {
 };
 
 Array.prototype.clone = function
-    clone() {
+clone() {
     if (this.length === 0) return [];
     if (typeof this[0] === "object") return this.map(a => ({ ...a }));
-    return this.splice(0);
+    return this.slice(0);
 };
 
 HTMLElement.prototype.dispatchSimpleEvent = function

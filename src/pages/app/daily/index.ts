@@ -19,7 +19,7 @@ export default class AppPageDailyList extends AppPageElement {
                     <h4>Daily List</h4>
                     ${this.hasDoneTasks ? html`
                         <mwc-button label="Remove done" icon="grading" outlined @click=${() => {
-                            const doneTasks = this.tasks!.filter(v => v.isDone());
+                            const doneTasks = this.tasks!.filter(v => v.isCompleted);
                             for (const t of doneTasks)
                                 t.modifier(this.tasks!).setIsInDaily(false, true);
                             this.hasDoneTasks = false;
@@ -40,7 +40,7 @@ export default class AppPageDailyList extends AppPageElement {
         super.connectedCallback();
         Task.daily().then(tasks => {
             this.tasks = tasks;
-            this.hasDoneTasks = this.tasks.some(v => v.isDone());
+            this.hasDoneTasks = this.tasks.some(v => v.isCompleted);
         });
     }
 

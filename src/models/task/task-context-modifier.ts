@@ -16,7 +16,7 @@ export class TaskContextModifier {
         return false;
     }
 
-    public isDoneTree(): boolean {
+    public isCompletedTree(): boolean {
         const children = this.getChildrenTasks();
         if (children.length === 0) return this.task.isCompleted;
         if (this.task.progress && this.task.progress.length > 0)

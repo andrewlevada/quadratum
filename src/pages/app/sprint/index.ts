@@ -27,7 +27,7 @@ export default class AppPageSprintList extends AppPageElement {
                 </div>
 
                 ${this.sprint ? html`
-                    <task-table .tasks=${this.hideDoneTasks ? this.tasks!.filter(v => !v.isDone()) : this.tasks}
+                    <task-table .tasks=${this.hideDoneTasks ? this.tasks!.filter(v => !v.isCompleted) : this.tasks}
                                 origin="sprint" .isCurrentSprint=${this.isCurrentSprint}
                                 globalSprintNumber=${this.sprint.number}></task-table>
                 ` : ""}
