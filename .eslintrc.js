@@ -22,9 +22,7 @@ module.exports = {
     },
     rules: {
         quotes: ["error", "double"],
-        "class-methods-use-this": [
-            "error", { exceptMethods: ["render", "connectedCallback"] },
-        ],
+        "class-methods-use-this": "off",
         "object-curly-newline": [
             "error", { ImportDeclaration: "never" },
         ],

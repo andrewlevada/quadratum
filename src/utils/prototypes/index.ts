@@ -3,6 +3,13 @@ last() {
     return this[this.length - 1];
 };
 
+Array.prototype.clone = function
+    clone() {
+    if (this.length === 0) return [];
+    if (typeof this[0] === "object") return this.map(a => ({ ...a }));
+    return this.splice(0);
+};
+
 HTMLElement.prototype.dispatchSimpleEvent = function
 dispatchSimpleEvent(name: string, value?: unknown) {
     this.dispatchEvent(new CustomEvent(name, {

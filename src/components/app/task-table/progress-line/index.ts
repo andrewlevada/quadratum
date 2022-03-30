@@ -5,8 +5,9 @@ import { defineComponent } from "~utils/components";
 import "@material/mwc-icon-button";
 import "@material/mwc-icon";
 import "@material/mwc-menu";
-import Task, { ActionOrigin } from "~src/models/task";
+import Task from "~src/models/task";
 import { getCurrentSprintNumber } from "~src/models/sprint/data";
+import { ActionOrigin } from "~src/models/task/factory";
 import { Section } from "~components/app/task-table";
 import { Menu } from "@material/mwc-menu";
 import { ifDefined } from "lit/directives/if-defined.js";
@@ -48,18 +49,21 @@ export class ProgressLine extends LitElement {
                                          ?marked=${this.task.isInDaily && this.origin !== "daily"}
                                          .color=${ifDefined(this.section.project?.color || undefined)}
                                          @change=${(event: CustomEvent) => {
-                                             this.task.progress![pI] = event.detail.value as boolean;
-                                             this.task.updateProgress();
-                                             this.dispatchSimpleEvent("taskChange");
+                                             const newProgress = this.task.progress!;
+                                             newProgress[pI] = event.detail.value as boolean;
+                                             this.task.updateProgress(newProgress).then(() => {
+                                                 this.dispatchSimpleEvent("taskChange");
+                                             });
                                          }}></square-checkbox>
                     `)}
 
                     <mwc-icon-button icon="add_box" @click=${() => {
                         const progress = this.task.progress || [];
                         progress.push(false);
-                        this.task.updateProgress(progress);
-                        this.requestUpdate();
-                        this.dispatchSimpleEvent("taskChange");
+                        this.task.updateProgress(progress).then(() => {
+                            this.requestUpdate();
+                            this.dispatchSimpleEvent("taskChange");
+                        });
                     }}></mwc-icon-button>
                 </div>
             </div>

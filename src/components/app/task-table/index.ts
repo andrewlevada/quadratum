@@ -3,8 +3,9 @@ import { CSSResultGroup, html, LitElement, PropertyValues, TemplateResult } from
 import { componentStyles } from "~src/global";
 import { defineComponent } from "~utils/components";
 import { property, state } from "lit/decorators.js";
-import Task, { ActionOrigin } from "~src/models/task";
+import Task from "~src/models/task";
 import { getCurrentSprintNumber } from "~src/models/sprint/data";
+import { ActionOrigin, createTask } from "~src/models/task/factory";
 import Project from "~src/models/project";
 import scopedStyles from "./styles.lit.scss";
 import "@material/mwc-icon-button";
@@ -44,17 +45,21 @@ export class TaskTable extends LitElement {
                             <inline-text-input value=${task.text}
                                                class=${task.modifier(this.tasks).isDoneTree() ? "fade" : ""}
                                                @update=${(event: CustomEvent) => {
-                                task.text = (event.detail.value as string).trim();
-                            }} @clear=${() => {
+                                                   task.text = (event.detail.value as string).trim();
+                                               }} @clear=${() => {
                                 task.modifier(this.tasks).deleteTree();
                                 this.requestUpdate();
                             }}></inline-text-input>
-                            
+
                             <add-button sub @create=${(event: CustomEvent) => {
-                                this.createTask(event.detail.value, section, task.parentTaskId || task.id);
+                                this.createTask(event.detail.value, section, task.parentTaskId || task.id)
+                                        .then(t => {
+                                            this.tasks.push(t);
+                                            this.requestUpdate("tasks");
+                                        });
                             }}></add-button>
                         </div>
-                        
+
                         <progress-line class="progress" .section=${section} .contextTasks=${this.tasks}
                                        .task=${task} .taskIndex=${i} .currentSprintDelta=${this.currentSprintDelta}
                                        .origin=${this.origin} @requestReorder=${() => this.requestUpdate("tasks")}
@@ -62,17 +67,16 @@ export class TaskTable extends LitElement {
                     `)}
 
                     <add-button @create=${(event: CustomEvent) => {
-                        this.createTask(event.detail.value, section);
+                        this.createTask(event.detail.value, section).then(task => {
+                            this.tasks.push(task);
+                            this.requestUpdate("tasks");
+                        });
                     }}></add-button>
                 ` : ""))}
-                
+
                 ${this.isEmptyState() ? html`
                     <add-button nohide @create=${(event: CustomEvent) => {
-                        Task.create(event.detail.value, {
-                            origin: this.origin,
-                            projectId: this.globalProjectId,
-                            sprintNumber: this.globalSprintNumber,
-                        }).then(task => {
+                        this.createTask(event.detail.value, null).then(task => {
                             this.tasks = [task];
                         });
                     }}></add-button>
@@ -124,32 +128,29 @@ export class TaskTable extends LitElement {
         });
     }
 
-    private createTask(text: string, section: Section, parentTaskId?: string) {
-        Task.create(text, {
+    private createTask(text: string, section: Section | null, parentTaskId?: string): Promise<Task> {
+        return createTask(text, {
             origin: this.origin,
-            projectId: section.project?.id || this.globalProjectId,
+            projectId: section?.project?.id || this.globalProjectId,
             sprintNumber: this.globalSprintNumber,
             parentTaskId,
-        }).then(task => {
-            this.tasks.push(task);
-            this.requestUpdate("tasks");
         });
     }
 
     private static reorderTasks(heap: Task[]): Task[] {
         const tasks: Task[] = [];
 
-        for (const t of heap.filter(v => !v.isDone() && !v.isInDaily)) {
+        for (const t of heap.filter(v => !v.isCompleted && !v.isInDaily)) {
             if (t.parentTaskId !== undefined) continue;
             tasks.push(t, ...this.constructSubTree(heap, t.id));
         }
 
-        for (const t of heap.filter(v => !v.isDone() && v.isInDaily)) {
+        for (const t of heap.filter(v => !v.isCompleted && v.isInDaily)) {
             if (t.parentTaskId !== undefined) continue;
             tasks.push(t, ...this.constructSubTree(heap, t.id));
         }
 
-        for (const t of heap.filter(v => v.isDone())) {
+        for (const t of heap.filter(v => v.isCompleted)) {
             if (t.parentTaskId !== undefined) continue;
             tasks.push(t, ...this.constructSubTree(heap, t.id));
         }

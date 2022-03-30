@@ -1,34 +1,21 @@
-import Task from "~src/models/task";
 import { addDoc,
     collection,
     deleteDoc,
     doc,
-    getDoc,
     getDocs,
     orderBy,
     query,
     QueryConstraint,
-    setDoc,
-    where } from "@firebase/firestore";
+    setDoc } from "@firebase/firestore";
 import { userDoc } from "~src/models/tools";
+import Task, { CompletedTaskDocumentPart,
+    PendingTaskDocumentPart } from "~src/models/task/index";
 
-export type PartialTaskWithId = Partial<Task> & { id: string };
+export type PartialTaskWithId = { id: string } & Partial<Task | PendingTaskDocumentPart | CompletedTaskDocumentPart>;
 
 export async function postTask(task: Task): Promise<Task> {
     const snap = await addDoc(collection(userDoc(), "tasks").withConverter(Task.converter), task);
     return new Task(snap.id, task);
-}
-
-export async function fetchTaskById(id: string): Promise<Task> {
-    const snap = await getDoc(doc(userDoc(), "tasks", id).withConverter(Task.converter));
-    return snap.data() || Promise.reject();
-}
-
-export async function fetchTasksByIds(ids: readonly string[]): Promise<Task[]> {
-    if (ids.length === 0) return [];
-    const q = query(collection(userDoc(), "tasks").withConverter(Task.converter), where("id", "in", ids));
-    const snap = await getDocs(q);
-    return snap.docs.map(v => v.data());
 }
 
 export async function fetchTasksWithFilter(...constraints: QueryConstraint[]): Promise<Task[]> {

@@ -18,10 +18,10 @@ export class TaskContextModifier {
 
     public isDoneTree(): boolean {
         const children = this.getChildrenTasks();
-        if (children.length === 0) return this.task.isDone();
+        if (children.length === 0) return this.task.isCompleted;
         if (this.task.progress && this.task.progress.length > 0)
-            return this.task.isDone() && children.every(t => t.isDone());
-        return children.every(t => t.isDone());
+            return this.task.isCompleted && children.every(t => t.isCompleted);
+        return children.every(t => t.isCompleted);
     }
 
     public setIsInDaily(value: boolean, pop: boolean): void {
