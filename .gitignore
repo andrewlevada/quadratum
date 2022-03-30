@@ -48,6 +48,9 @@ $RECYCLE.BIN/
 # Other files
 node_modules/
 
-# Webpack
+# Build
 build
 stats.json
+
+# Credentials
+tools/firebaseServiceAccount.json
