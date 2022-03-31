@@ -13,7 +13,7 @@ import { createRef, ref } from "lit/directives/ref.js";
 import { TextField } from "@material/mwc-textfield";
 import { AppPageElement } from "~components/app/router/app-router";
 
-import("~components/app/task-table").then(f => f.default());
+import("~components/legacy/task-table").then(f => f.default());
 
 @customElement("app-page--project")
 export default class AppPageProject extends AppPageElement {

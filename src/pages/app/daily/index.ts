@@ -5,7 +5,7 @@ import Task from "~src/models/task";
 import "@material/mwc-button";
 import { AppPageElement } from "~components/app/router/app-router";
 
-import("~components/app/task-table").then(f => f.default());
+import("~components/legacy/task-table").then(f => f.default());
 
 @customElement("app-page--daily")
 export default class AppPageDailyList extends AppPageElement {

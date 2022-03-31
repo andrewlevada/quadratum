@@ -8,7 +8,7 @@ import "@material/mwc-menu";
 import Task from "~src/models/task";
 import { getCurrentSprintNumber } from "~src/models/sprint/data";
 import { ActionOrigin } from "~src/models/task/factory";
-import { Section } from "~components/app/task-table";
+import { Section } from "~components/legacy/task-table";
 import { Menu } from "@material/mwc-menu";
 import { ifDefined } from "lit/directives/if-defined.js";
 import { TaskContextModifier } from "~src/models/task/task-context-modifier";

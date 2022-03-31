@@ -10,7 +10,7 @@ import Project from "~src/models/project";
 import scopedStyles from "./styles.lit.scss";
 import "@material/mwc-icon-button";
 
-import("~components/common/color-chip").then(f => f.default());
+import("~components/legacy/color-chip").then(f => f.default());
 import("~components/common/square-checkbox").then(f => f.default());
 import("./inline-text-input").then(f => f.default());
 import("./add-button").then(f => f.default());
