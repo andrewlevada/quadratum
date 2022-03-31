@@ -11,3 +11,12 @@
     }
   }
 }
+
+.flex.col.gap > *:not(:last-child) {
+  margin-bottom: 32px !important;
+}
+
+#active-task-card {
+  width: fit-content;
+  min-width: calc(50% - (56px / 2));
+}
