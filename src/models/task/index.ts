@@ -17,6 +17,7 @@ export interface BaseTaskDocument {
     isCompleted: boolean;
     sessions: number;
     parentTaskId?: string;
+    dueDate?: number;
 
     // Legacy
     projectId?: string;
@@ -27,12 +28,15 @@ export interface BaseTaskDocument {
 export type PendingTaskDocument = BaseTaskDocument & PendingTaskDocumentPart;
 export interface PendingTaskDocumentPart {
     progress?: boolean[] | null;
+    isStarted?: boolean;
+    wasActive?: boolean;
+    upNextBlockTime?: number;
 }
 
 export type CompletedTaskDocument = BaseTaskDocument & PendingTaskDocumentPart;
 // eslint-disable-next-line
 export interface CompletedTaskDocumentPart {
-    // For future use
+    isInHome?: boolean;
 }
 
 export default class Task {
@@ -74,6 +78,16 @@ export default class Task {
         updateTask({ id: this.id, parentTaskId: value }).then();
     }
 
+    private dueDateInner: number | null;
+    public get dueDate(): number | null {
+        return this.dueDateInner;
+    }
+    public set dueDate(value: number | null) {
+        if (this.dueDateInner === value) return;
+        this.dueDateInner = value;
+        updateTask({ id: this.id, dueDate: value }).then();
+    }
+
     public setState(value: TaskState) {
         this.state = value;
     }
@@ -89,6 +103,7 @@ export default class Task {
         this.textInner = data.text;
         this.sessionsInner = data.sessions || 0;
         this.parentTaskIdInner = data.parentTaskId;
+        this.dueDateInner = data.dueDate || null;
 
         this.state = data.isCompleted ? new CompletedState(this, data) : new NormalState(this, data);
 
@@ -124,8 +139,15 @@ export default class Task {
 
             if (o.text !== undefined) payload.text = o.text;
             if (o.sessions !== undefined) payload.sessions = o.sessions;
-            if (o.parentTaskId !== undefined) payload.parentTaskId = o.parentTaskId;
             if (o.isCompleted !== undefined) payload.isCompleted = o.isCompleted;
+
+            if (o.parentTaskId !== undefined)
+                if (o.parentTaskId === null) payload.parentTaskId = deleteField();
+                else payload.parentTaskId = o.parentTaskId;
+
+            if (o.dueDate !== undefined)
+                if (o.dueDate === null) payload.dueDate = deleteField();
+                else payload.dueDate = o.dueDate;
 
             if (o.progress !== undefined)
                 if (o.progress === null) payload.progress = deleteField();
