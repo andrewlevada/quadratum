@@ -127,10 +127,9 @@ export default class Task {
             if (o.parentTaskId !== undefined) payload.parentTaskId = o.parentTaskId;
             if (o.isCompleted !== undefined) payload.isCompleted = o.isCompleted;
 
-            if (o.progress !== undefined) {
+            if (o.progress !== undefined)
                 if (o.progress === null) payload.progress = deleteField();
                 else payload.progress = o.progress;
-            }
 
             // Legacy
             if (o.projectId !== undefined) payload.projectId = o.projectId || deleteField();

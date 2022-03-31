@@ -25,13 +25,14 @@ export default {
       },
     ]
   ],
+  optimize: {
+    minify: true,
+    target: 'es2018',
+  },
   routes: [
     /* Enable an SPA Fallback in development: */
     { "match": "routes", "src": ".*", "dest": "/index.html" },
   ],
-  optimize: {
-    "bundle": false, // TODO: Fix bundling side effects
-  },
   devOptions: {
     port: 2797,
     open: "none",
