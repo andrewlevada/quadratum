@@ -30,7 +30,8 @@ export default class PendingState extends TaskState {
         if (value === this.progressInner) return;
         this.progressInner = value;
         this.isStartedInner = value?.some(v => v) || null;
-        if (value?.every(v => v))
+        if (value?.every(v => v)) {
+            this.task.setState(new CompletedState(this.task));
             this.task.edit({
                 isCompleted: true,
                 sessions: value?.length || 0,
@@ -38,8 +39,8 @@ export default class PendingState extends TaskState {
                 upNextBlockTime: null,
                 wasActive: null,
                 isStarted: null,
-            }).then(() => this.task.setState(new CompletedState(this.task)));
-        else updateTask({
+            }).then();
+        } else updateTask({
             id: this.task.id,
             progress: value,
             sessions: value?.length || 0,

@@ -22,8 +22,8 @@ export async function fetchTaskById(id: string): Promise<Task> {
     return snap.data() as Task;
 }
 
-export async function fetchTasksWithFilter(...constraints: QueryConstraint[]): Promise<Task[]> {
-    const q = query(collection(userDoc(), "tasks").withConverter(Task.converter), orderBy("text"), ...constraints);
+export async function fetchTasksWithFilter(constraints: QueryConstraint[], dontOrder?: boolean): Promise<Task[]> {
+    const q = query(collection(userDoc(), "tasks").withConverter(Task.converter), ...constraints.concat(dontOrder ? [] : orderBy("text")));
     const snap = await getDocs(q);
     return snap.docs.map(v => v.data());
 }

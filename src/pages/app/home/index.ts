@@ -6,6 +6,8 @@ import { getUserInfo } from "~src/models/user-service";
 import Task from "~src/models/task";
 import { getTaskById } from "~src/models/task/factory";
 import scopedStyles from "./styles.lit.scss";
+import getUpNextTasks, { getMoreUpNextTasks } from "~src/models/algo/up-next";
+import { getTasksCompletedToday } from "~src/models/algo/home";
 
 import("~components/app/tasks/tasks-card").then(f => f.default());
 import("~components/app/tasks/task-item").then(f => f.default());
@@ -14,6 +16,9 @@ import("~components/common/card-surface").then(f => f.default());
 @customElement("app-page--home")
 export default class AppPageHome extends AppPageElement {
     @state() activeTask: Task | null = null;
+    @state() upNextTasks: Task[] = [];
+    @state() recommendedTasks: Task[] = [];
+    @state() completedTasks: Task[] = [];
 
     render(): TemplateResult {
         return html`
@@ -29,15 +34,15 @@ export default class AppPageHome extends AppPageElement {
                 <div class="wrapper">
                     <div class="flex col gap">
                         <h6>Up next</h6>
-                        <tasks-card .tasks=${[]}></tasks-card>
+                        <tasks-card .tasks=${this.upNextTasks}></tasks-card>
                         
                         <h6>Feel like doing something different?</h6>
-                        <tasks-card .tasks=${[]}></tasks-card>
+                        <tasks-card .tasks=${this.recommendedTasks}></tasks-card>
                     </div>
 
                     <div class="flex col gap">
                         <h6>Completed today</h6>
-                        <tasks-card .tasks=${[]}></tasks-card>
+                        <tasks-card .tasks=${this.completedTasks}></tasks-card>
 
                         <h6>Stay on track</h6>
                     </div>
@@ -57,6 +62,17 @@ export default class AppPageHome extends AppPageElement {
             getTaskById(user.activeTaskId).then(task => {
                 this.activeTask = task;
             });
+        });
+
+        getUpNextTasks().then(tasks => {
+            this.upNextTasks = tasks;
+            if (tasks.length <= 3) getMoreUpNextTasks().then(moreTasks => {
+                this.upNextTasks = [...this.upNextTasks, ...moreTasks];
+            });
+        });
+
+        getTasksCompletedToday().then(tasks => {
+            this.completedTasks = tasks;
         });
     }
 }

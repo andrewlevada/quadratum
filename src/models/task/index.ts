@@ -7,7 +7,7 @@ import { deleteField,
     WithFieldValue } from "@firebase/firestore";
 import { TaskContextModifier } from "~src/models/task/task-context-modifier";
 import TaskState, { TaskStateBehaviour } from "~src/models/task/states";
-import PendingState from "~src/models/task/states/normal";
+import PendingState from "~src/models/task/states/pending";
 import CompletedState from "~src/models/task/states/completed";
 import { FullPartial } from "~src/utils/types";
 
@@ -93,15 +93,19 @@ export default class Task extends TaskStateBehaviour {
 
     // State
 
+    public getState(): TaskState {
+        return this.state;
+    }
+
     public setState(value: TaskState) {
         this.state = value;
     }
 
-    @Task.forwardState progress!: boolean[];
-    @Task.forwardState wasActive!: boolean;
-    @Task.forwardState upNextBlockTime!: number | null;
-    @Task.forwardState isStarted!: boolean;
-    @Task.forwardState isInHome!: boolean;
+    @forwardState() progress!: boolean[];
+    @forwardState() wasActive!: boolean;
+    @forwardState() upNextBlockTime!: number | null;
+    @forwardState() isStarted!: boolean;
+    @forwardState() isInHome!: boolean;
 
     public constructor(id: string, data: TaskConstructionData) {
         super();
@@ -170,13 +174,6 @@ export default class Task extends TaskStateBehaviour {
         },
     };
 
-    private static forwardState(target: Task, key: string) {
-        const getter = () => (target.state as unknown as Record<string, unknown>)[key];
-        const setter = (value: unknown) => { (target.state as unknown as Record<string, unknown>)[key] = value; };
-        delete (target as any)[key];
-        Object.defineProperty(target, key, { get: getter, set: setter });
-    }
-
     // Legacy
 
     private isInDailyInner: boolean;
@@ -210,6 +207,21 @@ export default class Task extends TaskStateBehaviour {
     }
 
     public static daily(): Promise<Task[]> {
-        return fetchTasksWithFilter(where("isInDaily", "==", true));
+        return fetchTasksWithFilter([where("isInDaily", "==", true)]);
+    }
+}
+
+function forwardState() {
+    return (target: Task, key: string) => {
+        const getter = function() {
+            return (this.getState() as unknown as Record<string, unknown>)[key];
+        }
+
+        const setter = function (value: unknown) {
+            (this.getState() as unknown as Record<string, unknown>)[key] = value;
+        }
+
+        delete (target as any)[key];
+        Object.defineProperty(target, key, { get: getter, set: setter });
     }
 }

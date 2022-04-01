@@ -17,3 +17,9 @@ export function timestampToRelativeString(time: number) {
     if (dayDiff <= 7) return "This week";
     return `In ${Math.round(dayDiff)} days`;
 }
+
+export function getDayTimestamp(dayDelta?: number) {
+    const day = new Date(new Date().getTime() + (dayDelta || 0) * millsInDay);
+    day.setHours(0, 1, 0, 0);
+    return day.getTime();
+}

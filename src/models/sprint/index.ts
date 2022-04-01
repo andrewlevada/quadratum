@@ -27,7 +27,7 @@ export default class Sprint {
     }
 
     public static tasks(sprintNumber: number): Promise<Task[]> {
-        return fetchTasksWithFilter(where("sprintNumber", "==", sprintNumber));
+        return fetchTasksWithFilter([where("sprintNumber", "==", sprintNumber)]);
     }
 
     public static fromNumber(number: number): Promise<Sprint | null> {

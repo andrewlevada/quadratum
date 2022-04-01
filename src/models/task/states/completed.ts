@@ -1,5 +1,5 @@
 import TaskState from "~src/models/task/states/index";
-import PendingState from "~src/models/task/states/normal";
+import PendingState from "~src/models/task/states/pending";
 import Task, { CompletedTaskDocument, TaskConstructionData } from "~src/models/task";
 
 export default class CompletedState extends TaskState {
@@ -29,9 +29,13 @@ export default class CompletedState extends TaskState {
             return;
         }
 
+        this.task.setState(new PendingState(this.task, {
+            progress: value, wasActive: true, isStarted: value.some(v => v)
+        }));
+
         this.task.edit({
             isCompleted: false, progress: value, sessions: value.length,
-        }).then(() => this.task.setState(new PendingState(this.task, { progress: value })));
+        }).then();
     }
 
     get isInHome(): boolean {

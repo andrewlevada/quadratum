@@ -51,19 +51,17 @@ export class ProgressLine extends LitElement {
                                          @change=${(event: CustomEvent) => {
                                              const newProgress = this.task.progress!;
                                              newProgress[pI] = event.detail.value as boolean;
-                                             this.task.updateProgress(newProgress).then(() => {
-                                                 this.dispatchSimpleEvent("taskChange");
-                                             });
+                                             this.task.progress = newProgress;
+                                             this.dispatchSimpleEvent("taskChange");
                                          }}></square-checkbox>
                     `)}
 
                     <mwc-icon-button icon="add_box" @click=${() => {
                         const progress = this.task.progress || [];
                         progress.push(false);
-                        this.task.updateProgress(progress).then(() => {
-                            this.requestUpdate();
-                            this.dispatchSimpleEvent("taskChange");
-                        });
+                        this.task.progress = progress;
+                        this.requestUpdate();
+                        this.dispatchSimpleEvent("taskChange");
                     }}></mwc-icon-button>
                 </div>
             </div>
@@ -142,7 +140,7 @@ export class ProgressLine extends LitElement {
             ${this.task.sessions > 0 ? html`
                 <mwc-list-item graphic="icon" @click=${() => {
                     if (!this.task.progress) return;
-                    this.task.updateProgress(this.task.progress.slice(0, this.task.progress.length - 1)).then();
+                    this.task.progress = this.task.progress.slice(0, this.task.progress.length - 1);
                     this.requestUpdate();
                     this.dispatchSimpleEvent("requestReorder");
                 }}>

@@ -60,8 +60,8 @@ export default class Project {
 
     public static tasks(projectId: string, completedState?: boolean): Promise<Task[]> {
         return completedState !== undefined
-            ? fetchTasksWithFilter(where("projectId", "==", projectId), where("isCompleted", "==", completedState))
-            : fetchTasksWithFilter(where("projectId", "==", projectId));
+            ? fetchTasksWithFilter([where("projectId", "==", projectId), where("isCompleted", "==", completedState)])
+            : fetchTasksWithFilter([where("projectId", "==", projectId)]);
     }
 
     public static backlogTasks(projectId: string): Promise<Task[]> {

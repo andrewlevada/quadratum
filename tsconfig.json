@@ -17,7 +17,8 @@
     "moduleResolution": "node",
     "sourceMap": true,
     "inlineSources": true,
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "noImplicitThis": false
   },
   "ts-node": {
     "compilerOptions": {
