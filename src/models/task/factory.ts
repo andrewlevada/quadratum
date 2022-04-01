@@ -22,6 +22,7 @@ export async function createTask(text: string, context: CreationContext): Promis
         sprintNumber: context.sprintNumber,
         isInDaily: context.origin === "daily",
         progress: [false],
+        sessions: 1,
         parentTaskId: context.parentTaskId,
     }));
 }

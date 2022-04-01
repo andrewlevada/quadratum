@@ -36,6 +36,7 @@ module.exports = {
         "no-unused-vars": "off",
         "no-param-reassign": "off",
         // "@typescript-eslint/no-unused-vars": "error",
+        "@typescript-eslint/no-empty-function": "off",
         "no-shadow": "off",
         "@typescript-eslint/no-shadow": "error",
         "@typescript-eslint/no-inferrable-types": "off",

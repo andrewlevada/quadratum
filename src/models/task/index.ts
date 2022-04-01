@@ -6,9 +6,10 @@ import { deleteField,
     PartialWithFieldValue, QueryDocumentSnapshot, where,
     WithFieldValue } from "@firebase/firestore";
 import { TaskContextModifier } from "~src/models/task/task-context-modifier";
-import TaskState from "~src/models/task/states";
-import NormalState from "~src/models/task/states/normal";
+import TaskState, { TaskStateBehaviour } from "~src/models/task/states";
+import PendingState from "~src/models/task/states/normal";
 import CompletedState from "~src/models/task/states/completed";
+import { FullPartial } from "~src/utils/types";
 
 export type TaskConstructionData = BaseTaskDocument | Task | Partial<Task>;
 
@@ -33,13 +34,15 @@ export interface PendingTaskDocumentPart {
     upNextBlockTime?: number;
 }
 
-export type CompletedTaskDocument = BaseTaskDocument & PendingTaskDocumentPart;
+export type CompletedTaskDocument = BaseTaskDocument & CompletedTaskDocumentPart;
 // eslint-disable-next-line
 export interface CompletedTaskDocumentPart {
     isInHome?: boolean;
 }
 
-export default class Task {
+export type TaskDocument = PendingTaskDocument & CompletedTaskDocument;
+
+export default class Task extends TaskStateBehaviour {
     public readonly id: string;
 
     private state: TaskState;
@@ -88,24 +91,27 @@ export default class Task {
         updateTask({ id: this.id, dueDate: value }).then();
     }
 
+    // State
+
     public setState(value: TaskState) {
         this.state = value;
     }
-    public get progress(): boolean[] | null {
-        return this.state.progress;
-    }
-    public updateProgress(value: boolean[] | null): Promise<void> {
-        return this.state.updateProgress(value);
-    }
+
+    @Task.forwardState progress!: boolean[];
+    @Task.forwardState wasActive!: boolean;
+    @Task.forwardState upNextBlockTime!: number | null;
+    @Task.forwardState isStarted!: boolean;
+    @Task.forwardState isInHome!: boolean;
 
     public constructor(id: string, data: TaskConstructionData) {
+        super();
         this.id = id;
         this.textInner = data.text;
         this.sessionsInner = data.sessions || 0;
         this.parentTaskIdInner = data.parentTaskId;
         this.dueDateInner = data.dueDate || null;
 
-        this.state = data.isCompleted ? new CompletedState(this, data) : new NormalState(this, data);
+        this.state = data.isCompleted ? new CompletedState(this, data) : new PendingState(this, data);
 
         // Legacy
         this.projectIdInner = data.projectId;
@@ -121,11 +127,11 @@ export default class Task {
         return deleteTask(this.id);
     }
 
-    public edit(data: Partial<Task | PendingTaskDocumentPart | CompletedTaskDocumentPart>): Promise<void> {
+    public edit(data: FullPartial<Task>): Promise<void> {
         for (const field of Object.keys(data))
             if (`${field}Inner` in this)
                 (this as Record<string, unknown>)[`${field}Inner`] = (data as Record<string, unknown>)[field];
-        return updateTask({ id: this.id, ...data });
+        return updateTask({ ...data, id: this.id as string });
     }
 
     public static converter: FirestoreDataConverter<Task> = {
@@ -134,35 +140,42 @@ export default class Task {
         },
 
         toFirestore(modelObject: WithFieldValue<Task> | PartialWithFieldValue<Task>): DocumentData {
-            const o = modelObject as Partial<Task & PendingTaskDocumentPart & CompletedTaskDocumentPart>;
-            const payload: PartialWithFieldValue<PendingTaskDocument | CompletedTaskDocument> = {};
+            const o = modelObject as Partial<Task>;
+            const payload: PartialWithFieldValue<TaskDocument> = {};
 
             if (o.text !== undefined) payload.text = o.text;
             if (o.sessions !== undefined) payload.sessions = o.sessions;
             if (o.isCompleted !== undefined) payload.isCompleted = o.isCompleted;
 
-            if (o.parentTaskId !== undefined)
-                if (o.parentTaskId === null) payload.parentTaskId = deleteField();
-                else payload.parentTaskId = o.parentTaskId;
+            nullishPayloadSet("parentTaskId");
+            nullishPayloadSet("dueDate");
+            nullishPayloadSet("progress");
 
-            if (o.dueDate !== undefined)
-                if (o.dueDate === null) payload.dueDate = deleteField();
-                else payload.dueDate = o.dueDate;
-
-            if (o.progress !== undefined)
-                if (o.progress === null) payload.progress = deleteField();
-                else payload.progress = o.progress;
+            // For extra protection
+            if (o.sessions !== undefined && o.progress)
+                if (o.sessions !== o.progress.length) payload.sessions = o.progress.length;
 
             // Legacy
-            if (o.projectId !== undefined) payload.projectId = o.projectId || deleteField();
-            if (o.isInDaily !== undefined) payload.isInDaily = o.isInDaily;
-
-            if (o.sprintNumber === null) payload.sprintNumber = deleteField();
-            else if (o.sprintNumber !== undefined) payload.sprintNumber = o.sprintNumber;
+            nullishPayloadSet("projectId");
+            nullishPayloadSet("isInDaily");
+            nullishPayloadSet("sprintNumber");
 
             return payload;
+
+            function nullishPayloadSet(field: keyof Task): void {
+                if (o[field] === undefined) return;
+                if (o[field] === null) payload[field as keyof TaskDocument] = deleteField();
+                else (payload as Record<string, unknown>)[field] = o[field];
+            }
         },
     };
+
+    private static forwardState(target: Task, key: string) {
+        const getter = () => (target.state as unknown as Record<string, unknown>)[key];
+        const setter = (value: unknown) => { (target.state as unknown as Record<string, unknown>)[key] = value; };
+        delete (target as any)[key];
+        Object.defineProperty(target, key, { get: getter, set: setter });
+    }
 
     // Legacy
 

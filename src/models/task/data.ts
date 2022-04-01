@@ -10,8 +10,7 @@ import { addDoc,
 import { userDoc } from "~src/models/tools";
 import Task, { CompletedTaskDocumentPart,
     PendingTaskDocumentPart } from "~src/models/task/index";
-
-export type PartialTaskWithId = { id: string } & Partial<Task | PendingTaskDocumentPart | CompletedTaskDocumentPart>;
+import { FullPartial } from "~utils/types";
 
 export async function postTask(task: Task): Promise<Task> {
     const snap = await addDoc(collection(userDoc(), "tasks").withConverter(Task.converter), task);
@@ -24,6 +23,7 @@ export async function fetchTasksWithFilter(...constraints: QueryConstraint[]): P
     return snap.docs.map(v => v.data());
 }
 
+export type PartialTaskWithId = { id: string } & FullPartial<Task | PendingTaskDocumentPart | CompletedTaskDocumentPart>;
 export function updateTask(task: PartialTaskWithId): Promise<void> {
     // Don't use updateDoc() - it does not work with convertors!
     return setDoc(doc(userDoc(), "tasks", task.id).withConverter(Task.converter), task, { merge: true }).then();

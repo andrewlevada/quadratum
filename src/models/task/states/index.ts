@@ -1,13 +1,29 @@
+// eslint-disable-next-line max-classes-per-file
 import Task, { TaskConstructionData } from "~src/models/task";
 
-export default abstract class TaskState {
+export abstract class TaskStateBehaviour {
+    public abstract get isCompleted(): boolean;
+
+    // Pending
+    public abstract get progress(): boolean[] | null;
+    public abstract set progress(value: boolean[] | null);
+    public abstract get wasActive(): boolean;
+    public abstract set wasActive(value: boolean);
+    public abstract get upNextBlockTime(): number | null;
+    public abstract set upNextBlockTime(value: number | null);
+    public abstract get isStarted(): boolean;
+    public abstract set isStarted(value: boolean);
+
+    // Completed
+    public abstract get isInHome(): boolean;
+    public abstract set isInHome(value: boolean);
+}
+
+export default abstract class TaskState extends TaskStateBehaviour {
     protected task: Task;
 
-    public constructor(task: Task, data?: TaskConstructionData) {
+    protected constructor(task: Task, data?: TaskConstructionData) {
+        super();
         this.task = task;
     }
-
-    public abstract get isCompleted(): boolean;
-    public abstract get progress(): boolean[] | null;
-    public abstract updateProgress(value: boolean[] | null): Promise<void>;
 }
