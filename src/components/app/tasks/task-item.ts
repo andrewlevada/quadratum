@@ -3,6 +3,8 @@ import { componentStyles } from "~src/global";
 import { defineComponent } from "~utils/components";
 import { property } from "lit/decorators.js";
 import Task from "~src/models/task";
+import { setActiveTask } from "~src/models/user-service";
+import { timestampToRelativeString } from "~utils/time";
 
 export type TaskItemDisplay = "pending" | "active" | "completed";
 
@@ -15,7 +17,10 @@ export class TaskItem extends LitElement {
         return html`
             <div class="flex row gap">
                 ${this.displayType === "pending" ? html`
-                    <square-checkbox .label={}></square-checkbox>
+                    <square-checkbox .label=${this.getPendingCheckboxValue()}
+                                     @click=${() => {
+                                         setActiveTask(this.task.id).then();
+                                     }}></square-checkbox>
                 ` : ""}
 
                 <div class="flex col">
@@ -35,7 +40,7 @@ export class TaskItem extends LitElement {
                                              @change=${(event: CustomEvent) => {
                                                  const newProgress = this.task.progress!;
                                                  newProgress[i] = event.detail.value as boolean;
-                                                 this.task.updateProgress(newProgress).then();
+                                                 this.task.progress = newProgress;
                                                  this.dispatchSimpleEvent("taskChange");
                                              }}></square-checkbox>
                         `)}
@@ -46,7 +51,19 @@ export class TaskItem extends LitElement {
     }
 
     private infoBadge(): TemplateResult {
+        if (this.task.dueDate) return html`
+            <div class="flex row">
+                <p>${timestampToRelativeString(this.task.dueDate)}</p>
+                <span class="material-icons">schedule</span>
+            </div>
+        `;
+
         return html``;
+    }
+
+    private getPendingCheckboxValue(): string {
+        if (this.task.sessions === 0) return "";
+        return this.task.sessions.toString();
     }
 
     static get styles(): CSSResultGroup {

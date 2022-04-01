@@ -19,7 +19,10 @@ export class TasksCard extends LitElement {
                 ${this.tasks.map(task => html`
                     <task-item .task=${task} .displayType=${this.displayType}></task-item>
                 `)}
-                <p>wefwe</p>
+                
+                ${this.tasks.length === 0 ? html`
+                    <p>No tasks to display</p>
+                ` : ""}
             </card-surface>
         `;
     }

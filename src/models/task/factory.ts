@@ -1,6 +1,6 @@
 import Task from "~src/models/task/index";
 import { getCurrentSprintNumber } from "~src/models/sprint/data";
-import { postTask } from "~src/models/task/data";
+import { fetchTaskById, postTask } from "~src/models/task/data";
 
 export type ActionOrigin = "daily" | "sprint" | "backlog";
 
@@ -25,4 +25,8 @@ export async function createTask(text: string, context: CreationContext): Promis
         sessions: 1,
         parentTaskId: context.parentTaskId,
     }));
+}
+
+export function getTaskById(id: string): Promise<Task> {
+    return fetchTaskById(id);
 }

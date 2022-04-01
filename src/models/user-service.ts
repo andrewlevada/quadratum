@@ -4,6 +4,7 @@ import { userDoc } from "./tools";
 import { createNewSprint } from "./sprint/data";
 
 export interface UserDocument {
+    activeTaskId: string | null;
     sprintAnchor: SprintAnchor;
 }
 
@@ -35,6 +36,10 @@ export async function initializeUser(userUid: string): Promise<void> {
 
 export function getUserInfo(): Promise<UserDocument> {
     return getDoc(userDoc()).then(snap => snap.data() as UserDocument);
+}
+
+export function setActiveTask(taskId: string): Promise<void> {
+    return setDoc(userDoc(), { activeTaskId: taskId });
 }
 
 /*

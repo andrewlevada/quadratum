@@ -1,7 +1,7 @@
 import { addDoc,
     collection,
     deleteDoc,
-    doc,
+    doc, getDoc,
     getDocs,
     orderBy,
     query,
@@ -15,6 +15,11 @@ import { FullPartial } from "~utils/types";
 export async function postTask(task: Task): Promise<Task> {
     const snap = await addDoc(collection(userDoc(), "tasks").withConverter(Task.converter), task);
     return new Task(snap.id, task);
+}
+
+export async function fetchTaskById(id: string): Promise<Task> {
+    const snap = await getDoc(doc(userDoc(), "tasks", id).withConverter(Task.converter));
+    return snap.data() as Task;
 }
 
 export async function fetchTasksWithFilter(...constraints: QueryConstraint[]): Promise<Task[]> {
