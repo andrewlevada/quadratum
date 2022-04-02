@@ -82,6 +82,9 @@ export class AppRouter extends LitElement {
 
         this.withSidebar = path.startsWith("/app");
         if (path === "/app") return { tag: "home", importPath: "/app" };
+        if (path === "/app/map") return { tag: "map", importPath: "/app" };
+
+        // Legacy
         if (path === "/app/daily") return { tag: "daily", importPath: "/app" };
         if (path.startsWith("/app/sprint/")) return { tag: "sprint", importPath: "/app" };
         if (path.startsWith("/app/project/")) return { tag: "project", importPath: "/app" };

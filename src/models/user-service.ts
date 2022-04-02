@@ -4,8 +4,15 @@ import { userDoc } from "./tools";
 import { createNewSprint } from "./legacy/sprint/data";
 import { Callback } from "~utils/types";
 
+export interface OAuthData {
+    accessToken: string;
+    expiresIn: string;
+    refreshToken: string;
+}
+
 export interface UserDocument {
     activeTaskId: string | null;
+    figmaOAuth?: OAuthData | null;
     sprintAnchor: SprintAnchor;
 }
 
@@ -29,7 +36,7 @@ export async function initializeUser(userUid: string): Promise<void> {
     const d = await getDoc(userDoc());
     if (d.exists()) return;
 
-    await setDoc(userDoc(), { sprintAnchor } as UserDocument);
+    await setDoc(userDoc(), { activeTaskId: null, sprintAnchor } as UserDocument);
 
     await createNewSprint(new Sprint(0, { startWeek: new Date().week() }));
     await Sprint.createAndAppend();
@@ -44,7 +51,11 @@ export function listenForUserInfo(callback: Callback<UserDocument>): Unsubscribe
 }
 
 export function setActiveTask(taskId: string | null): Promise<void> {
-    return setDoc(userDoc(), { activeTaskId: taskId });
+    return setDoc(userDoc(), { activeTaskId: taskId }, { merge: true });
+}
+
+export function setFigmaOAuth(data: OAuthData): Promise<void> {
+    return setDoc(userDoc(), { figmaOAuth: data }, { merge: true });
 }
 
 /*
