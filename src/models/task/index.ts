@@ -10,6 +10,7 @@ import TaskState, { TaskStateBehaviour } from "~src/models/task/states";
 import PendingState from "~src/models/task/states/pending";
 import CompletedState from "~src/models/task/states/completed";
 import { FullPartial } from "~src/utils/types";
+import { nullishPayloadSet } from "~src/models/tools";
 
 export type TaskConstructionData = BaseTaskDocument | Task | Partial<Task>;
 
@@ -151,30 +152,24 @@ export default class Task extends TaskStateBehaviour {
             if (o.sessions !== undefined) payload.sessions = o.sessions;
             if (o.isCompleted !== undefined) payload.isCompleted = o.isCompleted;
 
-            nullishPayloadSet("parentTaskId");
-            nullishPayloadSet("dueDate");
-            nullishPayloadSet("progress");
-            nullishPayloadSet("wasActive");
-            nullishPayloadSet("upNextBlockTime");
-            nullishPayloadSet("isStarted");
-            nullishPayloadSet("isInHome");
+            nullishPayloadSet<Task>("parentTaskId", o, payload);
+            nullishPayloadSet<Task>("dueDate", o, payload);
+            nullishPayloadSet<Task>("progress", o, payload);
+            nullishPayloadSet<Task>("wasActive", o, payload);
+            nullishPayloadSet<Task>("upNextBlockTime", o, payload);
+            nullishPayloadSet<Task>("isStarted", o, payload);
+            nullishPayloadSet<Task>("isInHome", o, payload);
 
             // For extra protection
             if (o.sessions !== undefined && o.progress)
                 if (o.sessions !== o.progress.length) payload.sessions = o.progress.length;
 
             // Legacy
-            nullishPayloadSet("projectId");
-            nullishPayloadSet("isInDaily");
-            nullishPayloadSet("sprintNumber");
+            nullishPayloadSet<Task>("projectId", o, payload);
+            nullishPayloadSet<Task>("isInDaily", o, payload);
+            nullishPayloadSet<Task>("sprintNumber", o, payload);
 
             return payload;
-
-            function nullishPayloadSet(field: keyof Task): void {
-                if (o[field] === undefined) return;
-                if (o[field] === null) payload[field as keyof TaskDocument] = deleteField();
-                else (payload as Record<string, unknown>)[field] = o[field];
-            }
         },
     };
 
