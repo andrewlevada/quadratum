@@ -4,6 +4,7 @@ import { html as staticHtml, unsafeStatic } from "lit/static-html.js";
 import { query, state } from "lit/decorators.js";
 import { componentStyles } from "~src/global";
 import { defineComponent } from "~utils/components";
+import { Unsubscribe } from "@firebase/firestore";
 
 interface PageInfo {
     tag: string;
@@ -11,12 +12,19 @@ interface PageInfo {
 }
 
 export abstract class AppPageElement extends LitElement {
+    protected dataListeners: Unsubscribe[] = [];
+
     // eslint-disable-next-line class-methods-use-this,@typescript-eslint/no-empty-function
     public requestReload(): void { }
 
     protected firstUpdated(_changedProperties: PropertyValues) {
         super.firstUpdated(_changedProperties);
         this.requestReload();
+    }
+
+    disconnectedCallback() {
+        super.disconnectedCallback();
+        this.dataListeners.forEach((unsubscribe) => unsubscribe());
     }
 }
 

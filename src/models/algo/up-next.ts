@@ -1,35 +1,42 @@
 import Task from "~src/models/task";
-import { limit, query, QueryConstraint, where } from "@firebase/firestore";
+import { limit, QueryConstraint, Unsubscribe, where } from "@firebase/firestore";
 import { getDayTimestamp } from "~utils/time";
-import { fetchTasksWithFilter } from "~src/models/task/data";
+import { fetchTasksWithFilter, listenToTasksWithFilter } from "~src/models/task/data";
+import { Callback } from "~utils/types";
 
 const baseConstraints = [
     where("isCompleted", "==", false),
 ];
 
-export default function getUpNextTasks(): Promise<Task[]> {
+export default function listenToUpNextTasks(callback: Callback<Task[]>): Unsubscribe[] {
     return queryTasksForGroups([
         [where("wasActive", "==", true)],
         [where("isStarted", "==", true)],
         [where("dueDate", "<=", getDayTimestamp())],
-    ]);
+    ], callback);
 }
 
-export function getMoreUpNextTasks(): Promise<Task[]> {
-    return queryTasksForGroups([
-        [
-            where("dueDate", ">", getDayTimestamp()),
-            where("dueDate", "<=", getDayTimestamp(3)),
-        ],
-        // TODO: add condition for milestones
-    ]);
-}
+// export function getMoreUpNextTasks(): Promise<Task[]> {
+//     return queryTasksForGroups([
+//         [
+//             where("dueDate", ">", getDayTimestamp()),
+//             where("dueDate", "<=", getDayTimestamp(3)),
+//         ],
+//         // TODO: add condition for milestones
+//     ]);
+// }
 
-async function queryTasksForGroups(groups: QueryConstraint[][]): Promise<Task[]> {
-    return Promise.all(groups.map(
-        constraint => fetchTasksWithFilter(baseConstraints.concat(constraint), true),
-    )).then(results => results.reduce((acc: Task[], cur) => acc.concat(cur.filter(t => t.sessions > 0)), []))
-        .then(tasks => filter(tasks, hasNoChildren));
+function queryTasksForGroups(groups: QueryConstraint[][], masterCallback: Callback<Task[]>): Unsubscribe[] {
+    const groupTasks: Record<string, Task[]> = {};
+    const callback = (tasks: Task[], groupLabel: string) => {
+        filter(tasks, hasNoChildren).then(filteredTasks => {
+            groupTasks[groupLabel] = filteredTasks;
+            masterCallback(Object.values(groupTasks).flat());
+        });
+    };
+
+    return groups.map(constraints => listenToTasksWithFilter(baseConstraints.concat(constraints),
+            tasks => callback(tasks.filter(t => t.sessions  > 0), JSON.stringify(constraints))));
 }
 
 function hasNoChildren(task: Task): Promise<boolean> {

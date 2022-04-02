@@ -2,12 +2,12 @@ import { CSSResultGroup, html, TemplateResult } from "lit";
 import { customElement, state } from "lit/decorators.js";
 import { pageStyles } from "~src/global";
 import { AppPageElement } from "~components/app/router/app-router";
-import { getUserInfo } from "~src/models/user-service";
+import { listenForUserInfo, setActiveTask } from "~src/models/user-service";
 import Task from "~src/models/task";
 import { getTaskById } from "~src/models/task/factory";
 import scopedStyles from "./styles.lit.scss";
-import getUpNextTasks, { getMoreUpNextTasks } from "~src/models/algo/up-next";
-import { getTasksCompletedToday } from "~src/models/algo/home";
+import { listenForTasksCompletedToday } from "~src/models/algo/home";
+import listenForUpNextTasks from "~src/models/algo/up-next";
 
 import("~components/app/tasks/tasks-card").then(f => f.default());
 import("~components/app/tasks/task-item").then(f => f.default());
@@ -24,18 +24,24 @@ export default class AppPageHome extends AppPageElement {
         return html`
             <div class="flex col gap app-page full-width">
                 <h4>Your home</h4>
-                
+
                 <card-surface id="active-task-card" type="outlined">
                     ${this.activeTask ? html`
-                        <task-item .task=${this.activeTask} displayType="active"></task-item>
+                        <task-item .task=${this.activeTask} displayType="active"
+                                   @taskChange=${() => {
+                                       if (this.activeTask?.isCompleted) {
+                                           setActiveTask(null).then();
+                                           this.activeTask = null;
+                                       }
+                                   }}></task-item>
                     ` : html`<p>No active task</p>`}
                 </card-surface>
-                
+
                 <div class="wrapper">
                     <div class="flex col gap">
                         <h6>Up next</h6>
-                        <tasks-card .tasks=${this.upNextTasks} displayType="pending"></tasks-card>
-                        
+                        <tasks-card .tasks=${this.upNextTasks.filter(t => t.id !== this.activeTask?.id)} displayType="pending"></tasks-card>
+
                         <h6>Feel like doing something different?</h6>
                         <tasks-card .tasks=${this.recommendedTasks} displayType="pending"></tasks-card>
                     </div>
@@ -57,22 +63,20 @@ export default class AppPageHome extends AppPageElement {
 
     requestReload() {
         super.requestReload();
-        getUserInfo().then(user => {
+
+        this.dataListeners.push(listenForUserInfo(user => {
             if (!user.activeTaskId) return;
             getTaskById(user.activeTaskId).then(task => {
                 this.activeTask = task;
             });
-        });
+        }));
 
-        getUpNextTasks().then(tasks => {
+        this.dataListeners.push(...listenForUpNextTasks(tasks => {
             this.upNextTasks = tasks;
-            if (tasks.length <= 3) getMoreUpNextTasks().then(moreTasks => {
-                this.upNextTasks = [...this.upNextTasks, ...moreTasks];
-            });
-        });
+        }));
 
-        getTasksCompletedToday().then(tasks => {
+        this.dataListeners.push(listenForTasksCompletedToday(tasks => {
             this.completedTasks = tasks;
-        });
+        }));
     }
 }

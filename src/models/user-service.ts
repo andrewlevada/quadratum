@@ -1,7 +1,8 @@
-import { getDoc, setDoc } from "@firebase/firestore";
+import { getDoc, onSnapshot, setDoc, Unsubscribe } from "@firebase/firestore";
 import Sprint from "./sprint";
 import { userDoc } from "./tools";
 import { createNewSprint } from "./sprint/data";
+import { Callback } from "~utils/types";
 
 export interface UserDocument {
     activeTaskId: string | null;
@@ -38,7 +39,11 @@ export function getUserInfo(): Promise<UserDocument> {
     return getDoc(userDoc()).then(snap => snap.data() as UserDocument);
 }
 
-export function setActiveTask(taskId: string): Promise<void> {
+export function listenForUserInfo(callback: Callback<UserDocument>): Unsubscribe {
+    return onSnapshot(userDoc(), snap => callback(snap.data() as UserDocument));
+}
+
+export function setActiveTask(taskId: string | null): Promise<void> {
     return setDoc(userDoc(), { activeTaskId: taskId });
 }
 

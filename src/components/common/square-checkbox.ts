@@ -9,21 +9,22 @@ export default (): void => defineComponent("square-checkbox", SquareCheckbox);
 export class SquareCheckbox extends LitElement {
     @property({ type: Boolean }) checked: boolean = false;
     @property({ type: Boolean }) marked: boolean = false;
-    @property({ type: String }) color: string = "#dedede";
-    @property({ type: String }) label: string = "";
+    @property({ type: String }) color: string = "var(--md-sys-color-on-surface-variant)";
+    @property({ type: String }) label: string | null = null;
 
     render(): TemplateResult {
         return html`
             <input type="checkbox" checked=${ifDefined(this.checked || undefined)} @input=${(event: InputEvent) => {
                 const input = event.target as HTMLInputElement;
                 this.dispatchSimpleEvent("change", input.checked);
-                this.checked = input.checked;
+                if (this.label !== null) event.preventDefault();
+                else this.checked = input.checked;
             }}>
 
             <span style=${this.checked
                     ? `background: ${this.color}; border-color: ${this.color}`
                     : (this.marked ? `border-color: ${this.color}` : "")}>
-                <p>${this.label}</p>
+                <p>${this.label || ""}</p>
             </span>
         `;
     }

@@ -1,7 +1,7 @@
 import Task from "~src/models/task";
-import { fetchTasksWithFilter } from "~src/models/task/data";
-import { where } from "@firebase/firestore";
+import { listenToTasksWithFilter } from "~src/models/task/data";
+import { orderBy, Unsubscribe, where } from "@firebase/firestore";
 
-export function getTasksCompletedToday(): Promise<Task[]> {
-    return fetchTasksWithFilter([where("isInHome", "==", true)]);
+export function listenForTasksCompletedToday(callback: (tasks: Task[]) => void): Unsubscribe {
+    return listenToTasksWithFilter([where("isInHome", "==", true), orderBy("text")], callback);
 }

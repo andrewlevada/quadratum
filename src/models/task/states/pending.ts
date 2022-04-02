@@ -1,5 +1,5 @@
 import TaskState from "~src/models/task/states/index";
-import Task, { PendingTaskDocument, TaskConstructionData } from "~src/models/task";
+import Task, { CompletedTaskDocument, PendingTaskDocument, TaskConstructionData } from "~src/models/task";
 import { updateTask } from "~src/models/task/data";
 import CompletedState from "~src/models/task/states/completed";
 
@@ -31,15 +31,17 @@ export default class PendingState extends TaskState {
         this.progressInner = value;
         this.isStartedInner = value?.some(v => v) || null;
         if (value?.every(v => v)) {
-            this.task.setState(new CompletedState(this.task));
-            this.task.edit({
+            const updateValues = {
                 isCompleted: true,
+                isInHome: true,
                 sessions: value?.length || 0,
                 progress: null,
                 upNextBlockTime: null,
                 wasActive: null,
                 isStarted: null,
-            }).then();
+            };
+            this.task.setState(new CompletedState(this.task, updateValues as Partial<CompletedTaskDocument>));
+            this.task.edit(updateValues).then();
         } else updateTask({
             id: this.task.id,
             progress: value,

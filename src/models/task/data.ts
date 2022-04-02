@@ -1,12 +1,14 @@
-import { addDoc,
+import {
+    addDoc,
     collection,
     deleteDoc,
     doc, getDoc,
-    getDocs,
+    getDocs, onSnapshot,
     orderBy,
     query,
     QueryConstraint,
-    setDoc } from "@firebase/firestore";
+    setDoc, Unsubscribe
+} from "@firebase/firestore";
 import { userDoc } from "~src/models/tools";
 import Task, { CompletedTaskDocumentPart,
     PendingTaskDocumentPart } from "~src/models/task/index";
@@ -26,6 +28,11 @@ export async function fetchTasksWithFilter(constraints: QueryConstraint[], dontO
     const q = query(collection(userDoc(), "tasks").withConverter(Task.converter), ...constraints.concat(dontOrder ? [] : orderBy("text")));
     const snap = await getDocs(q);
     return snap.docs.map(v => v.data());
+}
+
+export function listenToTasksWithFilter(constraints: QueryConstraint[], callback: (tasks: Task[]) => void): Unsubscribe {
+    const q = query(collection(userDoc(), "tasks").withConverter(Task.converter), ...constraints);
+    return onSnapshot(q, snap => callback(snap.docs.map(v => v.data())));
 }
 
 export type PartialTaskWithId = { id: string } & FullPartial<Task | PendingTaskDocumentPart | CompletedTaskDocumentPart>;
