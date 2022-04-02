@@ -27,22 +27,22 @@ export default class AppPageHome extends AppPageElement {
                 
                 <card-surface id="active-task-card" type="outlined">
                     ${this.activeTask ? html`
-                        <task-item .task=${this.activeTask}></task-item>
+                        <task-item .task=${this.activeTask} displayType="active"></task-item>
                     ` : html`<p>No active task</p>`}
                 </card-surface>
                 
                 <div class="wrapper">
                     <div class="flex col gap">
                         <h6>Up next</h6>
-                        <tasks-card .tasks=${this.upNextTasks}></tasks-card>
+                        <tasks-card .tasks=${this.upNextTasks} displayType="pending"></tasks-card>
                         
                         <h6>Feel like doing something different?</h6>
-                        <tasks-card .tasks=${this.recommendedTasks}></tasks-card>
+                        <tasks-card .tasks=${this.recommendedTasks} displayType="pending"></tasks-card>
                     </div>
 
                     <div class="flex col gap">
                         <h6>Completed today</h6>
-                        <tasks-card .tasks=${this.completedTasks}></tasks-card>
+                        <tasks-card .tasks=${this.completedTasks} displayType="completed"></tasks-card>
 
                         <h6>Stay on track</h6>
                     </div>

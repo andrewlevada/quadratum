@@ -10,6 +10,7 @@ export class SquareCheckbox extends LitElement {
     @property({ type: Boolean }) checked: boolean = false;
     @property({ type: Boolean }) marked: boolean = false;
     @property({ type: String }) color: string = "#dedede";
+    @property({ type: String }) label: string = "";
 
     render(): TemplateResult {
         return html`
@@ -21,7 +22,9 @@ export class SquareCheckbox extends LitElement {
 
             <span style=${this.checked
                     ? `background: ${this.color}; border-color: ${this.color}`
-                    : (this.marked ? `border-color: ${this.color}` : "")}></span>
+                    : (this.marked ? `border-color: ${this.color}` : "")}>
+                <p>${this.label}</p>
+            </span>
         `;
     }
 
@@ -31,6 +34,11 @@ export class SquareCheckbox extends LitElement {
             width: 18px;
             height: 18px;
             position: relative;
+          }
+          
+          :host([new-design]) span {
+            border: 1px solid var(--md-sys-color-outline);
+            border-radius: 4px;
           }
           
           span {
@@ -48,6 +56,16 @@ export class SquareCheckbox extends LitElement {
           input {
             position: absolute;
             opacity: 0;
+          }
+          
+          p {
+            margin: 0;
+            padding: 0;
+            font-size: 11px;
+            font-weight: 500;
+            line-height: 16px;
+            text-align: center;
+            color: var(--md-sys-color-outline);
           }
         `];
     }
