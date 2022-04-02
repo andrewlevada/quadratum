@@ -36,6 +36,8 @@
   &.justify-between { justify-content: space-between }
 
   &.align-center { align-items: center }
+
+  &.grow { flex-grow: 1 }
 }
 
 .full-width {

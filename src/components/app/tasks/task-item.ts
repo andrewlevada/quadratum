@@ -18,7 +18,7 @@ export class TaskItem extends LitElement {
     render(): TemplateResult {
         return html`
             <div class="flex row justify-between">
-                <div class="flex row">
+                <div class="flex row grow">
                     ${this.displayType === "pending" ? html`
                         <square-checkbox .label=${this.getPendingCheckboxValue()}
                                          class="pending-checkbox"
@@ -27,19 +27,19 @@ export class TaskItem extends LitElement {
                                          }} new-design></square-checkbox>
                     ` : ""}
 
-                    <div class="flex col">
+                    <div class="flex col grow">
                         <p class="text">${this.task.text}</p>
-                        <div class="flex row justify-between">
+                        <div class="flex row justify-between sub">
                             <p class="scope">Scope</p>
                             ${this.displayType !== "completed" ? html`
-                            <div class="flex row">${this.infoBadge()}</div>
+                            <div class="flex row gap">${this.infoBadge()}</div>
                         ` : ""}
                         </div>
                     </div>
                 </div>
 
                 ${this.displayType !== "pending" && this.task.progress ? html`
-                    <div class="flex row gap">
+                    <div class="flex row gap progress-checkboxes">
                         ${this.task.progress.map((v, i) => html`
                             <square-checkbox ?checked=${v} new-design
                                              @change=${(event: CustomEvent) => {
@@ -57,10 +57,13 @@ export class TaskItem extends LitElement {
 
     private infoBadge(): TemplateResult {
         if (this.task.dueDate) return html`
-            <div class="flex row">
-                <p>${timestampToRelativeString(this.task.dueDate)}</p>
-                <span class="material-icons">schedule</span>
-            </div>
+            <p>${timestampToRelativeString(this.task.dueDate)}</p>
+            <span class="material-icons">schedule</span>
+        `;
+
+        if (this.task.wasActive || this.task.isStarted) return html`
+            <p>Not finished</p>
+            <span class="material-icons">pause_circle</span>
         `;
 
         return html``;
@@ -77,15 +80,23 @@ export class TaskItem extends LitElement {
             margin-right: 12px;
           }
           
+          .progress-checkboxes {
+            margin-left: 12px;
+          }
+          
           .text {
             font-weight: 500;
             font-size: 16px;
             line-height: 18px;
           }
           
-          .scope {
+          .sub *:not(.material-icons) {
             font-size: 14px;
             line-height: 20px;
+          }
+
+          .material-icons {
+            font-size: 18px;
           }
         `];
     }
