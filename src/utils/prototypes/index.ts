@@ -6,7 +6,7 @@ last() {
 Array.prototype.clone = function
 clone() {
     if (this.length === 0) return [];
-    if (typeof this[0] === "object") return this.map(a => ({ ...a }));
+    if (typeof this[0] === "object") return this.map((a: object) => ({ ...a }));
     return this.slice(0);
 };
 

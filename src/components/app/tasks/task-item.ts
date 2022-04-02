@@ -1,4 +1,4 @@
-import { CSSResultGroup, html, LitElement, TemplateResult } from "lit";
+import { css, CSSResultGroup, html, LitElement, TemplateResult } from "lit";
 import { componentStyles } from "~src/global";
 import { defineComponent } from "~utils/components";
 import { property } from "lit/decorators.js";
@@ -67,6 +67,17 @@ export class TaskItem extends LitElement {
     }
 
     static get styles(): CSSResultGroup {
-        return [...componentStyles];
+        return [...componentStyles, css`
+          .text {
+            font-weight: 500;
+            font-size: 16px;
+            line-height: 18px;
+          }
+          
+          .scope {
+            font-size: 14px;
+            line-height: 20px;
+          }
+        `];
     }
 }

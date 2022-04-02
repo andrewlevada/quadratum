@@ -11,7 +11,7 @@ export class CardSurface extends LitElement {
 
     render(): TemplateResult {
         return html`
-            <div>
+            <div class="flex col gap">
                 <slot></slot>
             </div>
         `;
@@ -34,6 +34,10 @@ export class CardSurface extends LitElement {
           :host([type=outlined]) div {
             background-color: var(--md-sys-color-surface);
             border: 1px solid var(--md-sys-color-outline);
+          }
+          
+          ::slotted(*:not(:last-child)) {
+            margin-bottom: 12px;
           }
         `];
     }
