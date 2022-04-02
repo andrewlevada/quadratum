@@ -13,6 +13,7 @@ export interface OAuthData {
 export interface UserDocument {
     activeTaskId: string | null;
     figmaOAuth?: OAuthData | null;
+    figmaMapUrl?: string;
     sprintAnchor: SprintAnchor;
 }
 
@@ -56,6 +57,10 @@ export function setActiveTask(taskId: string | null): Promise<void> {
 
 export function setFigmaOAuth(data: OAuthData): Promise<void> {
     return setDoc(userDoc(), { figmaOAuth: data }, { merge: true });
+}
+
+export function setFigmaMapUrl(value: string): Promise<void> {
+    return setDoc(userDoc(), { figmaMapUrl: value }, { merge: true });
 }
 
 /*

@@ -1,22 +1,23 @@
 import { CSSResultGroup, html, TemplateResult } from "lit";
-import { customElement, state } from "lit/decorators.js";
+import { customElement, query, state } from "lit/decorators.js";
 import { pageStyles } from "~src/global";
 import { AppPageElement } from "~components/app/router/app-router";
-import { getUserInfo, listenForUserInfo, OAuthData, setActiveTask, setFigmaOAuth } from "~src/models/user-service";
-import Task from "~src/models/task";
-import { getTaskById } from "~src/models/task/factory";
+import { listenForUserInfo, OAuthData, setFigmaMapUrl, setFigmaOAuth } from "~src/models/user-service";
 import scopedStyles from "./styles.lit.scss";
-import { listenForTasksCompletedToday } from "~src/models/algo/home";
-import listenForUpNextTasks from "~src/models/algo/up-next";
 import { getAuth, onAuthStateChanged } from "@firebase/auth";
 import { generateFigmaOAuthToken } from "~services/figma";
+import "@material/mwc-textfield";
+import { TextField } from "@material/mwc-textfield";
 
 @customElement("app-page--map")
 export default class AppPageMap extends AppPageElement {
+    @state() state: "auth" | "board" | null = null;
     @state() figmaAuthUrl: string | null = null;
-    @state() state: "auth" | "pick_file" | "board" | null = null;
+    @state() figmaMapUrl: string | null = null;
 
     private figmaOAuth: OAuthData | null = null;
+
+    @query("#figma-display") figmaDisplayElement!: HTMLElement;
 
     render(): TemplateResult {
         return html`
@@ -27,15 +28,29 @@ export default class AppPageMap extends AppPageElement {
                         <p>This is needed to fetch data from your life map in FigJam</p>
 
                         ${this.figmaAuthUrl ? html`
-                        <a href=${this.figmaAuthUrl}>Allow access to Figma</a>
-                    ` : ""}
+                            <a href=${this.figmaAuthUrl}>Allow access to Figma</a>
+                        ` : ""}
                     </div>
                 ` : ""}
 
-                ${this.state === "pick_file" ? html`
-                    <h3>You are logged in! Now enter url of a life map file</h3>
-                    <mwc-textfield label="FigJam file url" outlined></mwc-textfield>
+                ${this.state === "board" ? html`
+                    <mwc-textfield label="FigJam file url" outlined
+                                   pattern="https:\\/\\/([\\w\\.-]+\\.)?figma.com\\/(file|proto)\\/([0-9a-zA-Z]{22,128})(?:\\/.*)?$"
+                                   .value=${this.figmaMapUrl}
+                                   @change=${(e: InputEvent) => {
+                                       if (!(e.target as TextField).reportValidity()) return;
+                                       setFigmaMapUrl((e.target as TextField).value).then();
+                                   }}></mwc-textfield>
                 ` : ""}
+
+                <div id="figma-display">
+                    ${this.state === "board" && this.figmaMapUrl ? html`
+                        <iframe width=${this.figmaDisplayElement?.clientWidth}
+                                height=${this.figmaDisplayElement?.clientHeight}
+                                allowfullscreen
+                                src="https://www.figma.com/embed?embed_host=quadratum&url=${this.figmaMapUrl}"/>
+                    ` : ""}
+                </div>
             </div>
         `;
     }
@@ -43,19 +58,21 @@ export default class AppPageMap extends AppPageElement {
     connectedCallback() {
         super.connectedCallback();
 
-        getUserInfo().then(userInfo => {
+        this.dataListeners.push(listenForUserInfo(userInfo => {
             if (userInfo.figmaOAuth) {
-                this.figmaOAuth = userInfo.figmaOAuth;
                 this.state = "board";
+                this.figmaOAuth = userInfo.figmaOAuth;
+                this.figmaMapUrl = userInfo.figmaMapUrl || null;
             } else onAuthStateChanged(getAuth(), user => {
                 if (!user) return;
 
                 if (window.location.search.includes("code=")) {
-                    this.state = "pick_file";
                     const code = window.location.search.split("code=")[1].split("&")[0];
                     const state = window.location.search.split("state=")[1].split("&")[0];
                     if (state !== user.uid) return;
                     generateFigmaOAuthToken(code).then(data => {
+                        this.state = "board";
+                        this.figmaOAuth = data;
                         setFigmaOAuth(data).then();
                         window.history.replaceState({}, document.title, "/app/map");
                     });
@@ -64,7 +81,7 @@ export default class AppPageMap extends AppPageElement {
                     this.figmaAuthUrl = AppPageMap.getFigmaAuthUrl(user.uid);
                 }
             });
-        })
+        }));
     }
 
     private static getFigmaAuthUrl(userId: string): string {
