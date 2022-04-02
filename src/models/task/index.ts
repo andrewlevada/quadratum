@@ -154,6 +154,10 @@ export default class Task extends TaskStateBehaviour {
             nullishPayloadSet("parentTaskId");
             nullishPayloadSet("dueDate");
             nullishPayloadSet("progress");
+            nullishPayloadSet("wasActive");
+            nullishPayloadSet("upNextBlockTime");
+            nullishPayloadSet("isStarted");
+            nullishPayloadSet("isInHome");
 
             // For extra protection
             if (o.sessions !== undefined && o.progress)

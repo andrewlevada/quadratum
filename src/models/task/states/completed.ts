@@ -29,13 +29,16 @@ export default class CompletedState extends TaskState {
             return;
         }
 
-        this.task.setState(new PendingState(this.task, {
-            progress: value, wasActive: true, isStarted: value.some(v => v)
-        }));
+        const updateValues = {
+            isCompleted: false,
+            progress: value,
+            wasActive: true,
+            isStarted: value.some(v => v),
+            sessions: value.length,
+        }
 
-        this.task.edit({
-            isCompleted: false, progress: value, sessions: value.length,
-        }).then();
+        this.task.setState(new PendingState(this.task, updateValues));
+        this.task.edit(updateValues).then();
     }
 
     get isInHome(): boolean {
