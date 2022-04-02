@@ -1,9 +1,9 @@
 import { css, CSSResultGroup, html, TemplateResult } from "lit";
 import { customElement, state } from "lit/decorators.js";
 import { pageStyles } from "~src/global";
-import Sprint from "~src/models/sprint";
+import Sprint from "~src/models/legacy/sprint";
 import Task from "~src/models/task";
-import { getCurrentSprintNumber } from "~src/models/sprint/data";
+import { getCurrentSprintNumber } from "~src/models/legacy/sprint/data";
 import { AppPageElement } from "~components/app/router/app-router";
 
 import("~components/legacy/task-table").then(f => f.default());

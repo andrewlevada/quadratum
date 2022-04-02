@@ -1,5 +1,5 @@
 import Task from "~src/models/task/index";
-import { getCurrentSprintNumber } from "~src/models/sprint/data";
+import { getCurrentSprintNumber } from "~src/models/legacy/sprint/data";
 import { fetchTaskById, postTask } from "~src/models/task/data";
 
 export type ActionOrigin = "daily" | "sprint" | "backlog";

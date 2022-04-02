@@ -2,7 +2,7 @@ import { css, CSSResultGroup, html, TemplateResult } from "lit";
 import { customElement, state } from "lit/decorators.js";
 import { ifDefined } from "lit/directives/if-defined.js";
 import { pageStyles } from "~src/global";
-import Project from "~src/models/project";
+import Project from "~src/models/legacy/project";
 import Task from "~src/models/task";
 import "@material/mwc-button";
 import "@material/mwc-dialog";

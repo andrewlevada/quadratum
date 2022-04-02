@@ -1,4 +1,4 @@
-import Project from "~src/models/project";
+import Project from "~src/models/legacy/project/index";
 import { addDoc, collection, doc, getDoc, getDocs, orderBy, query, setDoc } from "@firebase/firestore";
 import { userDoc } from "~src/models/tools";
 

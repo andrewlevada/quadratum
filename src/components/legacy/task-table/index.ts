@@ -4,9 +4,9 @@ import { componentStyles } from "~src/global";
 import { defineComponent } from "~utils/components";
 import { property, state } from "lit/decorators.js";
 import Task from "~src/models/task";
-import { getCurrentSprintNumber } from "~src/models/sprint/data";
+import { getCurrentSprintNumber } from "~src/models/legacy/sprint/data";
 import { ActionOrigin, createTask } from "~src/models/task/factory";
-import Project from "~src/models/project";
+import Project from "~src/models/legacy/project";
 import scopedStyles from "./styles.lit.scss";
 import "@material/mwc-icon-button";
 

@@ -1,4 +1,4 @@
-import { createNewSprint, fetchSprintByNumber, getCurrentSprintNumber } from "~src/models/sprint/data";
+import { createNewSprint, fetchSprintByNumber, getCurrentSprintNumber } from "~src/models/legacy/sprint/data";
 import { getSprintAnchor } from "~src/models/user-service";
 import Task from "~src/models/task";
 import { fetchTasksWithFilter } from "~src/models/task/data";

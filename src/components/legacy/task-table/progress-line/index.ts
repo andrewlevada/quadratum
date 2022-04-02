@@ -6,7 +6,7 @@ import "@material/mwc-icon-button";
 import "@material/mwc-icon";
 import "@material/mwc-menu";
 import Task from "~src/models/task";
-import { getCurrentSprintNumber } from "~src/models/sprint/data";
+import { getCurrentSprintNumber } from "~src/models/legacy/sprint/data";
 import { ActionOrigin } from "~src/models/task/factory";
 import { Section } from "~components/legacy/task-table";
 import { Menu } from "@material/mwc-menu";

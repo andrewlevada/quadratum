@@ -1,4 +1,4 @@
-import { fetchAllProjects, fetchProjectById, postProject, updateProject } from "~src/models/project/data";
+import { fetchAllProjects, fetchProjectById, postProject, updateProject } from "~src/models/legacy/project/data";
 import Task from "~src/models/task";
 import { fetchTasksWithFilter } from "~src/models/task/data";
 import { DocumentData,

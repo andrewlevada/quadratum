@@ -1,4 +1,4 @@
-import Sprint from "~src/models/sprint";
+import Sprint from "~src/models/legacy/sprint/index";
 import { doc, getDoc, setDoc, updateDoc } from "@firebase/firestore";
 import { userDoc } from "~src/models/tools";
 import { getSprintAnchor, UserDocument } from "~src/models/user-service";
