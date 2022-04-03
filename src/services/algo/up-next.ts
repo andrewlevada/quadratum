@@ -11,7 +11,6 @@ const baseConstraints = [
 export default function listenToUpNextTasks(callback: Callback<Task[]>): Unsubscribe[] {
     return queryTasksForGroups([
         [where("wasActive", "==", true)],
-        [where("isStarted", "==", true)],
         [where("dueDate", "<=", getDayTimestamp())],
     ], callback);
 }

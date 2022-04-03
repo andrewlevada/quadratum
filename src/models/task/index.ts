@@ -33,7 +33,6 @@ export interface BaseTaskDocument {
 export type PendingTaskDocument = BaseTaskDocument & PendingTaskDocumentPart;
 export interface PendingTaskDocumentPart {
     progress?: boolean[] | null;
-    isStarted?: boolean;
     wasActive?: boolean;
     upNextBlockTime?: number;
 }
@@ -108,7 +107,6 @@ export default class Task extends TaskStateBehaviour {
     @forwardState() progress!: boolean[];
     @forwardState() wasActive!: boolean;
     @forwardState() upNextBlockTime!: number | null;
-    @forwardState() isStarted!: boolean;
     @forwardState() isInHome!: boolean;
 
     public constructor(id: string, data: TaskConstructionData) {
@@ -160,7 +158,6 @@ export default class Task extends TaskStateBehaviour {
             nullishPayloadSet<Task>("progress", o, payload);
             nullishPayloadSet<Task>("wasActive", o, payload);
             nullishPayloadSet<Task>("upNextBlockTime", o, payload);
-            nullishPayloadSet<Task>("isStarted", o, payload);
             nullishPayloadSet<Task>("isInHome", o, payload);
 
             // For extra protection

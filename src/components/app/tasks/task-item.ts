@@ -61,7 +61,7 @@ export class TaskItem extends LitElement {
             <span class="material-icons">schedule</span>
         `;
 
-        if (this.task.wasActive || this.task.isStarted) return html`
+        if (this.task.wasActive) return html`
             <p>Not finished</p>
             <span class="material-icons">pause_circle</span>
         `;

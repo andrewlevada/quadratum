@@ -6,8 +6,8 @@ import { listenForUserInfo, setActiveTask } from "~services/user";
 import Task from "~src/models/task";
 import { getTaskById } from "~src/models/task/factory";
 import scopedStyles from "./styles.lit.scss";
-import { listenForTasksCompletedToday } from "~src/models/algo/home";
-import listenForUpNextTasks from "~src/models/algo/up-next";
+import { listenForTasksCompletedToday } from "~src/services/algo/home";
+import listenForUpNextTasks from "~src/services/algo/up-next";
 
 import("~components/app/tasks/tasks-card").then(f => f.default());
 import("~components/app/tasks/task-item").then(f => f.default());

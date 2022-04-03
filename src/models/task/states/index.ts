@@ -11,8 +11,6 @@ export abstract class TaskStateBehaviour {
     public abstract set wasActive(value: boolean);
     public abstract get upNextBlockTime(): number | null;
     public abstract set upNextBlockTime(value: number | null);
-    public abstract get isStarted(): boolean;
-    public abstract set isStarted(value: boolean);
 
     // Completed
     public abstract get isInHome(): boolean;

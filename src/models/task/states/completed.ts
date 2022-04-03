@@ -33,7 +33,6 @@ export default class CompletedState extends TaskState {
             isCompleted: false,
             progress: value,
             wasActive: true,
-            isStarted: value.some(v => v),
             sessions: value.length,
             isInHome: null,
         }
@@ -50,10 +49,6 @@ export default class CompletedState extends TaskState {
         if (this.isInHomeInner === value) return;
         this.isInHomeInner = value;
         this.task.edit({ isInHome: value || null }).then();
-    }
-
-    get isStarted(): boolean {
-        return true;
     }
 
     get upNextBlockTime(): number | null {

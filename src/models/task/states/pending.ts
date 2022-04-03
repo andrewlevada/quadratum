@@ -7,7 +7,6 @@ export default class PendingState extends TaskState {
     private progressInner: boolean[] | null;
     private upNextBlockTimeInner: number | null;
     private wasActiveInner: boolean | null;
-    private isStartedInner: boolean | null;
 
     constructor(task: Task, data?: TaskConstructionData) {
         super(task, data);
@@ -15,7 +14,6 @@ export default class PendingState extends TaskState {
         this.progressInner = d?.progress || null;
         this.upNextBlockTimeInner = d?.upNextBlockTime || null;
         this.wasActiveInner = d?.wasActive || null;
-        this.isStartedInner = d?.isStarted || null;
     }
 
     public get isCompleted(): boolean {
@@ -29,7 +27,6 @@ export default class PendingState extends TaskState {
     public set progress(value: boolean[] | null) {
         if (value === this.progressInner) return;
         this.progressInner = value;
-        this.isStartedInner = value?.some(v => v) || null;
         if (value?.every(v => v)) {
             const updateValues = {
                 isCompleted: true,
@@ -38,7 +35,6 @@ export default class PendingState extends TaskState {
                 progress: null,
                 upNextBlockTime: null,
                 wasActive: null,
-                isStarted: null,
             };
             this.task.setState(new CompletedState(this.task, updateValues as Partial<CompletedTaskDocument>));
             this.task.edit(updateValues).then();
@@ -46,16 +42,11 @@ export default class PendingState extends TaskState {
             id: this.task.id,
             progress: value,
             sessions: value?.length || 0,
-            isStarted: this.isStartedInner,
         }).then();
     }
 
     get isInHome(): boolean {
         return false;
-    }
-
-    get isStarted(): boolean {
-        return !!this.isStartedInner;
     }
 
     get upNextBlockTime(): number | null {
