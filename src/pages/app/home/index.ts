@@ -12,6 +12,7 @@ import listenForUpNextTasks from "~src/models/algo/up-next";
 import("~components/app/tasks/tasks-card").then(f => f.default());
 import("~components/app/tasks/task-item").then(f => f.default());
 import("~components/common/card-surface").then(f => f.default());
+import("~components/overwrites/md-button").then(f => f.default());
 
 @customElement("app-page--home")
 export default class AppPageHome extends AppPageElement {
@@ -42,12 +43,19 @@ export default class AppPageHome extends AppPageElement {
                         <h6>Up next</h6>
                         <tasks-card .tasks=${this.upNextTasks.filter(t => t.id !== this.activeTask?.id)} displayType="pending"></tasks-card>
 
-                        <h6>Feel like doing something different?</h6>
+                        <div class="flex header">
+                            <h6>Feel like doing something different?</h6>
+                            <md-button label="Shuffle" icon="shuffle" outlined></md-button>
+                        </div>
                         <tasks-card .tasks=${this.recommendedTasks} displayType="pending"></tasks-card>
                     </div>
 
                     <div class="flex col gap">
-                        <h6>Completed today</h6>
+                        <div class="flex header">
+                            <h6>Completed today</h6>
+                            <md-button label="To the next day!" icon="clear_all" outlined></md-button>
+                        </div>
+
                         <tasks-card .tasks=${this.completedTasks} displayType="completed"></tasks-card>
 
                         <h6>Stay on track</h6>
