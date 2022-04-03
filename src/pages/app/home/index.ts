@@ -6,7 +6,7 @@ import { listenForUserInfo, setActiveTask } from "~services/user";
 import Task from "~src/models/task";
 import { getTaskById } from "~src/models/task/factory";
 import scopedStyles from "./styles.lit.scss";
-import { listenForTasksCompletedToday } from "~src/services/algo/home";
+import { clearCompletedToday, listenForTasksCompletedToday } from "~src/services/algo/home";
 import listenForUpNextTasks from "~src/services/algo/up-next";
 
 import("~components/app/tasks/tasks-card").then(f => f.default());
@@ -53,7 +53,8 @@ export default class AppPageHome extends AppPageElement {
                     <div class="flex col gap">
                         <div class="flex header">
                             <h6>Completed today</h6>
-                            <md-button label="To the next day!" icon="clear_all" outlined></md-button>
+                            <md-button label="To the next day!" icon="clear_all" outlined
+                                       @click=${() => clearCompletedToday(this.completedTasks)}></md-button>
                         </div>
 
                         <tasks-card .tasks=${this.completedTasks} displayType="completed"></tasks-card>
