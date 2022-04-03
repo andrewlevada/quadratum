@@ -5,12 +5,14 @@ import {
     doc,
     FirestoreDataConverter,
     getDoc,
-    getDocs,
+    getDocs, onSnapshot,
     orderBy,
-    query,
-    setDoc
+    query, QueryConstraint,
+    setDoc, Unsubscribe
 } from "@firebase/firestore";
 import { userDoc } from "~src/models/tools";
+import Task from "~src/models/task";
+import { Callback } from "~utils/types";
 
 type Constructor<I> = new (...args: any[]) => I;
 type Model<T> = Constructor<T> & { converter: FirestoreDataConverter<T> };
@@ -23,6 +25,17 @@ export async function postModel<T>(model: Model<T>, collectionName: string, obj:
 export async function fetchModelById<T>(model: Model<T>, collectionName: string, id: string): Promise<T> {
     const snap = await getDoc(doc(userDoc(), collectionName, id).withConverter(model.converter));
     return snap.data() || Promise.reject();
+}
+
+export async function fetchModelsWithFilter<T>(model: Model<T>, collectionName: string, constraints: QueryConstraint[]): Promise<T[]> {
+    const q = query(collection(userDoc(), collectionName).withConverter(model.converter), ...constraints);
+    const snap = await getDocs(q);
+    return snap.docs.map(v => v.data());
+}
+
+export function listenForModelsWithFilter<T>(model: Model<T>, collectionName: string, callback: Callback<T[]>, constraints: QueryConstraint[]): Unsubscribe {
+    const q = query(collection(userDoc(), collectionName).withConverter(model.converter), ...constraints);
+    return onSnapshot(q, snap => callback(snap.docs.map(v => v.data())));
 }
 
 export async function updateModel(model: Model<any>, collectionName: string, obj: any): Promise<void> {

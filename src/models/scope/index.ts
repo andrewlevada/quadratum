@@ -3,11 +3,14 @@ import {
     FirestoreDataConverter,
     PartialWithFieldValue,
     QueryDocumentSnapshot,
+    Unsubscribe,
+    where,
     WithFieldValue
 } from "@firebase/firestore";
 import { nullishPayloadSet, updatable } from "~src/models/tools";
-import { FullPartial } from "~utils/types";
+import { Callback, FullPartial } from "~utils/types";
 import { updateTask } from "~src/models/task/data";
+import { listenForScopesWithFilter, updateScope } from "~src/models/scope/data";
 
 export interface ScopeDocument {
     label: string;
@@ -48,11 +51,15 @@ export default class Scope {
         this.isArchivedInner = document.isArchived;
     }
 
-    public edit(data: FullPartial<Scope>): Promise<void> {
+    public edit(data: Partial<Scope>): Promise<void> {
         for (const field of Object.keys(data))
             if (`${field}Inner` in this)
                 (this as Record<string, unknown>)[`${field}Inner`] = (data as Record<string, unknown>)[field];
-        return updateTask({ ...data, id: this.id as string });
+        return updateScope({ ...data, id: this.id as string });
+    }
+
+    public static listenForPinned(callback: Callback<Scope[]>): Unsubscribe {
+        return listenForScopesWithFilter([where("isPinned", "==", true)], callback);
     }
 
     public static converter: FirestoreDataConverter<Scope> = {

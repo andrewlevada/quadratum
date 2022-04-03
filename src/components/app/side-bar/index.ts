@@ -1,7 +1,7 @@
-import { CSSResultGroup, html, LitElement, TemplateResult } from "lit";
+import { CSSResultGroup, html, TemplateResult } from "lit";
 import { createRef, ref } from "lit/directives/ref.js";
 import { componentStyles } from "~src/global";
-import { defineComponent } from "~utils/components";
+import { defineComponent, RealtimeLitElement } from "~utils/components";
 import "@material/mwc-button";
 import "@material/mwc-dialog";
 import "@material/mwc-textfield";
@@ -12,15 +12,17 @@ import { Dialog } from "@material/mwc-dialog";
 import { TextField } from "@material/mwc-textfield";
 import { Item } from "~components/app/side-bar/item";
 import scopedStyles from "./styles.lit.scss";
+import Scope from "~src/models/scope";
 
 import("~components/common/color-picker").then(f => f.default());
-import("./item").then(f => f.default());
 import("~components/overwrites/mwc-drawer-fixed").then(f => f.default());
+import("./item").then(f => f.default());
 
 export default (): void => defineComponent("side-bar", SideBar);
-export class SideBar extends LitElement {
+export class SideBar extends RealtimeLitElement {
     @property({ type: String }) pageTag: string = "";
     @state() projects: Project[] = [];
+    @state() scopes: Scope[] = [];
     @state() sprintNumbers: [number | undefined, number, number] | null = null;
 
     private newProjectColor: string = "";
@@ -34,36 +36,56 @@ export class SideBar extends LitElement {
                         <side-bar--item .item=${item}></side-bar--item>
                     `)}
                     <div class="header"><p>${SideBar.isNewDesign() ? "Scopes of focus" : "Projects"}</p></div>
-                    ${SideBar.markActive(this.getProjectsList()).map(item => html`
+                    ${SideBar.markActive(this.getDynamicList()).map(item => html`
                         <side-bar--item .item=${item}></side-bar--item>
                     `)}
-
-                    <mwc-button label="Create project" icon="add" @click=${() => this.newProjectDialogState(true)}></mwc-button>
+                    
+                    ${!SideBar.isNewDesign() ? html`
+                        <mwc-button label="Create project" icon="add"
+                                    @click=${() => this.newProjectDialogState(true)}></mwc-button>
+                    ` : ""}
                 </div>
                 <div id="app-content" slot="appContent">
                     <slot></slot>
                 </div>
             </mwc-drawer-fixed>
 
-            <mwc-dialog heading="Let's do something new..." ${ref(this.newProjectDialog)}>
-                <div class="flex col gap">
-                    <mwc-textfield label="Project Label" ${ref(this.newProjectNameField)}></mwc-textfield>
-                    <color-picker @update=${(e: CustomEvent) => {
-                        this.newProjectColor = e.detail.value as string;
-                    }}></color-picker>
-                </div>
-                <mwc-button slot="primaryAction" @click=${this.createNewProject}>
-                    Create
-                </mwc-button>
-                <mwc-button slot="secondaryAction" @click=${() => this.newProjectDialogState(false)}>
-                    Cancel
-                </mwc-button>
-            </mwc-dialog>
+            ${!SideBar.isNewDesign() ? html`
+                <mwc-dialog heading="Let's do something new..." ${ref(this.newProjectDialog)}>
+                    <div class="flex col gap">
+                        <mwc-textfield label="Project Label" ${ref(this.newProjectNameField)}></mwc-textfield>
+                        <color-picker @update=${(e: CustomEvent) => {
+                            this.newProjectColor = e.detail.value as string;
+                        }}></color-picker>
+                    </div>
+                    <mwc-button slot="primaryAction" @click=${this.createNewProject}>
+                        Create
+                    </mwc-button>
+                    <mwc-button slot="secondaryAction" @click=${() => this.newProjectDialogState(false)}>
+                        Cancel
+                    </mwc-button>
+                </mwc-dialog>
+            ` : ""}
         `;
     }
 
     private newProjectDialog = createRef<Dialog>();
     private newProjectNameField = createRef<TextField>();
+
+    private getDynamicList(): Item[] {
+        // Returns list of project in legacy design
+        // And pinned scopes in new design
+        if (SideBar.isNewDesign()) return this.getPinnedScopes();
+        return this.getProjectsList();
+    }
+
+    private getPinnedScopes(): Item[] {
+        return this.scopes.map(v => ({
+            label: v.label,
+            icon: v.symbol || "star",
+            link: `/scope/${v.id}`
+        }));
+    }
 
     private getProjectsList(): Item[] {
         const list = this.projects.map(v => ({
@@ -95,7 +117,14 @@ export class SideBar extends LitElement {
 
     connectedCallback() {
         super.connectedCallback();
-        if (SideBar.isNewDesign()) return;
+        if (SideBar.isNewDesign()) {
+            this.dataListeners.push(Scope.listenForPinned((scopes: Scope[]) => {
+                this.scopes = scopes;
+            }));
+            return;
+        }
+
+        // Legacy
         const [lastWeekDate, nextWeekDate] = [new Date(), new Date()];
         lastWeekDate.setDate(lastWeekDate.getDate() - 7);
         nextWeekDate.setDate(nextWeekDate.getDate() + 7);

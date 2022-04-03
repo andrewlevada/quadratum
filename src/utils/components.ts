@@ -1,5 +1,17 @@
+import { LitElement } from "lit";
+import { Unsubscribe } from "@firebase/firestore";
+
 export function defineComponent(tag: string, c: CustomElementConstructor): void {
     if (customElements.get(tag) === undefined) customElements.define(tag, c);
+}
+
+export class RealtimeLitElement extends LitElement {
+    protected dataListeners: Unsubscribe[] = [];
+
+    disconnectedCallback() {
+        super.disconnectedCallback();
+        this.dataListeners.forEach((unsubscribe) => unsubscribe());
+    }
 }
 
 export type obj = Record<string, unknown> | null | undefined;
