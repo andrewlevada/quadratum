@@ -1,5 +1,5 @@
 /** @type {import("snowpack").SnowpackUserConfig } */
-export default {
+const config = {
   mount: {
     assets: { url: '/', static: true },
     src: { url: '/build' },
@@ -31,6 +31,7 @@ export default {
   },
   routes: [
     /* Enable an SPA Fallback in development: */
+    { "src": "/tools", "dest": "tools/index.html" },
     { "match": "routes", "src": ".*", "dest": "/index.html" },
   ],
   devOptions: {
@@ -48,6 +49,11 @@ export default {
     "~src": "./src"
   },
 };
+
+if (!isProduction())
+  config.mount["scripts/tools"] = { url: "/tools" };
+
+export default config;
 
 function isProduction() {
   return process.env.NODE_ENV === "production";

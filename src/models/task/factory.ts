@@ -23,7 +23,12 @@ export async function createTask(text: string, context: CreationContext): Promis
         isInDaily: context.origin === "daily",
         progress: [false],
         sessions: 1,
+        isCompleted: false,
         parentTaskId: context.parentTaskId,
+        scope: {
+            id: "pile",
+            location: "Pile",
+        }
     }));
 }
 

@@ -28,19 +28,19 @@ export default class Scope {
     public readonly id: string;
 
     private labelInner: string;
-    @updatable() label!: string;
+    @updatable(updateScope) label!: string;
 
     private parentIdsInner: string[];
-    @updatable() parentIds!: string[];
+    @updatable(updateScope) parentIds!: string[];
 
     private symbolInner?: string;
-    @updatable() symbol!: string | null;
+    @updatable(updateScope, "null") symbol!: string | null;
 
     private isPinnedInner?: boolean;
-    @updatable() isPinned!: boolean;
+    @updatable(updateScope, "boolean") isPinned!: boolean;
 
     private isArchivedInner?: boolean;
-    @updatable() isArchived!: boolean;
+    @updatable(updateScope, "boolean") isArchived!: boolean;
 
     constructor(id: string, document: ScopeDocument) {
         this.id = id;

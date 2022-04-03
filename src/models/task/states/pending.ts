@@ -1,5 +1,8 @@
 import TaskState from "~src/models/task/states/index";
-import Task, { CompletedTaskDocument, PendingTaskDocument, TaskConstructionData } from "~src/models/task";
+import Task, {
+    CompletedTaskDocumentPart,
+    PendingTaskDocumentPart,
+} from "~src/models/task";
 import { updateTask } from "~src/models/task/data";
 import CompletedState from "~src/models/task/states/completed";
 
@@ -8,12 +11,11 @@ export default class PendingState extends TaskState {
     private upNextBlockTimeInner: number | null;
     private wasActiveInner: boolean | null;
 
-    constructor(task: Task, data?: TaskConstructionData) {
-        super(task, data);
-        const d = data as PendingTaskDocument | undefined;
-        this.progressInner = d?.progress || null;
-        this.upNextBlockTimeInner = d?.upNextBlockTime || null;
-        this.wasActiveInner = d?.wasActive || null;
+    constructor(task: Task, data: PendingTaskDocumentPart) {
+        super(task);
+        this.progressInner = data.progress || null;
+        this.upNextBlockTimeInner = data.upNextBlockTime || null;
+        this.wasActiveInner = data.wasActive || null;
     }
 
     public get isCompleted(): boolean {
@@ -36,7 +38,7 @@ export default class PendingState extends TaskState {
                 upNextBlockTime: null,
                 wasActive: null,
             };
-            this.task.setState(new CompletedState(this.task, updateValues as Partial<CompletedTaskDocument>));
+            this.task.setState(new CompletedState(this.task, updateValues as CompletedTaskDocumentPart));
             this.task.edit(updateValues).then();
         } else updateTask({
             id: this.task.id,

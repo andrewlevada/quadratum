@@ -1,13 +1,13 @@
 import TaskState from "~src/models/task/states/index";
 import PendingState from "~src/models/task/states/pending";
-import Task, { CompletedTaskDocument, TaskConstructionData } from "~src/models/task";
+import Task, { CompletedTaskDocumentPart } from "~src/models/task";
 
 export default class CompletedState extends TaskState {
     private isInHomeInner: boolean;
 
-    constructor(task: Task, data?: TaskConstructionData) {
-        super(task, data);
-        this.isInHomeInner = !!((data as CompletedTaskDocument)?.isInHome);
+    constructor(task: Task, data: CompletedTaskDocumentPart) {
+        super(task);
+        this.isInHomeInner = !!data.isInHome;
     }
 
     public get isCompleted(): boolean {
@@ -37,7 +37,7 @@ export default class CompletedState extends TaskState {
             isInHome: null,
         }
 
-        this.task.setState(new PendingState(this.task, updateValues as any));
+        this.task.setState(new PendingState(this.task, updateValues));
         this.task.edit(updateValues).then();
     }
 

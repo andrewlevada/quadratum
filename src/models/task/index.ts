@@ -13,14 +13,13 @@ import TaskState, { TaskStateBehaviour } from "~src/models/task/states";
 import PendingState from "~src/models/task/states/pending";
 import CompletedState from "~src/models/task/states/completed";
 import { FullPartial } from "~src/utils/types";
-import { nullishPayloadSet } from "~src/models/tools";
-
-export type TaskConstructionData = BaseTaskDocument | Task | Partial<Task>;
+import { nullishPayloadSet, updatable } from "~src/models/tools";
 
 export interface BaseTaskDocument {
     text: string;
     isCompleted: boolean;
     sessions: number;
+    scope: ScopeReference;
     parentTaskId?: string;
     dueDate?: number;
 
@@ -28,6 +27,11 @@ export interface BaseTaskDocument {
     projectId?: string;
     sprintNumber?: number;
     isInDaily?: boolean;
+}
+
+export interface ScopeReference {
+    id: string | "pile";
+    location: string;
 }
 
 export type PendingTaskDocument = BaseTaskDocument & PendingTaskDocumentPart;
@@ -50,49 +54,20 @@ export default class Task extends TaskStateBehaviour {
 
     private state: TaskState;
 
-    private textInner: string | undefined;
-    public get text(): string {
-        return this.textInner || "";
-    }
-    public set text(value: string) {
-        if (this.textInner === value) return;
-        this.textInner = value;
-        updateTask({ id: this.id, text: value }).then();
-    }
-
-    public get isCompleted(): boolean {
-        return this.state.isCompleted;
-    }
+    private textInner: string;
+    @updatable(updateTask) text!: string;
 
     private sessionsInner: number;
-    public get sessions(): number {
-        return this.sessionsInner;
-    }
-    public set sessions(value: number) {
-        if (this.sessionsInner === value) return;
-        this.sessionsInner = value;
-        updateTask({ id: this.id, sessions: this.sessionsInner }).then();
-    }
+    @updatable(updateTask) sessions!: number;
 
-    private parentTaskIdInner: string | undefined;
-    public get parentTaskId(): string | undefined {
-        return this.parentTaskIdInner;
-    }
-    public set parentTaskId(value: string | undefined) {
-        if (this.parentTaskIdInner === value) return;
-        this.parentTaskIdInner = value;
-        updateTask({ id: this.id, parentTaskId: value }).then();
-    }
+    private scopeInner: ScopeReference;
+    @updatable(updateTask) scope!: ScopeReference;
 
-    private dueDateInner: number | null;
-    public get dueDate(): number | null {
-        return this.dueDateInner;
-    }
-    public set dueDate(value: number | null) {
-        if (this.dueDateInner === value) return;
-        this.dueDateInner = value;
-        updateTask({ id: this.id, dueDate: value }).then();
-    }
+    private parentTaskIdInner?: string;
+    @updatable(updateTask, "null") parentTaskId!: string | null;
+
+    private dueDateInner?: number;
+    @updatable(updateTask, "null") dueDate!: number | null;
 
     // State
 
@@ -104,18 +79,25 @@ export default class Task extends TaskStateBehaviour {
         this.state = value;
     }
 
+    public get isCompleted(): boolean {
+        return this.state.isCompleted;
+    }
+
     @forwardState() progress!: boolean[];
     @forwardState() wasActive!: boolean;
     @forwardState() upNextBlockTime!: number | null;
     @forwardState() isInHome!: boolean;
 
-    public constructor(id: string, data: TaskConstructionData) {
+    public constructor(id: string, data: PendingTaskDocument & CompletedTaskDocument) {
         super();
         this.id = id;
+
         this.textInner = data.text;
-        this.sessionsInner = data.sessions || 0;
+        this.scopeInner = data.scope;
+        this.sessionsInner = data.sessions;
+
         this.parentTaskIdInner = data.parentTaskId;
-        this.dueDateInner = data.dueDate || null;
+        this.dueDateInner = data.dueDate;
 
         this.state = data.isCompleted ? new CompletedState(this, data) : new PendingState(this, data);
 
@@ -142,7 +124,7 @@ export default class Task extends TaskStateBehaviour {
 
     public static converter: FirestoreDataConverter<Task> = {
         fromFirestore(snap: QueryDocumentSnapshot): Task {
-            return new Task(snap.id, snap.data());
+            return new Task(snap.id, snap.data() as BaseTaskDocument);
         },
 
         toFirestore(modelObject: WithFieldValue<Task> | PartialWithFieldValue<Task>): DocumentData {
@@ -150,6 +132,7 @@ export default class Task extends TaskStateBehaviour {
             const payload: PartialWithFieldValue<TaskDocument> = {};
 
             if (o.text !== undefined) payload.text = o.text;
+            if (o.scope !== undefined) payload.scope = o.scope;
             if (o.sessions !== undefined) payload.sessions = o.sessions;
             if (o.isCompleted !== undefined) payload.isCompleted = o.isCompleted;
 

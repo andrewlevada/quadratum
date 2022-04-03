@@ -1,5 +1,5 @@
 // eslint-disable-next-line max-classes-per-file
-import Task, { TaskConstructionData } from "~src/models/task";
+import Task from "~src/models/task";
 
 export abstract class TaskStateBehaviour {
     public abstract get isCompleted(): boolean;
@@ -20,7 +20,7 @@ export abstract class TaskStateBehaviour {
 export default abstract class TaskState extends TaskStateBehaviour {
     protected task: Task;
 
-    protected constructor(task: Task, data?: TaskConstructionData) {
+    protected constructor(task: Task) {
         super();
         this.task = task;
     }
