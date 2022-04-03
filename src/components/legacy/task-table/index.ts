@@ -52,7 +52,7 @@ export class TaskTable extends LitElement {
                             }}></inline-text-input>
 
                             <add-button sub @create=${(event: CustomEvent) => {
-                                this.createTask(event.detail.value, section, task.parentTaskId || task.id)
+                                this.createTask(event.detail.value, section, task)
                                         .then(t => {
                                             this.tasks.push(t);
                                             this.requestUpdate("tasks");
@@ -128,12 +128,12 @@ export class TaskTable extends LitElement {
         });
     }
 
-    private createTask(text: string, section: Section | null, parentTaskId?: string): Promise<Task> {
+    private createTask(text: string, section: Section | null, parentTask?: Task): Promise<Task> {
         return createTask(text, {
             origin: this.origin,
             projectId: section?.project?.id || this.globalProjectId,
             sprintNumber: this.globalSprintNumber,
-            parentTaskId,
+            parentTask,
         });
     }
 
@@ -141,17 +141,17 @@ export class TaskTable extends LitElement {
         const tasks: Task[] = [];
 
         for (const t of heap.filter(v => !v.isCompleted && !v.isInDaily)) {
-            if (t.parentTaskId !== undefined) continue;
+            if (t.parentTaskId) continue;
             tasks.push(t, ...this.constructSubTree(heap, t.id));
         }
 
         for (const t of heap.filter(v => !v.isCompleted && v.isInDaily)) {
-            if (t.parentTaskId !== undefined) continue;
+            if (t.parentTaskId) continue;
             tasks.push(t, ...this.constructSubTree(heap, t.id));
         }
 
         for (const t of heap.filter(v => v.isCompleted)) {
-            if (t.parentTaskId !== undefined) continue;
+            if (t.parentTaskId) continue;
             tasks.push(t, ...this.constructSubTree(heap, t.id));
         }
 

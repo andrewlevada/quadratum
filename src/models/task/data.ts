@@ -1,10 +1,10 @@
 import { collection, getDocs, onSnapshot, orderBy, query, QueryConstraint, Unsubscribe } from "@firebase/firestore";
 import { userDoc } from "~src/models/tools";
-import Task, { CompletedTaskDocumentPart, PendingTaskDocumentPart } from "~src/models/task/index";
+import Task, { CompletedTaskDocumentPart, PendingTaskDocumentPart, TaskDocument } from "~src/models/task/index";
 import { FullPartial } from "~utils/types";
 import { deleteModel, fetchModelById, postModel, updateModel } from "~src/models/data";
 
-export function postTask(task: Task): Promise<Task> {
+export function postTask(task: TaskDocument): Promise<Task> {
     return postModel(Task, "tasks", task);
 }
 

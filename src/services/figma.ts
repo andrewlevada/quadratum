@@ -37,7 +37,7 @@ function extractScopesFromFigmaDocument(document: DocumentNode): ScopeDraft[] {
         if (node.type !== "SHAPE_WITH_TEXT") continue;
         const emojis = node.name.match(emojiRegex);
         scopes[node.id] = {
-            label: node.name.replace(emojiRegex, "").trim(),
+            label: node.name.replace(emojiRegex, "").replace("/", "").trim(),
             parentIds: [],
         }
         if (node.shapeType === "ROUNDED_RECTANGLE") scopes[node.id].isPinned = true;

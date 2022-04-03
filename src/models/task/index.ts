@@ -55,13 +55,30 @@ export default class Task extends TaskStateBehaviour {
     private state: TaskState;
 
     private textInner: string;
-    @updatable(updateTask) text!: string;
+    public get text(): string {
+        return this.textInner;
+    }
+    public set text(value: string) {
+        value = value.trim();
+        if (this.textInner === value) return;
+        this.textInner = value;
+        updateTask({ id: this.id, text: value }).then();
+        this.propagateScopeUpdate().then();
+    }
 
     private sessionsInner: number;
     @updatable(updateTask) sessions!: number;
 
     private scopeInner: ScopeReference;
-    @updatable(updateTask) scope!: ScopeReference;
+    public get scope(): ScopeReference {
+        return this.scopeInner;
+    }
+    public set scope(value: ScopeReference) {
+        if (this.scopeInner === value) return;
+        this.scopeInner = value;
+        updateTask({ id: this.id, scope: value }).then();
+        this.propagateScopeUpdate().then();
+    }
 
     private parentTaskIdInner?: string;
     @updatable(updateTask, "null") parentTaskId!: string | null;
@@ -120,6 +137,12 @@ export default class Task extends TaskStateBehaviour {
             if (`${field}Inner` in this)
                 (this as Record<string, unknown>)[`${field}Inner`] = (data as Record<string, unknown>)[field];
         return updateTask({ ...data, id: this.id as string });
+    }
+
+    private async propagateScopeUpdate() {
+        const children = await fetchTasksWithFilter([where("parentTaskId", "==", this.id)], true);
+        for (const child of children)
+            child.scope = { ...child.scope, location: `${this.scopeInner.location}/${this.textInner}` };
     }
 
     public static converter: FirestoreDataConverter<Task> = {

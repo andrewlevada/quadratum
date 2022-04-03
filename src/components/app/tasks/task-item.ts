@@ -30,7 +30,7 @@ export class TaskItem extends LitElement {
                     <div class="flex col grow">
                         <p class="text">${this.task.text}</p>
                         <div class="flex row justify-between sub">
-                            <p class="scope">Scope</p>
+                            <p class="scope">${this.task.scope.location}</p>
                             ${this.displayType !== "completed" ? html`
                             <div class="flex row gap">${this.infoBadge()}</div>
                         ` : ""}

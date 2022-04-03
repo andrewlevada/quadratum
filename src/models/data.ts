@@ -17,7 +17,7 @@ import { Callback } from "~utils/types";
 type Constructor<I> = new (...args: any[]) => I;
 type Model<T> = Constructor<T> & { converter: FirestoreDataConverter<T> };
 
-export async function postModel<T>(model: Model<T>, collectionName: string, obj: T): Promise<T> {
+export async function postModel<T>(model: Model<T>, collectionName: string, obj: any): Promise<T> {
     const snap = await addDoc(collection(userDoc(), collectionName).withConverter(model.converter), obj);
     return new model(snap.id, obj);
 }
