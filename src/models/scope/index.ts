@@ -1,13 +1,11 @@
 import { updateScope } from "~src/models/scope/data";
 import {
-    deleteField,
     DocumentData,
     FirestoreDataConverter,
     PartialWithFieldValue,
     QueryDocumentSnapshot,
     WithFieldValue
 } from "@firebase/firestore";
-import { TaskDocument } from "~src/models/task";
 import { nullishPayloadSet } from "~src/models/tools";
 
 export interface ScopeDocument {

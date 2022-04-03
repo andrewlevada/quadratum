@@ -1,4 +1,4 @@
-import { OAuthData } from "~src/models/user-service";
+import { OAuthData } from "~services/user";
 
 export function generateFigmaOAuthToken(code: string): Promise<OAuthData> {
     return fetch("https://functions.yandexcloud.net/d4egl0rlb1ug96bg0hn0", {

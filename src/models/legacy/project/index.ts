@@ -1,12 +1,14 @@
 import { fetchAllProjects, fetchProjectById, postProject, updateProject } from "~src/models/legacy/project/data";
 import Task from "~src/models/task";
 import { fetchTasksWithFilter } from "~src/models/task/data";
-import { DocumentData,
+import {
+    DocumentData,
     FirestoreDataConverter,
     PartialWithFieldValue,
     QueryDocumentSnapshot,
     where,
-    WithFieldValue } from "@firebase/firestore";
+    WithFieldValue
+} from "@firebase/firestore";
 
 interface ProjectDocument {
     label: string;

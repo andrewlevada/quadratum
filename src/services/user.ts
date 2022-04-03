@@ -1,7 +1,7 @@
 import { getDoc, onSnapshot, setDoc, Unsubscribe } from "@firebase/firestore";
-import Sprint from "./legacy/sprint";
-import { userDoc } from "./tools";
-import { createNewSprint } from "./legacy/sprint/data";
+import Sprint from "../models/legacy/sprint";
+import { userDoc } from "../models/tools";
+import { createNewSprint } from "../models/legacy/sprint/data";
 import { Callback } from "~utils/types";
 
 export interface OAuthData {

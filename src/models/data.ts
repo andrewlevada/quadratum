@@ -1,6 +1,7 @@
 import {
     addDoc,
     collection,
+    deleteDoc,
     doc,
     FirestoreDataConverter,
     getDoc,
@@ -34,4 +35,8 @@ export async function fetchAllModels<T>(model: Model<T>, collectionName: string,
     const docs = await getDocs(q);
     const snaps = docs.docs;
     return snaps.map(snap => snap.data());
+}
+
+export function deleteModel(collectionName: string, id: string): Promise<void> {
+    return deleteDoc(doc(userDoc(), collectionName, id));
 }

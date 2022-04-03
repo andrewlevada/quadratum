@@ -1,5 +1,5 @@
 // eslint-disable-next-line max-classes-per-file
-import { css, CSSResultGroup, LitElement, PropertyValues, TemplateResult, html } from "lit";
+import { css, CSSResultGroup, html, LitElement, PropertyValues, TemplateResult } from "lit";
 import { html as staticHtml, unsafeStatic } from "lit/static-html.js";
 import { query, state } from "lit/decorators.js";
 import { componentStyles } from "~src/global";

@@ -3,7 +3,7 @@ import { customElement } from "lit/decorators.js";
 import { pageStyles } from "~src/global";
 import googleIcon from "~assets/icons/logo_google.svg";
 import { getAuth, GoogleAuthProvider, signInWithPopup } from "@firebase/auth";
-import { initializeUser } from "~src/models/user-service";
+import { initializeUser } from "~services/user";
 import backgroundImage from "~assets/images/enter-bg.png";
 import logoImage from "~assets/icons/logo.svg";
 import { AppPageElement } from "~components/app/router/app-router";

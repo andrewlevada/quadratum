@@ -1,27 +1,15 @@
-import {
-    addDoc,
-    collection,
-    deleteDoc,
-    doc, getDoc,
-    getDocs, onSnapshot,
-    orderBy,
-    query,
-    QueryConstraint,
-    setDoc, Unsubscribe
-} from "@firebase/firestore";
+import { collection, getDocs, onSnapshot, orderBy, query, QueryConstraint, Unsubscribe } from "@firebase/firestore";
 import { userDoc } from "~src/models/tools";
-import Task, { CompletedTaskDocumentPart,
-    PendingTaskDocumentPart } from "~src/models/task/index";
+import Task, { CompletedTaskDocumentPart, PendingTaskDocumentPart } from "~src/models/task/index";
 import { FullPartial } from "~utils/types";
+import { deleteModel, fetchModelById, postModel, updateModel } from "~src/models/data";
 
-export async function postTask(task: Task): Promise<Task> {
-    const snap = await addDoc(collection(userDoc(), "tasks").withConverter(Task.converter), task);
-    return new Task(snap.id, task);
+export function postTask(task: Task): Promise<Task> {
+    return postModel(Task, "tasks", task);
 }
 
-export async function fetchTaskById(id: string): Promise<Task> {
-    const snap = await getDoc(doc(userDoc(), "tasks", id).withConverter(Task.converter));
-    return snap.data() as Task;
+export function fetchTaskById(id: string): Promise<Task> {
+    return fetchModelById(Task, "tasks", id);
 }
 
 export async function fetchTasksWithFilter(constraints: QueryConstraint[], dontOrder?: boolean): Promise<Task[]> {
@@ -37,10 +25,9 @@ export function listenToTasksWithFilter(constraints: QueryConstraint[], callback
 
 export type PartialTaskWithId = { id: string } & FullPartial<Task | PendingTaskDocumentPart | CompletedTaskDocumentPart>;
 export function updateTask(task: PartialTaskWithId): Promise<void> {
-    // Don't use updateDoc() - it does not work with convertors!
-    return setDoc(doc(userDoc(), "tasks", task.id).withConverter(Task.converter), task, { merge: true }).then();
+    return updateModel(Task, "tasks", task);
 }
 
 export function deleteTask(id: string): Promise<void> {
-    return deleteDoc(doc(userDoc(), "tasks", id));
+    return deleteModel("tasks", id);
 }

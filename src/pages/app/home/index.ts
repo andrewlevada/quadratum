@@ -2,7 +2,7 @@ import { CSSResultGroup, html, TemplateResult } from "lit";
 import { customElement, state } from "lit/decorators.js";
 import { pageStyles } from "~src/global";
 import { AppPageElement } from "~components/app/router/app-router";
-import { listenForUserInfo, setActiveTask } from "~src/models/user-service";
+import { listenForUserInfo, setActiveTask } from "~services/user";
 import Task from "~src/models/task";
 import { getTaskById } from "~src/models/task/factory";
 import scopedStyles from "./styles.lit.scss";

@@ -1,10 +1,13 @@
 import { deleteTask, fetchTasksWithFilter, updateTask } from "~src/models/task/data";
-import { getSprintAnchorSync } from "~src/models/user-service";
-import { deleteField,
+import { getSprintAnchorSync } from "~services/user";
+import {
     DocumentData,
     FirestoreDataConverter,
-    PartialWithFieldValue, QueryDocumentSnapshot, where,
-    WithFieldValue } from "@firebase/firestore";
+    PartialWithFieldValue,
+    QueryDocumentSnapshot,
+    where,
+    WithFieldValue
+} from "@firebase/firestore";
 import { TaskContextModifier } from "~src/models/task/task-context-modifier";
 import TaskState, { TaskStateBehaviour } from "~src/models/task/states";
 import PendingState from "~src/models/task/states/pending";

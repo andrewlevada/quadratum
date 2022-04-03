@@ -1,7 +1,7 @@
 import Sprint from "~src/models/legacy/sprint/index";
 import { doc, getDoc, setDoc, updateDoc } from "@firebase/firestore";
 import { userDoc } from "~src/models/tools";
-import { getSprintAnchor, UserDocument } from "~src/models/user-service";
+import { getSprintAnchor, UserDocument } from "~services/user";
 
 export async function createNewSprint(sprint: Sprint): Promise<Sprint> {
     await setDoc(doc(userDoc(), "sprints", sprint.number.toString()).withConverter(Sprint.converter), sprint);

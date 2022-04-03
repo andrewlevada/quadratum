@@ -3,7 +3,7 @@ import { componentStyles } from "~src/global";
 import { defineComponent } from "~utils/components";
 import { property } from "lit/decorators.js";
 import Task from "~src/models/task";
-import { setActiveTask } from "~src/models/user-service";
+import { setActiveTask } from "~services/user";
 import { timestampToRelativeString } from "~utils/time";
 
 import("~components/common/square-checkbox").then(f => f.default());
