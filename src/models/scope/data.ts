@@ -1,9 +1,5 @@
 import Scope from "~src/models/scope/index";
-import { fetchAllModels, fetchModelById, postModel, updateModel } from "~src/models/data";
-
-export function postScope(scope: Scope): Promise<Scope> {
-    return postModel(Scope, "scopes", scope);
-}
+import { fetchAllModels, fetchModelById, updateModel } from "~src/models/data";
 
 export async function fetchScopeById(id: string): Promise<Scope> {
     return fetchModelById(Scope, "scopes", id);
@@ -13,6 +9,6 @@ export function updateScope(scope: Partial<Scope> & { id: string }): Promise<voi
     return updateModel(Scope, "scopes", scope);
 }
 
-export async function fetchAllPScopes(): Promise<Scope[]> {
+export async function fetchAllScopes(): Promise<Scope[]> {
     return fetchAllModels(Scope, "scopes", "label");
 }

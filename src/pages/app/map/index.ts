@@ -5,13 +5,17 @@ import { AppPageElement } from "~components/app/router/app-router";
 import { listenForUserInfo, OAuthData, setFigmaMapUrl, setFigmaOAuth } from "~services/user";
 import scopedStyles from "./styles.lit.scss";
 import { getAuth, onAuthStateChanged } from "@firebase/auth";
-import { generateFigmaOAuthToken } from "~services/figma";
+import { generateFigmaOAuthToken, getScopesFromFigma } from "~services/figma";
 import "@material/mwc-textfield";
 import { TextField } from "@material/mwc-textfield";
+import syncScopes from "~src/models/scope/sync";
+
+import("~components/overwrites/md-button").then(f => f.default());
 
 @customElement("app-page--map")
 export default class AppPageMap extends AppPageElement {
     @state() state: "auth" | "board" | null = null;
+    @state() syncState: "none" | "syncing" | "done" = "none";
     @state() figmaAuthUrl: string | null = null;
     @state() figmaMapUrl: string | null = null;
 
@@ -21,26 +25,34 @@ export default class AppPageMap extends AppPageElement {
 
     render(): TemplateResult {
         return html`
-            <div class="flex col gap app-page full-width">
+            <div class="flex col gap big-gap app-page full-width">
                 ${this.state === "auth" ? html`
                     <div class="flex col gap big-gap">
                         <h4>To start allow access to your Figma account</h4>
                         <p>This is needed to fetch data from your life map in FigJam</p>
 
                         ${this.figmaAuthUrl ? html`
-                            <a href=${this.figmaAuthUrl}>Allow access to Figma</a>
+                            <a href=${this.figmaAuthUrl}>
+                                <md-button raised label="Allow access to Figma"></md-button>
+                            </a>
                         ` : ""}
                     </div>
                 ` : ""}
 
                 ${this.state === "board" ? html`
-                    <mwc-textfield label="FigJam file url" outlined
-                                   pattern="https:\\/\\/([\\w\\.-]+\\.)?figma.com\\/(file|proto)\\/([0-9a-zA-Z]{22,128})(?:\\/.*)?$"
-                                   .value=${this.figmaMapUrl}
-                                   @change=${(e: InputEvent) => {
-                                       if (!(e.target as TextField).reportValidity()) return;
-                                       setFigmaMapUrl((e.target as TextField).value).then();
-                                   }}></mwc-textfield>
+                    <div class="flex row gap big-gap align-center full-width">
+                        <mwc-textfield label="FigJam file url" outlined class="flex-grow"
+                                       pattern="https:\\/\\/([\\w\\.-]+\\.)?figma.com\\/(file|proto)\\/([0-9a-zA-Z]{22,128})(?:\\/.*)?$"
+                                       .value=${this.figmaMapUrl}
+                                       @change=${(e: InputEvent) => {
+                                           if (!(e.target as TextField).reportValidity()) return;
+                                           setFigmaMapUrl((e.target as TextField).value).then();
+                                       }}></mwc-textfield>
+
+                        <md-button outlined icon="sync" ?disabled=${this.syncState !== "none"}
+                                   .label=${this.syncState === "done" ? "Synced!" : "Sync scopes with life map"}
+                                   @click=${() => this.syncLifeMap()}></md-button>
+                    </div>
                 ` : ""}
 
                 <div id="figma-display">
@@ -82,6 +94,17 @@ export default class AppPageMap extends AppPageElement {
                 }
             });
         }));
+    }
+
+    private syncLifeMap() {
+        if (!this.figmaOAuth || !this.figmaMapUrl) return;
+        this.syncState = "syncing";
+        getScopesFromFigma(this.figmaMapUrl, this.figmaOAuth.accessToken).then(scopes => {
+            console.log(scopes);
+            syncScopes(scopes).then(() => {
+                this.syncState = "done";
+            });
+        });
     }
 
     private static getFigmaAuthUrl(userId: string): string {

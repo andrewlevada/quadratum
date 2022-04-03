@@ -18,7 +18,11 @@
     "sourceMap": true,
     "inlineSources": true,
     "esModuleInterop": true,
-    "noImplicitThis": false
+    "noImplicitThis": false,
+    "typeRoots": [
+      "./node_modules/@types",
+      "./node_modules/@figma"
+    ]
   },
   "ts-node": {
     "compilerOptions": {

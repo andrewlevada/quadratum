@@ -30,6 +30,7 @@
     "md5": "^2.3.0"
   },
   "devDependencies": {
+    "@figma/plugin-typings": "^1.43.0",
     "@sentry/webpack-plugin": "^1.18.8",
     "@snowpack/plugin-typescript": "^1.2.1",
     "@types/md5": "^2.3.2",

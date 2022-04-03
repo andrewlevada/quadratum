@@ -1,4 +1,3 @@
-import { updateScope } from "~src/models/scope/data";
 import {
     DocumentData,
     FirestoreDataConverter,
@@ -6,13 +5,20 @@ import {
     QueryDocumentSnapshot,
     WithFieldValue
 } from "@firebase/firestore";
-import { nullishPayloadSet } from "~src/models/tools";
+import { nullishPayloadSet, updatable } from "~src/models/tools";
+import { FullPartial } from "~utils/types";
+import { updateTask } from "~src/models/task/data";
 
 export interface ScopeDocument {
     label: string;
     parentIds: (string | "root")[];
     symbol?: string;
     isPinned?: boolean;
+    isArchived?: boolean;
+}
+
+export interface ScopeDraft extends ScopeDocument {
+    id: string;
 }
 
 export default class Scope {
@@ -24,18 +30,29 @@ export default class Scope {
     private parentIdsInner: string[];
     @updatable() parentIds!: string[];
 
-    private symbolInner: string | null;
+    private symbolInner?: string;
     @updatable() symbol!: string | null;
 
-    private isPinnedInner: boolean | null;
+    private isPinnedInner?: boolean;
     @updatable() isPinned!: boolean;
+
+    private isArchivedInner?: boolean;
+    @updatable() isArchived!: boolean;
 
     constructor(id: string, document: ScopeDocument) {
         this.id = id;
         this.labelInner = document.label;
         this.parentIdsInner = document.parentIds;
-        this.symbolInner = document.symbol || null;
-        this.isPinnedInner = document.isPinned || null;
+        this.symbolInner = document.symbol;
+        this.isPinnedInner = document.isPinned;
+        this.isArchivedInner = document.isArchived;
+    }
+
+    public edit(data: FullPartial<Scope>): Promise<void> {
+        for (const field of Object.keys(data))
+            if (`${field}Inner` in this)
+                (this as Record<string, unknown>)[`${field}Inner`] = (data as Record<string, unknown>)[field];
+        return updateTask({ ...data, id: this.id as string });
     }
 
     public static converter: FirestoreDataConverter<Scope> = {
@@ -52,30 +69,9 @@ export default class Scope {
 
             nullishPayloadSet<Scope>("symbol", o, payload);
             nullishPayloadSet<Scope>("isPinned", o, payload);
+            nullishPayloadSet<Scope>("isArchived", o, payload);
 
             return payload;
         },
     };
-}
-
-function updatable(additionalPayload?: Partial<Scope>) {
-    return (target: Object, key: string) => {
-        const privateKey = `${key}Inner`;
-
-        const getter = function() {
-            return this[privateKey];
-        }
-
-        const setter = function (value: unknown) {
-            if (value === this[privateKey]) return;
-            this[privateKey] = value;
-
-            const payload: Record<string, unknown> = additionalPayload || {};
-            payload[key] = value;
-            updateScope({ ...(payload as Partial<Scope>), id: this.id }).then();
-        }
-
-        delete (target as any)[key];
-        Object.defineProperty(target, key, { get: getter, set: setter });
-    }
 }
