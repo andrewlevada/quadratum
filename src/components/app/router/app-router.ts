@@ -6,13 +6,14 @@ import { componentStyles } from "~src/global";
 import { defineComponent, RealtimeLitElement } from "~utils/components";
 import { Unsubscribe } from "@firebase/firestore";
 
+import("~components/app/create-task-fab").then(f => f.default());
+
 interface PageInfo {
     tag: string;
     importPath?: string;
 }
 
 export abstract class AppPageElement extends RealtimeLitElement {
-    // eslint-disable-next-line class-methods-use-this,@typescript-eslint/no-empty-function
     public requestReload(): void { }
 
     protected firstUpdated(_changedProperties: PropertyValues) {
@@ -39,6 +40,7 @@ export class AppRouter extends LitElement {
             <side-bar .pageTag=${this.page.tag}>${staticHtml`
                 <${tag} id="page-element"></${tag}>
                `}
+                <create-task-fab></create-task-fab>
             </side-bar>
         ` : staticHtml`
             <${tag} id="page-element"></${tag}>
