@@ -10,6 +10,9 @@ export class MaterialYouButton extends Button {
           .mdc-button {
             height: 40px;
             border-radius: 20px;
+          }
+          
+          :host([icon]) .mdc-button {
             padding-right: 20px;
           }
           
