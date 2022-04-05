@@ -41,7 +41,7 @@ function extractScopesFromFigmaDocument(document: DocumentNode): ScopeDraft[] {
             parentIds: [],
         }
         if (node.shapeType === "ROUNDED_RECTANGLE") scopes[node.id].isPinned = true;
-        if (emojis && emojis[0]) scopes[node.id].symbol = emojis[0][0];
+        if (emojis && emojis[0]) scopes[node.id].symbol = emojis[0];
     }
 
     for (const node of page.children) {

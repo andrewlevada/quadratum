@@ -27,7 +27,8 @@
     "@sentry/browser": "^6.19.3",
     "@sentry/tracing": "^6.19.3",
     "lit": "^2.2.1",
-    "md5": "^2.3.0"
+    "md5": "^2.3.0",
+    "twemoji": "^14.0.2"
   },
   "devDependencies": {
     "@figma/plugin-typings": "^1.43.0",

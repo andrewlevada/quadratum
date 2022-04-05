@@ -83,7 +83,8 @@ export class SideBar extends RealtimeLitElement {
         return this.scopes.map(v => ({
             label: v.label,
             icon: v.symbol || "star",
-            link: `/scope/${v.id}`
+            link: `/scope/${v.id}`,
+            isEmoji: !!v.symbol
         }));
     }
 
