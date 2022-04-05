@@ -1,10 +1,13 @@
-import { CSSResultGroup, html, LitElement, TemplateResult } from "lit";
+import { CSSResultGroup, html, TemplateResult } from "lit";
 import { componentStyles } from "~src/global";
 import { defineComponent, RealtimeLitElement } from "~utils/components";
-import { state } from "lit/decorators.js";
+import { query, state } from "lit/decorators.js";
 import scopesStyles from "./styles.lit.scss";
 import Scope from "~src/models/scope";
 import { CompactListItem } from "~components/common/compact-list/item";
+import { TextField } from "@material/mwc-textfield";
+import { createTask } from "~src/models/task/factory";
+import Task from "~src/models/task";
 
 import("~components/common/selection-chip").then(f => f.default());
 import("~components/common/compact-list").then(f => f.default());
@@ -15,11 +18,16 @@ export class CreateTaskFab extends RealtimeLitElement {
     @state() isDialogShown: boolean = false;
     @state() pinnedScopes: Scope[] = [];
 
+    private selectedScope: Scope | null = null;
+
+    @query("#task-text-input", true) taskTextInput!: TextField;
+
     render(): TemplateResult {
         return html`
             ${this.isDialogShown ? html`
                 <div class="surface flex col">
-                    <mwc-textfield label="Task name" outlined></mwc-textfield>
+                    <mwc-textfield id="task-text-input" outlined
+                                   label="Task name"></mwc-textfield>
 
                     <div class="flex row justify-between">
                         <selection-chip primary icon="outlined_flag" label="Milestone"></selection-chip>
@@ -30,7 +38,10 @@ export class CreateTaskFab extends RealtimeLitElement {
                         <h6>Scopes</h6>
                     </div>
                     
-                    <compact-list .items=${this.getScopesList()}></compact-list>
+                    <compact-list .items=${this.getScopesList()}
+                                  @selectedItem=${(e: CustomEvent) => {
+                        this.selectedScope = this.pinnedScopes[e.detail.value];
+                    }}></compact-list>
 
                     <div class="flex row justify-between gap">
                         <md-button outlined @click=${() => {
@@ -38,8 +49,8 @@ export class CreateTaskFab extends RealtimeLitElement {
                         }}>Cancel</md-button>
 
                         <div class="flex row gap">
-                            <md-button outlined>Do now</md-button>
-                            <md-button unelevated>Create</md-button>
+                            <md-button outlined @click=${() => this.onCreate(true)}>Do now</md-button>
+                            <md-button unelevated @click=${() => this.onCreate()}>Create</md-button>
                         </div>
                     </div>
                 </div>
@@ -65,6 +76,18 @@ export class CreateTaskFab extends RealtimeLitElement {
         this.dataListeners.push(Scope.listenForPinned(scopes => {
             this.pinnedScopes = scopes;
         }));
+    }
+
+    private onCreate(setActive?: boolean): void {
+        createTask(this.taskTextInput.value, {
+            scope: {
+                id: this.selectedScope?.id || "pile",
+                label: this.selectedScope?.label || "Pile",
+            }
+        }).then(task => {
+            this.isDialogShown = false;
+            if (setActive) Task.setActive(task).then();
+        })
     }
 
     static get styles(): CSSResultGroup {

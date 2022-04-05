@@ -3,6 +3,7 @@ import Sprint from "../models/legacy/sprint";
 import { userDoc } from "../models/tools";
 import { createNewSprint } from "../models/legacy/sprint/data";
 import { Callback } from "~utils/types";
+import Task from "~src/models/task";
 
 export interface OAuthData {
     accessToken: string;
@@ -51,8 +52,9 @@ export function listenForUserInfo(callback: Callback<UserDocument>): Unsubscribe
     return onSnapshot(userDoc(), snap => callback(snap.data() as UserDocument));
 }
 
-export function setActiveTask(taskId: string | null): Promise<void> {
-    return setDoc(userDoc(), { activeTaskId: taskId }, { merge: true });
+export async function setActiveTask(task: Task | null): Promise<void> {
+
+
 }
 
 export function setFigmaOAuth(data: OAuthData): Promise<void> {

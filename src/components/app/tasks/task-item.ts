@@ -3,7 +3,6 @@ import { componentStyles } from "~src/global";
 import { defineComponent } from "~utils/components";
 import { property } from "lit/decorators.js";
 import Task from "~src/models/task";
-import { setActiveTask } from "~services/user";
 import { timestampToRelativeString } from "~utils/time";
 
 import("~components/common/square-checkbox").then(f => f.default());
@@ -23,7 +22,7 @@ export class TaskItem extends LitElement {
                         <square-checkbox .label=${this.getPendingCheckboxValue()}
                                          class="pending-checkbox"
                                          @click=${() => {
-                                             setActiveTask(this.task.id).then();
+                                             Task.setActive(this.task).then();
                                          }} new-design></square-checkbox>
                     ` : ""}
 

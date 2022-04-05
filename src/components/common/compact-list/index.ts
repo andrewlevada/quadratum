@@ -19,6 +19,7 @@ export class CompactList extends LitElement {
                     <compact-list--item ?selected=${this.selectedIndex === i}
                                         .item=${item} @click=${() => {
                         this.selectedIndex = i;
+                        this.dispatchSimpleEvent("selectedItem", i);
                     }}></compact-list--item>
                 `)}
             </div>

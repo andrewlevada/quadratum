@@ -1,10 +1,11 @@
 import { deleteTask, fetchTasksWithFilter, updateTask } from "~src/models/task/data";
-import { getSprintAnchorSync } from "~services/user";
+import { getSprintAnchorSync, getUserInfo } from "~services/user";
 import {
     DocumentData,
     FirestoreDataConverter,
     PartialWithFieldValue,
     QueryDocumentSnapshot,
+    setDoc,
     where,
     WithFieldValue
 } from "@firebase/firestore";
@@ -13,7 +14,7 @@ import TaskState, { TaskStateBehaviour } from "~src/models/task/states";
 import PendingState from "~src/models/task/states/pending";
 import CompletedState from "~src/models/task/states/completed";
 import { FullPartial } from "~src/utils/types";
-import { nullishPayloadSet, updatable } from "~src/models/tools";
+import { nullishPayloadSet, updatable, userDoc } from "~src/models/tools";
 
 export interface BaseTaskDocument {
     text: string;
@@ -178,6 +179,13 @@ export default class Task extends TaskStateBehaviour {
             return payload;
         },
     };
+
+    public static async setActive(task: Task | null): Promise<void> {
+        const previousActiveId = (await getUserInfo()).activeTaskId;
+        await setDoc(userDoc(), { activeTaskId: task?.id || null }, { merge: true });
+        if (!previousActiveId) return;
+        await updateTask({ id: previousActiveId, wasActive: true });
+    }
 
     // Legacy
 

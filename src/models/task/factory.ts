@@ -5,7 +5,7 @@ import { fetchTaskById, postTask } from "~src/models/task/data";
 export type ActionOrigin = "daily" | "sprint" | "backlog";
 
 export interface ActionContext {
-    origin: ActionOrigin;
+    origin?: ActionOrigin;
     parentTask?: Task;
 }
 
