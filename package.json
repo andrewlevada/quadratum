@@ -24,6 +24,7 @@
     "@material/mwc-menu": "^0.25.3",
     "@material/mwc-slider": "^0.25.3",
     "@material/mwc-textfield": "^0.25.3",
+    "@material/ripple": "^14.0.0-canary.261f2db59.0",
     "@sentry/browser": "^6.19.3",
     "@sentry/tracing": "^6.19.3",
     "lit": "^2.2.1",

@@ -24,3 +24,11 @@
     margin-bottom: 18px;
   }
 }
+
+compact-list {
+  position: relative;
+  left: -28px;
+  width: calc(100% + 28px * 2);
+
+  --compact-list-padding: 28px;
+}

@@ -1,0 +1,28 @@
+.item {
+  height: 32px;
+  padding-left: var(--compact-list-padding, 8px);
+  position: relative;
+
+  .icon {
+    margin-right: 16px;
+  }
+
+  &::before {
+    content: "";
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    left: 0;
+
+    background-color: var(--md-sys-color-primary);
+    opacity: 0;
+  }
+
+  &:hover::before {
+    opacity: 0.08;
+  }
+}
+
+:host([selected]) .item::before {
+  opacity: 0.20;
+}
