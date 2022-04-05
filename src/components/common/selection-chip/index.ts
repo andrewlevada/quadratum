@@ -1,4 +1,4 @@
-import { css, CSSResultGroup, html, LitElement, TemplateResult } from "lit";
+import { CSSResultGroup, html, LitElement, TemplateResult } from "lit";
 import { componentStyles } from "~src/global";
 import { defineComponent } from "~utils/components";
 import { property } from "lit/decorators.js";
@@ -13,13 +13,16 @@ export class SelectionChip extends LitElement {
 
     render(): TemplateResult {
         return html`
-            <div class="chip flex row align-center"
-                 @click=${() => { this.selected = true; }}>
+            <div class="chip flex row align-center">
                 ${this.icon ? html`
                     <span class="icon material-icons">${this.icon}</span>
                 ` : ""}
                 
                 <p>${this.label}</p>
+                
+                <input @click=${() => {
+                    this.selected = true;
+                }}>
             </div>
         `;
     }

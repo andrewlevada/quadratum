@@ -18,7 +18,8 @@ export interface CreationContext extends ActionContext {
     scope: {
         id: string;
         label: string;
-    }
+    },
+    dueDate?: Date;
 }
 
 export async function createTask(text: string, context: LegacyCreationContext | CreationContext): Promise<Task> {
@@ -42,6 +43,7 @@ export async function createTask(text: string, context: LegacyCreationContext | 
 
     if ("projectId" in context) payload.projectId = context.projectId;
     if ("sprintNumber" in context) payload.sprintNumber = context.sprintNumber;
+    if ("dueDate" in context) payload.dueDate = context.dueDate!.getTime();
 
     return postTask(payload);
 

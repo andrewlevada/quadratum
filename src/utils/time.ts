@@ -1,5 +1,9 @@
 const millsInDay = 86400000;
 
+export function dateToDisplayString(date: Date): string {
+  return date.toDateString().split(" ").slice(0, 3).join(" ");
+}
+
 export function timestampToRelativeString(time: number) {
     const now = new Date();
     const then = new Date(time);
@@ -20,6 +24,6 @@ export function timestampToRelativeString(time: number) {
 
 export function getDayTimestamp(dayDelta?: number) {
     const day = new Date(new Date().getTime() + (dayDelta || 0) * millsInDay);
-    day.setHours(0, 1, 0, 0);
+    day.setHours(24, 0, 0, 0);
     return day.getTime();
 }
