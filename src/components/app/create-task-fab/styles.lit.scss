@@ -23,6 +23,21 @@
   & > *:not(:last-child) {
     margin-bottom: 18px;
   }
+
+  .scopes-heading {
+    position: relative;
+    height: 28px;
+  }
+
+  --mdc-menu-item-height: 32px;
+}
+
+.more-scopes-button {
+  left: 8px;
+
+  & > div {
+    position: relative;
+  }
 }
 
 compact-list {

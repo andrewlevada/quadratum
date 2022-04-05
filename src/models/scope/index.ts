@@ -62,6 +62,10 @@ export default class Scope {
         return listenForScopesWithFilter([where("isPinned", "==", true)], callback);
     }
 
+    public static listen(callback: Callback<Scope[]>): Unsubscribe {
+        return listenForScopesWithFilter([] as any, callback);
+    }
+
     public static converter: FirestoreDataConverter<Scope> = {
         fromFirestore(snap: QueryDocumentSnapshot): Scope {
             return new Scope(snap.id, snap.data() as ScopeDocument);

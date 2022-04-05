@@ -50,6 +50,11 @@ export async function fetchAllModels<T>(model: Model<T>, collectionName: string,
     return snaps.map(snap => snap.data());
 }
 
+export function listenForAllModels<T>(model: Model<T>, collectionName: string, order: keyof T, callback: Callback<T[]>): Unsubscribe {
+    const q = query(collection(userDoc(), collectionName).withConverter(model.converter), orderBy(order as string));
+    return onSnapshot(q, snap => callback(snap.docs.map(v => v.data())));
+}
+
 export function deleteModel(collectionName: string, id: string): Promise<void> {
     return deleteDoc(doc(userDoc(), collectionName, id));
 }

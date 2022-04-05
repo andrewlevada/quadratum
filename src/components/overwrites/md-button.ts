@@ -12,7 +12,7 @@ export class MaterialYouButton extends Button {
             border-radius: 20px;
           }
           
-          :host([icon]) .mdc-button {
+          :host([icon]:not([trailingIcon])) .mdc-button {
             padding-right: 20px;
           }
           
