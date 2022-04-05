@@ -1,0 +1,41 @@
+.chip {
+  height: 32px;
+
+  border-radius: 8px;
+  border: solid 1px var(--md-sys-color-outline);
+
+  padding-left: 16px;
+  padding-right: 16px;
+
+  color: var(--md-sys-color-on-surface-variant);
+
+  p {
+    font-size: 14px;
+    font-weight: 500;
+  }
+}
+
+:host([icon]) .chip {
+  padding-left: 8px;
+}
+
+:host([selected]) .chip {
+  background-color: var(--md-sys-color-secondary-container);
+  color: var(--md-sys-color-on-secondary-container);
+  border: none;
+}
+
+:host([selected][primary]) .chip {
+  background-color: var(--md-sys-color-primary);
+  color: var(--md-sys-color-on-primary);
+
+  .icon {
+    color: var(--md-sys-color-on-primary);
+  }
+}
+
+.icon {
+  font-size: 18px;
+  margin-right: 8px;
+  color: var(--md-sys-color-primary);
+}

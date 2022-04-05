@@ -1,11 +1,10 @@
-import { css, CSSResultGroup, html, LitElement, TemplateResult } from "lit";
+import { CSSResultGroup, html, LitElement, TemplateResult } from "lit";
 import { componentStyles } from "~src/global";
 import { defineComponent } from "~utils/components";
-import { property, state } from "lit/decorators.js";
-import Task from "~src/models/task";
-import { setActiveTask } from "~services/user";
-import { timestampToRelativeString } from "~utils/time";
+import { state } from "lit/decorators.js";
+import scopesStyles from "./styles.lit.scss";
 
+import("~components/common/selection-chip").then(f => f.default());
 import("~components/overwrites/md-fab").then(f => f.default());
 
 export default (): void => defineComponent("create-task-fab", CreateTaskFab);
@@ -15,14 +14,17 @@ export class CreateTaskFab extends LitElement {
     render(): TemplateResult {
         return html`
             ${this.isDialogShown ? html`
-                <div class="surface flex col gap">
+                <div class="surface flex col">
                     <mwc-textfield label="Task name" outlined></mwc-textfield>
 
                     <div class="flex row justify-between">
-
+                        <selection-chip primary icon="outlined_flag" label="Milestone"></selection-chip>
+                        <selection-chip primary icon="schedule" label="Due date"></selection-chip>
                     </div>
 
-                    <h6>Scopes</h6>
+                    <div class="flex row justify-between">
+                        <h6>Scopes</h6>
+                    </div>
 
                     <div class="flex row justify-between gap">
                         <md-button outlined @click=${() => {
@@ -45,29 +47,6 @@ export class CreateTaskFab extends LitElement {
     }
 
     static get styles(): CSSResultGroup {
-        return [...componentStyles, css`
-          :host {
-            position: fixed;
-            width: 100vw;
-            height: 100vh;
-          }
-
-          .surface, md-fab {
-            position: fixed;
-            bottom: 16px;
-            right: 16px;
-            z-index: 1;
-          }
-
-          .surface {
-            min-width: 420px;
-
-            background: var(--md-sys-color-secondary-container);
-            color: var(--md-sys-color-on-secondary-container);
-
-            border-radius: 28px;
-            padding: 28px;
-          }
-        `];
+        return [...componentStyles, scopesStyles];
     }
 }
