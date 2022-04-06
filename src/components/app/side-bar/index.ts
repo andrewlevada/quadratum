@@ -21,8 +21,12 @@ import("./item").then(f => f.default());
 export default (): void => defineComponent("side-bar", SideBar);
 export class SideBar extends RealtimeLitElement {
     @property({ type: String }) pageTag: string = "";
-    @state() projects: Project[] = [];
+    @state() pinnedScopes: Scope[] = [];
     @state() scopes: Scope[] = [];
+    @state() showAllScopes: boolean = false;
+
+    // Legacy
+    @state() projects: Project[] = [];
     @state() sprintNumbers: [number | undefined, number, number] | null = null;
 
     private newProjectColor: string = "";
@@ -75,17 +79,40 @@ export class SideBar extends RealtimeLitElement {
     private getDynamicList(): Item[] {
         // Returns list of project in legacy design
         // And pinned scopes in new design
-        if (SideBar.isNewDesign()) return this.getPinnedScopes();
+        if (SideBar.isNewDesign()) return this.getScopes();
         return this.getProjectsList();
     }
 
-    private getPinnedScopes(): Item[] {
-        return this.scopes.map(v => ({
+    private getScopes(): Item[] {
+        const s = this.showAllScopes ? this.scopes : this.pinnedScopes;
+        const items = s.map(v => ({
             label: v.label,
             icon: v.symbol || "star",
             link: `/scope/${v.id}`,
-            isEmoji: !!v.symbol
-        }));
+            isEmoji: !!v.symbol,
+        } as Item));
+
+        if (this.showAllScopes) {
+            items.push({
+                label: "Hide some scopes",
+                icon: "expand_less",
+                link: "#",
+                onClick: () => {
+                    this.showAllScopes = false;
+                }
+            });
+        } else {
+            items.push({
+                label: "Show all scopes",
+                icon: "expand_more",
+                link: "#",
+                onClick: () => {
+                    this.showAllScopes = true;
+                }
+            });
+        }
+
+        return items;
     }
 
     private getProjectsList(): Item[] {
@@ -119,8 +146,9 @@ export class SideBar extends RealtimeLitElement {
     connectedCallback() {
         super.connectedCallback();
         if (SideBar.isNewDesign()) {
-            this.dataListeners.push(Scope.listenForPinned((scopes: Scope[]) => {
+            this.dataListeners.push(Scope.listen((scopes: Scope[]) => {
                 this.scopes = scopes;
+                this.pinnedScopes = scopes.filter(v => v.isPinned);
             }));
             return;
         }

@@ -1,6 +1,6 @@
 import { CSSResultGroup, html, LitElement, PropertyValues, TemplateResult } from "lit";
 import { componentStyles } from "~src/global";
-import { defineComponent } from "~utils/components";
+import { defineComponent, hasObjectChanged } from "~utils/components";
 import { property, query } from "lit/decorators.js";
 import { AppRouter } from "~components/app/router/app-router";
 import scopedStyles from "./styles.lit.scss";
@@ -13,11 +13,12 @@ export interface Item {
     color?: string;
     isActive?: boolean;
     isEmoji?: boolean;
+    onClick?: ()=>void;
 }
 
 export default (): void => defineComponent("side-bar--item", SideBarItem);
 export class SideBarItem extends LitElement {
-    @property({ type: String }) item!: Item;
+    @property({ type: Object }) item!: Item;
 
     @query(".emoji") emojiElement: HTMLElement | undefined;
 
@@ -25,7 +26,12 @@ export class SideBarItem extends LitElement {
         return html`
             <a class="item ${this.item.isActive ? "active" : ""}"
                href="/app${this.item.link}"
-               @click=${(event: Event) => SideBarItem.onClick(this.item, event)}>
+               @click=${(event: Event) => {
+                   if (this.item.onClick) {
+                       event.preventDefault();
+                       this.item.onClick();
+                   } else SideBarItem.onClick(this.item, event);
+               }}>
                 <span style="${this.item.color ? `color: ${this.item.color}` : ""}"
                       class=${this.item.isEmoji ? "emoji" : "material-icons"}>
                     ${this.item.icon}
@@ -33,11 +39,6 @@ export class SideBarItem extends LitElement {
                 <p>${this.item.label}</p>
             </a>
         `;
-    }
-
-    protected firstUpdated(_changedProperties: PropertyValues) {
-        super.firstUpdated(_changedProperties);
-        if (this.item.isEmoji) twemoji.parse(this.emojiElement!);
     }
 
     private static onClick(item: Item, event: Event) {
