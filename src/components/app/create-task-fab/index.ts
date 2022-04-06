@@ -10,11 +10,11 @@ import { createTask } from "~src/models/task/factory";
 import Task from "~src/models/task";
 import { DatePicker } from "~components/overwrites/date-picker";
 import { dateToDisplayString } from "~utils/time";
-import "@material/mwc-menu";
-import { Menu } from "@material/mwc-menu";
+import { ScopesListMenu } from "~components/app/scopes-list-menu";
 
 import("~components/common/selection-chip").then(f => f.default());
 import("~components/common/compact-list").then(f => f.default());
+import("~components/app/scopes-list-menu").then(f => f.default());
 import("~components/overwrites/md-fab").then(f => f.default());
 import("~components/overwrites/md-button").then(f => f.default());
 import("~components/overwrites/date-picker").then(f => f.default());
@@ -30,7 +30,7 @@ export class CreateTaskFab extends RealtimeLitElement {
     @query("#task-text-input") taskTextInput!: TextField;
     @query("date-picker") datePickerElement!: DatePicker;
     @query(".more-scopes-button") moreScopesButton!: HTMLElement;
-    @query("mwc-menu") scopesMenuElement!: Menu;
+    @query("scopes-list-menu") scopesMenuElement!: ScopesListMenu;
 
     render(): TemplateResult {
         return html`
@@ -59,7 +59,9 @@ export class CreateTaskFab extends RealtimeLitElement {
                                 this.scopesMenuElement.open = true;
                             }}></md-button>
 
-                            <mwc-menu>${this.getScopesMenuTemplate()}</mwc-menu>
+                            <scopes-list-menu .selectedScope=${this.selectedScope} @change=${() => {
+                                this.selectedScope = this.scopesMenuElement.selectedScope;
+                            }}></scopes-list-menu>
                         </div>
                     </div>
 
@@ -103,16 +105,6 @@ export class CreateTaskFab extends RealtimeLitElement {
             icon: v.symbol || "star",
             isEmoji: !!v.symbol,
         }));
-    }
-
-    private getScopesMenuTemplate(): TemplateResult[] {
-        return this.allScopes.map(v => html`
-            <mwc-list-item @click=${() => {
-                this.selectedScope = v;
-            }}>
-                <span>${v.symbol ? `${v.symbol} ` : ""}${v.label}</span>
-            </mwc-list-item>
-        `);
     }
 
     connectedCallback() {
