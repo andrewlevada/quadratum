@@ -28,7 +28,7 @@ export class ScopesListMenu extends RealtimeLitElement {
 
     connectedCallback() {
         super.connectedCallback();
-        this.dataListeners.push(Scope.listen(scopes => {
+        this.dataListeners.push(Scope.listenForAll(scopes => {
             this.scopes = scopes;
         }));
     }

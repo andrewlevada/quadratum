@@ -146,7 +146,7 @@ export class SideBar extends RealtimeLitElement {
     connectedCallback() {
         super.connectedCallback();
         if (SideBar.isNewDesign()) {
-            this.dataListeners.push(Scope.listen((scopes: Scope[]) => {
+            this.dataListeners.push(Scope.listenForAll((scopes: Scope[]) => {
                 this.scopes = scopes;
                 this.pinnedScopes = scopes.filter(v => v.isPinned);
             }));

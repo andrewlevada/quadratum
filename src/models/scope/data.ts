@@ -1,16 +1,15 @@
 import Scope from "~src/models/scope/index";
 import {
     fetchAllModels,
-    fetchModelById,
-    listenForAllModels,
+    listenForAllModels, listenForModelById,
     listenForModelsWithFilter,
     updateModel
 } from "~src/models/data";
 import { QueryConstraint, Unsubscribe } from "@firebase/firestore";
 import { Callback } from "~utils/types";
 
-export async function fetchScopeById(id: string): Promise<Scope> {
-    return fetchModelById(Scope, "scopes", id);
+export function listenForScopeById(id: string, callback: Callback<Scope>): Unsubscribe {
+    return listenForModelById(Scope, "scopes", id, callback);
 }
 
 export function listenForAllScopes(callback: Callback<Scope[]>): Unsubscribe {

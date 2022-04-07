@@ -42,8 +42,6 @@ export class TaskTable extends LitElement {
                     <sessions-adjuster .value=${task.sessions} @change=${(e: CustomEvent) => {
                         task.sessions = e.detail.value;
                     }}></sessions-adjuster>
-                    
-                    
                 `)}
             </div>
         `;

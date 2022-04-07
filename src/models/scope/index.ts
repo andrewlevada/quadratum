@@ -8,9 +8,9 @@ import {
     WithFieldValue
 } from "@firebase/firestore";
 import { nullishPayloadSet, updatable } from "~src/models/tools";
-import { Callback, FullPartial } from "~utils/types";
-import { updateTask } from "~src/models/task/data";
-import { listenForScopesWithFilter, updateScope } from "~src/models/scope/data";
+import { Callback } from "~utils/types";
+import { listenForAllScopes, listenForScopeById, listenForScopesWithFilter, updateScope } from "~src/models/scope/data";
+import PileScope from "~src/models/scope/pile";
 
 export interface ScopeDocument {
     label: string;
@@ -58,12 +58,16 @@ export default class Scope {
         return updateScope({ ...data, id: this.id as string });
     }
 
-    public static listenForPinned(callback: Callback<Scope[]>): Unsubscribe {
-        return listenForScopesWithFilter([where("isPinned", "==", true)], callback);
+    public static listen(id: string, callback: Callback<Scope>): Unsubscribe {
+        return listenForScopeById(id, callback);
     }
 
-    public static listen(callback: Callback<Scope[]>): Unsubscribe {
-        return listenForScopesWithFilter([] as any, callback);
+    public static listenForAll(callback: Callback<Scope[]>): Unsubscribe {
+        return listenForAllScopes(callback);
+    }
+
+    public static listenForPinned(callback: Callback<Scope[]>): Unsubscribe {
+        return listenForScopesWithFilter([where("isPinned", "==", true)], callback);
     }
 
     public static converter: FirestoreDataConverter<Scope> = {

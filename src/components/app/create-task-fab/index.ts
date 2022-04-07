@@ -86,7 +86,7 @@ export class CreateTaskFab extends RealtimeLitElement {
                         @click=${() => {
                             this.isDialogShown = true;
                             if (this.allScopes.length === 0 && this.dataListeners.length === 1)
-                                this.dataListeners.push(Scope.listen(scopes => {
+                                this.dataListeners.push(Scope.listenForAll(scopes => {
                                     this.allScopes = scopes;
                                 }));
                         }}></md-fab>

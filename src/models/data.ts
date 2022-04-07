@@ -27,6 +27,11 @@ export async function fetchModelById<T>(model: Model<T>, collectionName: string,
     return snap.data() || Promise.reject();
 }
 
+export function listenForModelById<T>(model: Model<T>, collectionName: string, id: string, callback: Callback<T>): Unsubscribe {
+    const d = doc(userDoc(), collectionName, id).withConverter(model.converter);
+    return onSnapshot(d, snap => callback(snap.data()!));
+}
+
 export async function fetchModelsWithFilter<T>(model: Model<T>, collectionName: string, constraints: QueryConstraint[]): Promise<T[]> {
     const q = query(collection(userDoc(), collectionName).withConverter(model.converter), ...constraints);
     const snap = await getDocs(q);

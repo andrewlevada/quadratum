@@ -1,6 +1,8 @@
 import Task, { CompletedTaskDocument, PendingTaskDocument } from "~src/models/task/index";
 import { getCurrentSprintNumber } from "~src/models/legacy/sprint/data";
-import { fetchTaskById, postTask } from "~src/models/task/data";
+import { fetchTaskById, listenToTasksWithFilter, postTask } from "~src/models/task/data";
+import { orderBy, Unsubscribe, where } from "@firebase/firestore";
+import { Callback } from "~utils/types";
 
 export type ActionOrigin = "daily" | "sprint" | "backlog";
 
@@ -56,4 +58,8 @@ export async function createTask(text: string, context: LegacyCreationContext | 
 
 export function getTaskById(id: string): Promise<Task> {
     return fetchTaskById(id);
+}
+
+export function listenForTasksFromScope(scopeId: string, callback: Callback<Task[]>): Unsubscribe {
+    return listenToTasksWithFilter([where("scope.id", "==", scopeId), orderBy("text")], callback);
 }
