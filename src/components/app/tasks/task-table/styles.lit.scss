@@ -3,32 +3,22 @@
   --mdc-icon-size: 18px;
 }
 
-@mixin hover-show() {
-  opacity: 0;
-  transition: opacity 100ms ease;
-  &:hover {
-    opacity: 0.6;
-  }
-}
-
 .container {
   display: grid;
-  grid-template-columns: fit-content(100%) fit-content(100%) fit-content(100%);
+  width: 100%;
+
+  grid-template-columns: auto 60px fit-content(100%) fit-content(100%);
   gap: 12px;
 
-  & > .project {
-    grid-column: 1;
-    margin-right: 16px;
-    width: max-content;
+  .header {
+    &-name { grid-column: 1; }
+    &-milestones { grid-column: 3; }
+    &-due { grid-column: 4; }
   }
 
   & > .text {
     position: relative;
-    grid-column: 2;
-
-    &.gap {
-      margin-bottom: 8px;
-    }
+    grid-column: 1;
 
     &.sub {
       margin-left: 20px;
@@ -47,14 +37,5 @@
 
   & > .progress {
     grid-column: 3;
-  }
-
-  & > * {
-    height: 18px;
-  }
-
-  & > add-button {
-    grid-column: 2;
-    width: 100%;
   }
 }

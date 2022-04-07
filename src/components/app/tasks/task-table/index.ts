@@ -1,11 +1,8 @@
-import { CSSResultGroup, html, LitElement, PropertyValues, TemplateResult } from "lit";
+import { CSSResultGroup, html, LitElement, TemplateResult } from "lit";
 import { componentStyles } from "~src/global";
 import { defineComponent } from "~utils/components";
-import { property, state } from "lit/decorators.js";
+import { property } from "lit/decorators.js";
 import Task from "~src/models/task";
-import { getCurrentSprintNumber } from "~src/models/legacy/sprint/data";
-import { ActionOrigin, createTask } from "~src/models/task/factory";
-import Project from "~src/models/legacy/project";
 import scopedStyles from "./styles.lit.scss";
 import "@material/mwc-icon-button";
 import Scope from "~src/models/scope";
@@ -22,11 +19,9 @@ export class TaskTable extends LitElement {
     render(): TemplateResult {
         return html`
             <div class="container">
-                <div class="header">
-                    <h6 class="header-name">Tasks</h6>
-                    <h6 class="header-milestones">Milestones</h6>
-                    <h6 class="header-due">Due dates</h6>
-                </div>
+                <h6 class="header-name">Tasks</h6>
+                <h6 class="header-milestones">Milestones</h6>
+                <h6 class="header-due">Due dates</h6>
 
                 ${TaskTable.reorderTasks(this.tasks).map(task => html`
                     <div class="text flex row align-center ${task.parentTaskId ? "sub" : ""}">

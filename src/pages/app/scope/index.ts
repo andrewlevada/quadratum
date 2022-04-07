@@ -15,6 +15,7 @@ import { AppPageElement } from "~components/app/router/app-router";
 import Scope from "~src/models/scope";
 import { listenForTasksFromScope } from "~src/models/task/factory";
 
+import("~components/common/card-surface").then(f => f.default());
 import("~components/app/tasks/task-table").then(f => f.default());
 
 @customElement("app-page--scope")
@@ -26,23 +27,28 @@ export default class AppPageScope extends AppPageElement {
         return html`
             <div class="flex col app-page">
                 <div class="flex row justify-between align-center full-width">
-                    <div class="flex row align-center">
-                        <span class="material-icons">${this.scope?.symbol || "star"}</span>
+                    <div class="flex row gap align-center">
+                        <span id="scope-icon" class="material-icons">${this.scope?.symbol || "star"}</span>
                         <h4>${this.scope?.label || ""} ${this.scope?.isArchived ? "(Archived)" : ""}</h4>
                     </div>
                 </div>
 
-                ${this.tasks && this.scope ? html`
-                    <task-table .tasks=${this.tasks} .scope=${this.scope}></task-table>
-                ` : ""}
+                <card-surface type="filled">
+                    ${this.tasks && this.scope ? html`
+                        <task-table .tasks=${this.tasks} .scope=${this.scope}></task-table>
+                    ` : ""}
+                </card-surface>
             </div>
         `;
     }
 
-    connectedCallback() {
-        super.connectedCallback();
+    requestReload() {
+        super.requestReload();
         const id = window.location.pathname.split("/").pop();
         if (!id) return;
+
+        for (const unsubscribe of this.dataListeners) unsubscribe();
+        this.dataListeners = [];
 
         this.dataListeners.push(Scope.listen(id, scope => {
             this.scope = scope;
@@ -55,7 +61,9 @@ export default class AppPageScope extends AppPageElement {
 
     static get styles(): CSSResultGroup {
         return [...pageStyles, css`
-          
+          #scope-icon {
+            font-size: 24px;
+          }
         `];
     }
 }
