@@ -12,7 +12,7 @@ import "@material/mwc-icon-button";
 
 import("~components/legacy/color-chip").then(f => f.default());
 import("~components/common/square-checkbox").then(f => f.default());
-import("./inline-text-input").then(f => f.default());
+import("~components/common/inline-text-input").then(f => f.default());
 import("./add-button").then(f => f.default());
 import("./progress-line").then(f => f.default());
 
