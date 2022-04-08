@@ -6,6 +6,7 @@ import Task from "~src/models/task";
 import scopedStyles from "./styles.lit.scss";
 import "@material/mwc-icon-button";
 import Scope from "~src/models/scope";
+import { dateToDisplayString } from "~utils/time";
 
 import("./sessions-adjuster").then(f => f.default());
 import("~components/common/inline-text-input").then(f => f.default());
@@ -43,6 +44,14 @@ export class TaskTable extends LitElement {
                             task.progress = task.progress.slice(0, newSessions);
                         }
                     }}></sessions-adjuster>
+                    
+                    ${task.dueDate ? html`
+                        <p class="due">${dateToDisplayString(new Date(task.dueDate))}</p>
+                    ` : html`
+                        <square-checkbox class="due" icon="schedule" @change=${() => {
+                            
+                        }} new-design></square-checkbox>
+                    `}
                 `)}
             </div>
         `;

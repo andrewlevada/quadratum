@@ -38,4 +38,8 @@
   & > .progress {
     grid-column: 3;
   }
+
+  & > .due {
+    grid-column: 4;
+  }
 }
