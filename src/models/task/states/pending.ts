@@ -29,7 +29,7 @@ export default class PendingState extends TaskState {
     public set progress(value: boolean[] | null) {
         if (value === this.progressInner) return;
         this.progressInner = value;
-        if (value?.every(v => v)) {
+        if (value?.every(v => v) && value?.length > 0) {
             const updateValues = {
                 isCompleted: true,
                 isInHome: true,

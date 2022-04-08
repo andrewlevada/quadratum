@@ -68,7 +68,7 @@ export default class Task extends TaskStateBehaviour {
     }
 
     private sessionsInner: number;
-    @updatable(updateTask) sessions!: number;
+    @updatable(updateTask) readonly sessions!: number;
 
     private scopeInner: ScopeReference;
     public get scope(): ScopeReference {

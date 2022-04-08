@@ -7,8 +7,7 @@ import scopedStyles from "./styles.lit.scss";
 import "@material/mwc-icon-button";
 import Scope from "~src/models/scope";
 
-import("~components/legacy/color-chip").then(f => f.default());
-import("~components/common/square-checkbox").then(f => f.default());
+import("./sessions-adjuster").then(f => f.default());
 import("~components/common/inline-text-input").then(f => f.default());
 
 export default (): void => defineComponent("task-table", TaskTable);
@@ -35,7 +34,14 @@ export class TaskTable extends LitElement {
                     </div>
 
                     <sessions-adjuster .value=${task.sessions} @change=${(e: CustomEvent) => {
-                        task.sessions = e.detail.value;
+                        const newSessions = e.detail.value as number;
+                        if (newSessions > task.sessions) {
+                            const append = new Array(newSessions - task.sessions);
+                            append.fill(false);
+                            task.progress = task.progress.concat(append);
+                        } else if (task.sessions > newSessions) {
+                            task.progress = task.progress.slice(0, newSessions);
+                        }
                     }}></sessions-adjuster>
                 `)}
             </div>

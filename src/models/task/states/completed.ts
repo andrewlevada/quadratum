@@ -20,14 +20,16 @@ export default class CompletedState extends TaskState {
 
     public set progress(value: boolean[] | null) {
         if (value === null) {
-            this.task.sessions = 0;
+            this.task.edit({ sessions: 0 }).then();
             return;
         }
 
         if (value.every(v => v)) {
-            this.task.sessions = value.length;
+            this.task.edit({ sessions: value.length }).then();
             return;
         }
+
+        if (value.length === 0) return;
 
         const updateValues = {
             isCompleted: false,
