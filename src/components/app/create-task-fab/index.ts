@@ -6,7 +6,7 @@ import scopesStyles from "./styles.lit.scss";
 import Scope from "~src/models/scope";
 import { CompactListItem } from "~components/common/compact-list/item";
 import { TextField } from "@material/mwc-textfield";
-import { createTask } from "~src/models/task/factory";
+import { createTask, CreationContext } from "~src/models/task/factory";
 import Task from "~src/models/task";
 import { DatePicker } from "~components/overwrites/date-picker";
 import { dateToDisplayString } from "~utils/time";
@@ -125,13 +125,15 @@ export class CreateTaskFab extends RealtimeLitElement {
     }
 
     private onCreate(setActive?: boolean): void {
-        createTask(this.taskTextInput.value, {
+        const payload = {
             scope: {
                 id: this.selectedScope?.id || "pile",
                 label: this.selectedScope?.label || "Pile",
-            },
-            dueDate: this.dueDate || undefined,
-        }).then(task => {
+            }
+        } as CreationContext;
+        if (this.dueDate) payload.dueDate = this.dueDate;
+
+        createTask(this.taskTextInput.value, payload).then(task => {
             if (setActive) Task.setActive(task).then();
             this.isDialogShown = false;
             this.dueDate = null;

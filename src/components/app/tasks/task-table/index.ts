@@ -7,9 +7,11 @@ import scopedStyles from "./styles.lit.scss";
 import "@material/mwc-icon-button";
 import Scope from "~src/models/scope";
 import { dateToDisplayString } from "~utils/time";
+import { createTask, CreationContext } from "~src/models/task/factory";
 
 import("./sessions-adjuster").then(f => f.default());
 import("~components/common/inline-text-input").then(f => f.default());
+import("~components/legacy/task-table/add-button").then(f => f.default());
 
 export default (): void => defineComponent("task-table", TaskTable);
 export class TaskTable extends LitElement {
@@ -32,6 +34,17 @@ export class TaskTable extends LitElement {
                                            }} @clear=${() => {
                             task.modifier(this.tasks).deleteTree();
                         }}></inline-text-input>
+
+                        ${!task.parentTaskId ? html`
+                            <add-button sub @create=${(event: CustomEvent) => {
+                                createTask(event.detail.value, {
+                                    parentTask: task,
+                                    scope: {
+                                        id: task.scope.id,
+                                    }
+                                } as CreationContext).then();
+                            }}></add-button>
+                        ` : ""}
                     </div>
 
                     <sessions-adjuster .value=${task.sessions} @change=${(e: CustomEvent) => {
@@ -44,12 +57,12 @@ export class TaskTable extends LitElement {
                             task.progress = task.progress.slice(0, newSessions);
                         }
                     }}></sessions-adjuster>
-                    
+
                     ${task.dueDate ? html`
                         <p class="due">${dateToDisplayString(new Date(task.dueDate))}</p>
                     ` : html`
                         <square-checkbox class="due" icon="schedule" @change=${() => {
-                            
+
                         }} new-design></square-checkbox>
                     `}
                 `)}
