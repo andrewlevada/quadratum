@@ -1,6 +1,6 @@
 import { CSSResultGroup, html, TemplateResult } from "lit";
 import { createRef, ref } from "lit/directives/ref.js";
-import { componentStyles } from "~src/global";
+import { componentStyles, isNewDesign } from "~src/global";
 import { defineComponent, RealtimeLitElement } from "~utils/components";
 import "@material/mwc-button";
 import "@material/mwc-dialog";
@@ -39,12 +39,12 @@ export class SideBar extends RealtimeLitElement {
                     ${SideBar.markActive(this.getItems()).map(item => html`
                         <side-bar--item .item=${item}></side-bar--item>
                     `)}
-                    <div class="header"><p>${SideBar.isNewDesign() ? "Scopes of focus" : "Projects"}</p></div>
+                    <div class="header"><p>${isNewDesign() ? "Scopes of focus" : "Projects"}</p></div>
                     ${SideBar.markActive(this.getDynamicList()).map(item => html`
                         <side-bar--item .item=${item}></side-bar--item>
                     `)}
                     
-                    ${!SideBar.isNewDesign() ? html`
+                    ${!isNewDesign() ? html`
                         <mwc-button label="Create project" icon="add"
                                     @click=${() => this.newProjectDialogState(true)}></mwc-button>
                     ` : ""}
@@ -54,7 +54,7 @@ export class SideBar extends RealtimeLitElement {
                 </div>
             </mwc-drawer-fixed>
 
-            ${!SideBar.isNewDesign() ? html`
+            ${!isNewDesign() ? html`
                 <mwc-dialog heading="Let's do something new..." ${ref(this.newProjectDialog)}>
                     <div class="flex col gap">
                         <mwc-textfield label="Project Label" ${ref(this.newProjectNameField)}></mwc-textfield>
@@ -79,7 +79,7 @@ export class SideBar extends RealtimeLitElement {
     private getDynamicList(): Item[] {
         // Returns list of project in legacy design
         // And pinned scopes in new design
-        if (SideBar.isNewDesign()) return this.getScopes();
+        if (isNewDesign()) return this.getScopes();
         return this.getProjectsList();
     }
 
@@ -91,6 +91,12 @@ export class SideBar extends RealtimeLitElement {
             link: `/scope/${v.id}`,
             isEmoji: !!v.symbol,
         } as Item));
+
+        items.unshift({
+            label: "Pile",
+            icon: "inbox",
+            link: "/scope/pile",
+        });
 
         if (this.showAllScopes) {
             items.push({
@@ -124,7 +130,7 @@ export class SideBar extends RealtimeLitElement {
     }
 
     private getItems(): Item[] {
-        if (SideBar.isNewDesign()) return [
+        if (isNewDesign()) return [
             { icon: "home", label: "Home", link: "" },
             { icon: "account_tree", label: "Life Map", link: "/map" },
             { icon: "flag", label: "Milestones", link: "/milestones" },
@@ -145,7 +151,7 @@ export class SideBar extends RealtimeLitElement {
 
     connectedCallback() {
         super.connectedCallback();
-        if (SideBar.isNewDesign()) {
+        if (isNewDesign()) {
             this.dataListeners.push(Scope.listenForAll((scopes: Scope[]) => {
                 this.scopes = scopes;
                 this.pinnedScopes = scopes.filter(v => v.isPinned);
@@ -176,10 +182,6 @@ export class SideBar extends RealtimeLitElement {
             this.projects.push(project);
             this.requestUpdate();
         });
-    }
-
-    private static isNewDesign(): boolean {
-        return !!localStorage.getItem("qu-new-design");
     }
 
     static get styles(): CSSResultGroup {

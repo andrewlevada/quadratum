@@ -3,7 +3,6 @@ import { doc, setDoc } from "@firebase/firestore";
 import { userDoc } from "~src/models/tools";
 
 export function createScope(draft: ScopeDraft): Scope {
-    const scope = new Scope(draft.id, draft);
-    setDoc(doc(userDoc(), "scopes", draft.id).withConverter(Scope.converter), scope).then();
-    return scope;
+    setDoc(doc(userDoc(), "scopes", draft.id).withConverter(Scope.converter), draft as Partial<Scope>).then();
+    return new Scope(draft.id, draft);
 }

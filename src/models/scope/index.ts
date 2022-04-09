@@ -1,6 +1,6 @@
 import {
     DocumentData,
-    FirestoreDataConverter,
+    FirestoreDataConverter, orderBy,
     PartialWithFieldValue,
     QueryDocumentSnapshot,
     Unsubscribe,
@@ -9,8 +9,7 @@ import {
 } from "@firebase/firestore";
 import { nullishPayloadSet, updatable } from "~src/models/tools";
 import { Callback } from "~utils/types";
-import { listenForAllScopes, listenForScopeById, listenForScopesWithFilter, updateScope } from "~src/models/scope/data";
-import PileScope from "~src/models/scope/pile";
+import { listenForScopeById, listenForScopesWithFilter, updateScope } from "~src/models/scope/data";
 
 export interface ScopeDocument {
     label: string;
@@ -59,15 +58,20 @@ export default class Scope {
     }
 
     public static listen(id: string, callback: Callback<Scope>): Unsubscribe {
+        if (id === "pile") {
+            callback(new PileScope());
+            return () => {};
+        }
         return listenForScopeById(id, callback);
     }
 
     public static listenForAll(callback: Callback<Scope[]>): Unsubscribe {
-        return listenForAllScopes(callback);
+        return listenForScopesWithFilter([orderBy("label")],
+            (scopes: Scope[]) => callback(scopes.filter(v => !v.isArchived)));
     }
 
     public static listenForPinned(callback: Callback<Scope[]>): Unsubscribe {
-        return listenForScopesWithFilter([where("isPinned", "==", true)], callback);
+        return listenForScopesWithFilter([where("isPinned", "==", true), orderBy("label")], callback);
     }
 
     public static converter: FirestoreDataConverter<Scope> = {
@@ -89,4 +93,16 @@ export default class Scope {
             return payload;
         },
     };
+}
+
+class PileScope extends Scope {
+    public constructor() {
+        super("pile", {
+            label: "Pile",
+            parentIds: ["root"],
+            symbol: "inbox",
+            isPinned: true,
+            isArchived: false,
+        });
+    }
 }
