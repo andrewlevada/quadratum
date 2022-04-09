@@ -30,7 +30,7 @@ function queryTasksForGroups(groups: QueryConstraint[][], masterCallback: Callba
     const callback = (tasks: Task[], groupLabel: string) => {
         filter(tasks, hasNoChildren).then(filteredTasks => {
             groupTasks[groupLabel] = filteredTasks;
-            masterCallback(Object.values(groupTasks).flat());
+            masterCallback(Object.values(groupTasks).flat().unique(v => v.id));
         });
     };
 

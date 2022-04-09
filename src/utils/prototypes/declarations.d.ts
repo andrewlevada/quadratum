@@ -4,6 +4,7 @@ declare global {
     interface Array<T> {
         last(): T;
         clone(): Array<T>;
+        unique(transform: (v: T) => string): Array<T>;
     }
 
     interface HTMLElement {

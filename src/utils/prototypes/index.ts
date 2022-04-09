@@ -10,6 +10,19 @@ clone() {
     return this.slice(0);
 };
 
+Array.prototype.unique = function
+unique<T>(transform: (v: T) => string) {
+    const [newArr, set] = [[] as T[], new Set()];
+    for (const item of this) {
+        const key = transform(item);
+        if (!set.has(key)) {
+            newArr.push(item);
+            set.add(item);
+        }
+    }
+    return newArr;
+};
+
 HTMLElement.prototype.dispatchSimpleEvent = function
 dispatchSimpleEvent(name: string, value?: unknown) {
     this.dispatchEvent(new CustomEvent(name, {
