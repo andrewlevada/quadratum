@@ -59,6 +59,8 @@ export class SquareCheckbox extends LitElement {
           input {
             position: absolute;
             opacity: 0;
+            z-index: 1;
+            cursor: pointer;
           }
 
           .input-box > * {

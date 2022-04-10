@@ -1,5 +1,5 @@
 import { deleteTask, fetchTasksWithFilter, updateTask } from "~src/models/task/data";
-import { getSprintAnchorSync, getUserInfo } from "~services/user";
+import { getUserInfo } from "~services/user";
 import {
     DocumentData,
     FirestoreDataConverter,
@@ -23,11 +23,6 @@ export interface BaseTaskDocument {
     scope: ScopeReference;
     parentTaskId?: string;
     dueDate?: number;
-
-    // Legacy
-    projectId?: string;
-    sprintNumber?: number;
-    isInDaily?: boolean;
 }
 
 export interface ScopeReference {
@@ -118,11 +113,6 @@ export default class Task extends TaskStateBehaviour {
         this.dueDateInner = data.dueDate;
 
         this.state = data.isCompleted ? new CompletedState(this, data) : new PendingState(this, data);
-
-        // Legacy
-        this.projectIdInner = data.projectId;
-        this.sprintNumberInner = data.sprintNumber;
-        this.isInDailyInner = !!data.isInDaily;
     }
 
     public modifier(group: Task[]): TaskContextModifier {
@@ -171,11 +161,6 @@ export default class Task extends TaskStateBehaviour {
             if (o.sessions !== undefined && o.progress)
                 if (o.sessions !== o.progress.length) payload.sessions = o.progress.length;
 
-            // Legacy
-            nullishPayloadSet<Task>("projectId", o, payload);
-            nullishPayloadSet<Task>("isInDaily", o, payload);
-            nullishPayloadSet<Task>("sprintNumber", o, payload);
-
             return payload;
         },
     };
@@ -185,42 +170,6 @@ export default class Task extends TaskStateBehaviour {
         await setDoc(userDoc(), { activeTaskId: task?.id || null }, { merge: true });
         if (!previousActiveId) return;
         await updateTask({ id: previousActiveId, wasActive: true });
-    }
-
-    // Legacy
-
-    private isInDailyInner: boolean;
-    public get isInDaily(): boolean {
-        return this.isInDailyInner;
-    }
-    public set isInDaily(value: boolean) {
-        if (this.isInDailyInner === value) return;
-        this.isInDailyInner = value;
-        updateTask({ id: this.id, isInDaily: value, sprintNumber: getSprintAnchorSync().currentSprintNumber }).then();
-    }
-
-    private projectIdInner: string | null | undefined;
-    public get projectId(): string | null {
-        return this.projectIdInner!;
-    }
-    public set projectId(value: string | null) {
-        if (this.projectIdInner === value) return;
-        this.projectIdInner = value;
-        updateTask({ id: this.id, projectId: value }).then();
-    }
-
-    private sprintNumberInner: number | null | undefined;
-    public get sprintNumber(): number | null {
-        return this.sprintNumberInner!;
-    }
-    public set sprintNumber(value: number | null) {
-        if (this.sprintNumberInner === value) return;
-        this.sprintNumberInner = value;
-        updateTask({ id: this.id, sprintNumber: value, isInDaily: false }).then();
-    }
-
-    public static daily(): Promise<Task[]> {
-        return fetchTasksWithFilter([where("isInDaily", "==", true)]);
     }
 }
 

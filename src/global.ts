@@ -50,7 +50,3 @@ function initEnv(): void {
         });
     }
 }
-
-export function isNewDesign(): boolean {
-    return !!localStorage.getItem("qu-new-design");
-}

@@ -8,10 +8,12 @@ import "@material/mwc-icon-button";
 import Scope from "~src/models/scope";
 import { dateToDisplayString } from "~utils/time";
 import { createTask, CreationContext } from "~src/models/task/factory";
+import { DatePicker } from "~components/overwrites/date-picker";
 
-import("./sessions-adjuster").then(f => f.default());
 import("~components/common/inline-text-input").then(f => f.default());
-import("~components/legacy/task-table/add-button").then(f => f.default());
+import("~components/overwrites/date-picker").then(f => f.default());
+import("./sessions-adjuster").then(f => f.default());
+import("./add-button").then(f => f.default());
 
 export default (): void => defineComponent("task-table", TaskTable);
 export class TaskTable extends LitElement {
@@ -58,13 +60,18 @@ export class TaskTable extends LitElement {
                         }
                     }}></sessions-adjuster>
 
-                    ${task.dueDate ? html`
-                        <p class="due">${dateToDisplayString(new Date(task.dueDate))}</p>
-                    ` : html`
-                        <square-checkbox class="due" icon="schedule" @change=${() => {
-
-                        }} new-design></square-checkbox>
-                    `}
+                    <date-picker class="due" @change=${(e: CustomEvent) => {
+                        if (!e.target || !("getSelectedDates" in e.target)) return;
+                        const dueDate = (e.target as DatePicker).getSelectedDates()[0];
+                        dueDate.setHours(23, 59, 59, 999);
+                        task.dueDate = dueDate.getTime();
+                    }}>
+                        ${task.dueDate ? html`
+                            <p>${dateToDisplayString(new Date(task.dueDate))}</p>
+                        ` : html`
+                            <square-checkbox icon="schedule" new-design></square-checkbox>
+                        `}
+                    </date-picker>
                 `)}
             </div>
         `;
@@ -73,12 +80,7 @@ export class TaskTable extends LitElement {
     private static reorderTasks(heap: Task[]): Task[] {
         const tasks: Task[] = [];
 
-        for (const t of heap.filter(v => !v.isCompleted && !v.isInDaily)) {
-            if (t.parentTaskId) continue;
-            tasks.push(t, ...this.constructSubTree(heap, t.id));
-        }
-
-        for (const t of heap.filter(v => !v.isCompleted && v.isInDaily)) {
+        for (const t of heap.filter(v => !v.isCompleted)) {
             if (t.parentTaskId) continue;
             tasks.push(t, ...this.constructSubTree(heap, t.id));
         }

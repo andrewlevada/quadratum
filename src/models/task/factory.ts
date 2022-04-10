@@ -1,5 +1,4 @@
 import Task, { CompletedTaskDocument, PendingTaskDocument } from "~src/models/task/index";
-import { getCurrentSprintNumber } from "~src/models/legacy/sprint/data";
 import { fetchTaskById, listenToTasksWithFilter, postTask } from "~src/models/task/data";
 import { orderBy, Unsubscribe, where } from "@firebase/firestore";
 import { Callback } from "~utils/types";
@@ -11,11 +10,6 @@ export interface ActionContext {
     parentTask?: Task;
 }
 
-export interface LegacyCreationContext extends ActionContext {
-    projectId: string | undefined;
-    sprintNumber: number | undefined;
-}
-
 export interface CreationContext extends ActionContext {
     scope: {
         id: string;
@@ -24,13 +18,9 @@ export interface CreationContext extends ActionContext {
     dueDate?: Date;
 }
 
-export async function createTask(text: string, context: LegacyCreationContext | CreationContext): Promise<Task> {
-    if (context.origin === "daily")
-        (context as LegacyCreationContext).sprintNumber = await getCurrentSprintNumber();
-
+export async function createTask(text: string, context: CreationContext): Promise<Task> {
     const payload = {
         text,
-        isInDaily: context.origin === "daily",
         progress: [false],
         sessions: 1,
         isCompleted: false,
@@ -40,12 +30,8 @@ export async function createTask(text: string, context: LegacyCreationContext | 
         }
     } as PendingTaskDocument | CompletedTaskDocument;
 
-    if (context.parentTask)
-        payload.parentTaskId = context.parentTask.id;
-
-    if ("projectId" in context) payload.projectId = context.projectId;
-    if ("sprintNumber" in context) payload.sprintNumber = context.sprintNumber;
-    if ("dueDate" in context) payload.dueDate = context.dueDate!.getTime();
+    if (context.parentTask) payload.parentTaskId = context.parentTask.id;
+    if (context.dueDate) payload.dueDate = context.dueDate!.getTime();
 
     return postTask(payload);
 

@@ -1,6 +1,6 @@
 import { css, CSSResultGroup, html, TemplateResult } from "lit";
 import { customElement } from "lit/decorators.js";
-import { isNewDesign, pageStyles } from "~src/global";
+import { pageStyles } from "~src/global";
 import { getAuth } from "@firebase/auth";
 import { AppPageElement } from "~components/app/router/app-router";
 import scopedStyles from "./styles.lit.scss";
@@ -18,8 +18,7 @@ export default class LandingPage extends AppPageElement {
         super.connectedCallback();
         getAuth().onAuthStateChanged(() => {
             if (getAuth().currentUser) {
-                if (isNewDesign()) window.location.pathname = "/app";
-                else window.location.pathname = "/app/daily";
+                window.location.pathname = "/app";
             }
         });
     }

@@ -79,11 +79,6 @@ export class AppRouter extends LitElement {
         if (path === "/app/map") return { tag: "map", importPath: "/app" };
         if (path.startsWith("/app/scope/")) return { tag: "scope", importPath: "/app" };
 
-        // Legacy
-        if (path === "/app/daily") return { tag: "daily", importPath: "/app" };
-        if (path.startsWith("/app/sprint/")) return { tag: "sprint", importPath: "/app" };
-        if (path.startsWith("/app/project/")) return { tag: "project", importPath: "/app" };
-
         return { tag: "not-found" };
     }
 
