@@ -35,14 +35,10 @@ export default class EnterPage extends AppPageElement {
             .then(credentials => initializeUser(credentials.user.uid))
             .then(() => {
                 window.location.pathname = "/app";
-            })
-            // eslint-disable-next-line no-console
-            .catch(() => console.log("Auth failed"));
+            }).catch((reason) => console.log("Auth failed", reason));
     }
 
     static get styles(): CSSResultGroup {
-        // Styles can either be in this file (only css)
-        // or imported from another file (scss in this case)
         return [...pageStyles, scopedStyles, css`
           #logo {
             position: absolute;
