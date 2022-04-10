@@ -12,12 +12,12 @@ clone() {
 
 Array.prototype.unique = function
 unique<T>(transform: (v: T) => string) {
-    const [newArr, set] = [[] as T[], new Set()];
+    const [newArr, set] = [[] as T[], new Set<string>()];
     for (const item of this) {
         const key = transform(item);
         if (!set.has(key)) {
             newArr.push(item);
-            set.add(item);
+            set.add(key);
         }
     }
     return newArr;

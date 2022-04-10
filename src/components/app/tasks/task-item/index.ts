@@ -1,4 +1,4 @@
-import { css, CSSResultGroup, html, LitElement, PropertyValues, TemplateResult } from "lit";
+import { css, CSSResultGroup, html, LitElement, TemplateResult } from "lit";
 import { componentStyles } from "~src/global";
 import { defineComponent } from "~utils/components";
 import { property, query } from "lit/decorators.js";
@@ -6,6 +6,7 @@ import Task from "~src/models/task";
 import { timestampToRelativeString } from "~utils/time";
 import { Menu } from "@material/mwc-menu";
 import { TaskContextModifier } from "~src/models/task/task-context-modifier";
+import { taskItemActionsHtml, taskItemActionsStyles } from "~components/app/tasks/task-item/actions";
 
 import("~components/common/menu-tiny-button").then(f => f.default());
 import("~components/common/square-checkbox").then(f => f.default());
@@ -30,14 +31,14 @@ export class TaskItem extends LitElement {
                                          class="pending-checkbox"
                                          @click=${() => {
                                              Task.setActive(this.task).then();
-                                         }} new-design></square-checkbox>
+                                         }}></square-checkbox>
                     ` : ""}
 
                     <div class="flex col grow">
                         <div class="flex row justify-between full-width">
                             <p class="text">${this.task.text}</p>
                             <menu-tiny-button icon="more_horiz">
-                                ${this.actionsHtml()}
+                                ${taskItemActionsHtml(this)}
                             </menu-tiny-button>
                         </div>
 
@@ -53,7 +54,7 @@ export class TaskItem extends LitElement {
                 ${this.displayType !== "pending" && this.task.progress ? html`
                     <div class="flex row gap progress-checkboxes">
                         ${this.task.progress.map((v, i) => html`
-                            <square-checkbox ?checked=${v} new-design
+                            <square-checkbox ?checked=${v}
                                              @change=${(event: CustomEvent) => {
                                                  const newProgress = this.task.progress!;
                                                  newProgress[i] = event.detail.value as boolean;
@@ -81,25 +82,13 @@ export class TaskItem extends LitElement {
         return html``;
     }
 
-    private actionsHtml(): TemplateResult[] {
-        return [html`
-            <mwc-list-item graphic="icon" @click=${() => {
-                if (this.taskModifier) this.taskModifier.deleteTree();
-                else this.task.delete().then();
-            }}>
-                <span>Delete task</span>
-                <mwc-icon slot="graphic">delete</mwc-icon>
-            </mwc-list-item>
-        `];
-    }
-
     private getPendingCheckboxValue(): string {
         if (this.task.sessions <= 1) return "";
         return this.task.sessions.toString();
     }
 
     static get styles(): CSSResultGroup {
-        return [...componentStyles, css`
+        return [...componentStyles, taskItemActionsStyles, css`
           .pending-checkbox {
             margin-right: 12px;
           }

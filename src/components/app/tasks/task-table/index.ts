@@ -49,16 +49,7 @@ export class TaskTable extends LitElement {
                         ` : ""}
                     </div>
 
-                    <sessions-adjuster .value=${task.sessions} @change=${(e: CustomEvent) => {
-                        const newSessions = e.detail.value as number;
-                        if (newSessions > task.sessions) {
-                            const append = new Array(newSessions - task.sessions);
-                            append.fill(false);
-                            task.progress = task.progress.concat(append);
-                        } else if (task.sessions > newSessions) {
-                            task.progress = task.progress.slice(0, newSessions);
-                        }
-                    }}></sessions-adjuster>
+                    <sessions-adjuster .task=${task}></sessions-adjuster>
 
                     <date-picker class="due" @change=${(e: CustomEvent) => {
                         if (!e.target || !("getSelectedDates" in e.target)) return;
@@ -69,7 +60,7 @@ export class TaskTable extends LitElement {
                         ${task.dueDate ? html`
                             <p>${dateToDisplayString(new Date(task.dueDate))}</p>
                         ` : html`
-                            <square-checkbox icon="schedule" new-design></square-checkbox>
+                            <square-checkbox icon="schedule"></square-checkbox>
                         `}
                     </date-picker>
                 `)}

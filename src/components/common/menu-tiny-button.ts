@@ -40,8 +40,12 @@ export class MenuTinyButton extends LitElement {
             --mdc-icon-button-size: 24px;
             --mdc-icon-size: 18px;
           }
-          
+
           .actions-button {
+            position: absolute;
+            top: -4px;
+            left: -3px;
+
             opacity: 0;
           }
 

@@ -40,18 +40,13 @@ export class SquareCheckbox extends LitElement {
             position: relative;
           }
 
-          :host([new-design]) .input-box {
-            border: 1px solid var(--md-sys-color-outline);
-            border-radius: 4px;
-          }
-
           .input-box {
             width: 18px;
             height: 18px;
-
-            border: 2px solid var(--mdc-theme-on-surface);
+            
             box-sizing: border-box;
-            border-radius: 2px;
+            border: 1px solid var(--md-sys-color-outline);
+            border-radius: 4px;
 
             transition: background-color 100ms ease-out;
           }
