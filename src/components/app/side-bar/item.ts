@@ -1,10 +1,9 @@
-import { CSSResultGroup, html, LitElement, PropertyValues, TemplateResult } from "lit";
+import { CSSResultGroup, html, LitElement, TemplateResult } from "lit";
 import { componentStyles } from "~src/global";
-import { defineComponent, hasObjectChanged } from "~utils/components";
+import { defineComponent } from "~utils/components";
 import { property, query } from "lit/decorators.js";
 import { AppRouter } from "~components/app/router/app-router";
 import scopedStyles from "./styles.lit.scss";
-import twemoji from "twemoji";
 
 export interface Item {
     label: string;
@@ -32,10 +31,12 @@ export class SideBarItem extends LitElement {
                        this.item.onClick();
                    } else SideBarItem.onClick(this.item, event);
                }}>
-                <span style="${this.item.color ? `color: ${this.item.color}` : ""}"
-                      class=${this.item.isEmoji ? "emoji" : "material-icons"}>
+                <div class="icon-container flex align-center justify-center">
+                    <span style="${this.item.color ? `color: ${this.item.color}` : ""}"
+                          class=${this.item.isEmoji ? "emoji" : "material-icons"}>
                     ${this.item.icon}
-                </span>
+                    </span>
+                </div>
                 <p>${this.item.label}</p>
             </a>
         `;

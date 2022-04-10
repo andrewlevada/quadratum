@@ -51,10 +51,15 @@
     margin-bottom: 28px;
   }
 
-  span {
-    font-size: 24px;
+  .icon-container {
+    width: 24px;
     margin-right: 12px;
-    color: var(--sidebar-item-icon-color, var(--md-sys-color-on-primary-container));
+
+    span {
+      font-size: 24px;
+      width: 60px;
+      color: var(--sidebar-item-icon-color, var(--md-sys-color-on-primary-container));
+    }
   }
 
   p {
