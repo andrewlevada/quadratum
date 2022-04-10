@@ -13,6 +13,7 @@
       "~src/*": ["./src/*"]
     },
     "strict": true,
+    "skipLibCheck": true,
     "allowSyntheticDefaultImports": true,
     "moduleResolution": "node",
     "sourceMap": true,
