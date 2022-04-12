@@ -48,7 +48,7 @@ export class TaskTable extends LitElement {
 
                     <sessions-adjuster .task=${task}></sessions-adjuster>
                     
-                    <task-table--due-cell class="due"></task-table--due-cell>
+                    <task-table--due-cell class="due" .task=${task}></task-table--due-cell>
                 `)}
             </div>
         `;

@@ -17,7 +17,7 @@ export class TaskItemBadge extends LitElement {
 
     render(): TemplateResult {
         return html`
-            <div class="cell flex row gap align-center"
+            <div class="badge-styling flex row gap align-center"
                  @click=${() => this.onInfoBadgeClick()}>
                 ${this.infoBadge()}
             </div>

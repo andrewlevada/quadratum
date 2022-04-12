@@ -20,24 +20,3 @@
 .material-icons {
     font-size: 18px;
 }
-
-.cell {
-    position: relative;
-    cursor: pointer;
-
-    &:before {
-        content: "";
-        border-radius: 6px;
-
-        position: absolute;
-        top: -4px;
-        bottom: -4px;
-        left: -8px;
-        right: -8px;
-    }
-
-    &:hover:before {
-        background: var(--md-sys-color-on-surface-variant);
-        opacity: 0.1;
-    }
-}

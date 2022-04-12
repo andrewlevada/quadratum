@@ -6,6 +6,27 @@
   line-height: 100%;
 }
 
+.badge-styling {
+  position: relative;
+  cursor: pointer;
+
+  &:before {
+    content: "";
+    border-radius: 6px;
+
+    position: absolute;
+    top: -4px;
+    bottom: -4px;
+    left: -8px;
+    right: -8px;
+  }
+
+  &:hover:before {
+    background: var(--md-sys-color-on-surface-variant);
+    opacity: 0.1;
+  }
+}
+
 a {
   text-decoration: none;
 }

@@ -17,7 +17,7 @@ export class TaskTableDueCell extends LitElement {
 
     render(): TemplateResult {
         return html`
-            <div class="cell" @click=${() => {
+            <div class="badge-styling" @click=${() => {
                 this.calendarInput.open();
             }}>
                 ${this.task.dueDate ? html`
