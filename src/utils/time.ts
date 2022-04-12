@@ -1,3 +1,5 @@
+import { formatISO, parseISO } from "date-fns";
+
 const millsInDay = 86400000;
 
 export function dateToDisplayString(date: Date): string {
@@ -36,4 +38,19 @@ function getDayDiffFromNow(date: Date): number {
     const now = new Date();
     const diff = date.getTime() - now.getTime();
     return diff / millsInDay;
+}
+
+export function hasChangedISO(value: Date | undefined, oldValue: Date | undefined): boolean {
+    if (value === undefined || oldValue === undefined)
+        return !(value === undefined && oldValue === undefined);
+    return formatISO(value) != formatISO(oldValue);
+}
+
+export const ISOConverter = {
+    fromAttribute(value: string) {
+        return value ? parseISO(value) : undefined;
+    },
+    toAttribute(value: Date | undefined) {
+        return value ? formatISO(value) : undefined;
+    },
 }

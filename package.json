@@ -26,6 +26,7 @@
     "@material/mwc-textfield": "^0.25.3",
     "@sentry/browser": "^6.19.6",
     "@sentry/tracing": "^6.19.6",
+    "date-fns": "^2.28.0",
     "lit": "^2.2.2",
     "lit-flatpickr": "^0.3.0",
     "md5": "^2.3.0",
