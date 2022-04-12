@@ -11,6 +11,7 @@ import Task from "~src/models/task";
 import { dateToDisplayString } from "~utils/time";
 import { ScopesListMenu } from "~components/app/scopes-list-menu";
 import { CalendarInput } from "~components/common/calendar-input";
+import "@material/mwc-textfield";
 
 import("~components/common/selection-chip").then(f => f.default());
 import("~components/common/compact-list").then(f => f.default());
@@ -42,13 +43,18 @@ export class CreateTaskFab extends RealtimeLitElement {
                     <div class="flex row justify-between">
                         <selection-chip primary icon="outlined_flag" label="Milestone"></selection-chip>
 
-                        <calendar-input @change=${() => {
-                            this.dueDate = this.calendarInputElement.date;
-                            this.dueDate.setHours(23, 59, 59, 999);
-                        }}>
+                        <div>
                             <selection-chip label=${this.dueDate ? dateToDisplayString(this.dueDate) : "Due date"}
-                                            primary icon="schedule"></selection-chip>
-                        </calendar-input>
+                                            primary icon="schedule" @click=${(e: Event) => {
+                                this.calendarInputElement.anchor = e.target as HTMLElement;
+                                this.calendarInputElement.open();
+                            }}></selection-chip>
+
+                            <calendar-input @change=${() => {
+                                this.dueDate = this.calendarInputElement.date;
+                                this.dueDate.setHours(23, 59, 59, 999);
+                            }}></calendar-input>
+                        </div>
                     </div>
 
                     <div class="scopes-heading flex row align-center justify-between">

@@ -50,6 +50,7 @@ export class CalendarInput extends LitElement {
     static styles = [...componentStyles, css`
       :host {
         position: relative;
+        --mdc-theme-surface: var(--md-sys-color-surface);
       }
       
       :host, .container {
