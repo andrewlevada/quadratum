@@ -5,6 +5,12 @@ export function defineComponent(tag: string, c: CustomElementConstructor): void 
     if (customElements.get(tag) === undefined) customElements.define(tag, c);
 }
 
+export function waitForRender(): Promise<void> {
+    return new Promise<void>(resolve => {
+        setTimeout(() => resolve(), 0);
+    });
+}
+
 export class RealtimeLitElement extends LitElement {
     protected dataListeners: Unsubscribe[] = [];
 

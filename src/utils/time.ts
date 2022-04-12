@@ -17,6 +17,7 @@ export function timestampToRelativeString(time: number) {
     const dayDiff = getDayDiffFromNow(new Date(time));
 
     if (dayDiff < 0) {
+        if (dayDiff >= -1) return "Yesterday";
         if (dayDiff >= -2) return "Overdue";
         return "Very overdue";
     }

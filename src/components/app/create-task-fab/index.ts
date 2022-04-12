@@ -8,16 +8,16 @@ import { CompactListItem } from "~components/common/compact-list/item";
 import { TextField } from "@material/mwc-textfield";
 import { createTask, CreationContext } from "~src/models/task/factory";
 import Task from "~src/models/task";
-import { DatePicker } from "~components/overwrites/date-picker";
 import { dateToDisplayString } from "~utils/time";
 import { ScopesListMenu } from "~components/app/scopes-list-menu";
+import { CalendarInput } from "~components/common/calendar-input";
 
 import("~components/common/selection-chip").then(f => f.default());
 import("~components/common/compact-list").then(f => f.default());
 import("~components/app/scopes-list-menu").then(f => f.default());
 import("~components/overwrites/md-fab").then(f => f.default());
 import("~components/overwrites/md-button").then(f => f.default());
-import("~components/overwrites/date-picker").then(f => f.default());
+import("~components/common/calendar-input").then(f => f.default());
 
 export default (): void => defineComponent("create-task-fab", CreateTaskFab);
 export class CreateTaskFab extends RealtimeLitElement {
@@ -28,7 +28,7 @@ export class CreateTaskFab extends RealtimeLitElement {
     @state() selectedScope: Scope | null = null;
 
     @query("#task-text-input") taskTextInput!: TextField;
-    @query("date-picker") datePickerElement!: DatePicker;
+    @query("calendar-input") calendarInputElement!: CalendarInput;
     @query(".more-scopes-button") moreScopesButton!: HTMLElement;
     @query("scopes-list-menu") scopesMenuElement!: ScopesListMenu;
 
@@ -42,13 +42,13 @@ export class CreateTaskFab extends RealtimeLitElement {
                     <div class="flex row justify-between">
                         <selection-chip primary icon="outlined_flag" label="Milestone"></selection-chip>
 
-                        <date-picker @change=${() => {
-                            this.dueDate = this.datePickerElement.getSelectedDates()[0];
+                        <calendar-input @change=${() => {
+                            this.dueDate = this.calendarInputElement.date;
                             this.dueDate.setHours(23, 59, 59, 999);
                         }}>
                             <selection-chip label=${this.dueDate ? dateToDisplayString(this.dueDate) : "Due date"}
                                             primary icon="schedule"></selection-chip>
-                        </date-picker>
+                        </calendar-input>
                     </div>
 
                     <div class="scopes-heading flex row align-center justify-between">

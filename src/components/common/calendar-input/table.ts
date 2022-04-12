@@ -20,9 +20,10 @@ import scopedStyles from "./styles.lit.scss";
 import "@material/mwc-icon-button";
 import { hasChangedISO, ISOConverter } from "~utils/time";
 import { componentStyles } from "~src/global";
+import { defineComponent } from "~utils/components";
 
-@customElement("lit-datetime-picker-calendar")
-export class Calendar extends LitElement {
+export default (): void => defineComponent("calendar-input--table", CalendarInputTable);
+export class CalendarInputTable extends LitElement {
     @property({ converter: ISOConverter, hasChanged: hasChangedISO }) value: Date = new Date();
 
     @state({ hasChanged() { return true; } })

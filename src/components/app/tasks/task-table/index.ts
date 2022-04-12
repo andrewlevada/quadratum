@@ -4,14 +4,11 @@ import { defineComponent } from "~utils/components";
 import { property } from "lit/decorators.js";
 import Task from "~src/models/task";
 import scopedStyles from "./styles.lit.scss";
-import "@material/mwc-icon-button";
 import Scope from "~src/models/scope";
-import { dateToDisplayString } from "~utils/time";
 import { createTask, CreationContext } from "~src/models/task/factory";
-import { DatePicker } from "~components/overwrites/date-picker";
 
 import("~components/common/inline-text-input").then(f => f.default());
-import("~components/overwrites/date-picker").then(f => f.default());
+import("./due-cell").then(f => f.default());
 import("./sessions-adjuster").then(f => f.default());
 import("./add-button").then(f => f.default());
 
@@ -50,19 +47,8 @@ export class TaskTable extends LitElement {
                     </div>
 
                     <sessions-adjuster .task=${task}></sessions-adjuster>
-
-                    <date-picker class="due" @change=${(e: CustomEvent) => {
-                        if (!e.target || !("getSelectedDates" in e.target)) return;
-                        const dueDate = (e.target as DatePicker).getSelectedDates()[0];
-                        dueDate.setHours(23, 59, 59, 999);
-                        task.dueDate = dueDate.getTime();
-                    }}>
-                        ${task.dueDate ? html`
-                            <p>${dateToDisplayString(new Date(task.dueDate))}</p>
-                        ` : html`
-                            <square-checkbox icon="schedule"></square-checkbox>
-                        `}
-                    </date-picker>
+                    
+                    <task-table--due-cell class="due"></task-table--due-cell>
                 `)}
             </div>
         `;
