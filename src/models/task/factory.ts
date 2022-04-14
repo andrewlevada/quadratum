@@ -46,6 +46,10 @@ export function getTaskById(id: string): Promise<Task> {
     return fetchTaskById(id);
 }
 
-export function listenForTasksFromScope(scopeId: string, callback: Callback<Task[]>): Unsubscribe {
-    return listenToTasksWithFilter([where("scope.id", "==", scopeId), orderBy("text")], callback);
+export function listenForPendingTasksFromScope(scopeId: string, callback: Callback<Task[]>): Unsubscribe {
+    return listenToTasksWithFilter([where("scope.id", "==", scopeId), where("isCompleted", "==", false), orderBy("text")], callback);
+}
+
+export function listenForCompletedTasksFromScope(scopeId: string, callback: Callback<Task[]>): Unsubscribe {
+    return listenToTasksWithFilter([where("scope.id", "==", scopeId), where("isCompleted", "==", true), orderBy("text")], callback);
 }
