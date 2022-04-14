@@ -11,10 +11,13 @@ import {
 } from "@firebase/firestore";
 import { listenForMilestonesWithFilter } from "~src/models/milestone/data";
 
-export interface MilestoneDocument {
+export interface MilestoneDraft {
     label: string;
     description: string;
     dueDate: number;
+}
+
+export interface MilestoneDocument extends MilestoneDraft {
     totalSessions: number;
     completedSessions: number;
     isArchived?: boolean;
