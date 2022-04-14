@@ -11,9 +11,9 @@ import {
     setDoc, Unsubscribe
 } from "@firebase/firestore";
 import { userDoc } from "~src/models/tools";
-import Task from "~src/models/task";
 import { Callback } from "~utils/types";
 
+export type DocumentDraft<T> = T & { id: string };
 type Constructor<I> = new (...args: any[]) => I;
 type Model<T> = Constructor<T> & { converter: FirestoreDataConverter<T> };
 

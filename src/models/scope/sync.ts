@@ -1,8 +1,9 @@
-import { ScopeDraft } from "~src/models/scope/index";
+import { ScopeDocument } from "~src/models/scope/index";
 import { fetchAllScopes } from "~src/models/scope/data";
 import { createScope } from "~src/models/scope/factory";
+import { DocumentDraft } from "~src/models/data";
 
-export default async function syncScopes(drafts: ScopeDraft[]): Promise<void> {
+export default async function syncScopes(drafts: DocumentDraft<ScopeDocument>[]): Promise<void> {
     const scopes = await fetchAllScopes();
     const newIds = new Set(drafts.map(d => d.id));
     const draftsMap = new Map(drafts.map(d => [d.id, d]));

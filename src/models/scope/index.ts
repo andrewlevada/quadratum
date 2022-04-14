@@ -19,10 +19,6 @@ export interface ScopeDocument {
     isArchived?: boolean;
 }
 
-export interface ScopeDraft extends ScopeDocument {
-    id: string;
-}
-
 export default class Scope {
     public readonly id: string;
 

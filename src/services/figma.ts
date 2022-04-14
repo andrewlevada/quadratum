@@ -1,5 +1,6 @@
 import { OAuthData } from "~services/user";
-import { ScopeDocument, ScopeDraft } from "~src/models/scope";
+import { ScopeDocument } from "~src/models/scope";
+import { DocumentDraft } from "~src/models/data";
 
 // TODO: Add scope refresh logic
 export function generateFigmaOAuthToken(code: string): Promise<OAuthData> {
@@ -13,7 +14,7 @@ export function generateFigmaOAuthToken(code: string): Promise<OAuthData> {
     }) as OAuthData);
 }
 
-export function getScopesFromFigma(url: string, token: string): Promise<ScopeDraft[]> {
+export function getScopesFromFigma(url: string, token: string): Promise<DocumentDraft<ScopeDocument>[]> {
     return fetch(getFigmaApiUrlFromBoard(url), {
         headers: { Authorization: `Bearer ${token}` },
     }).then(res => res.json())
@@ -28,7 +29,7 @@ function getFigmaApiUrlFromBoard(boardUrl: string): string {
 const emojiRegex = /([\p{Emoji_Presentation}|\p{Extended_Pictographic}\u200d]+)/gu;
 
 type Connection = ConnectorEndpointEndpointNodeIdAndMagnet;
-function extractScopesFromFigmaDocument(document: DocumentNode): ScopeDraft[] {
+function extractScopesFromFigmaDocument(document: DocumentNode): DocumentDraft<ScopeDocument>[] {
     const page = document.children[0];
 
     const scopes: Record<string, ScopeDocument> = {};
