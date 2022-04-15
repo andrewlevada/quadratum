@@ -1,5 +1,5 @@
 import { CSSResultGroup, html, TemplateResult } from "lit";
-import { customElement, state } from "lit/decorators.js";
+import { customElement, query, state } from "lit/decorators.js";
 import { pageStyles } from "~src/global";
 import { AppPageElement } from "~components/app/router/app-router";
 import { listenForUserInfo } from "~services/user";
@@ -8,6 +8,7 @@ import { getTaskById } from "~src/models/task/factory";
 import scopedStyles from "./styles.lit.scss";
 import { clearCompletedToday, listenForTasksCompletedToday } from "~src/services/algo/home";
 import listenForUpNextTasks from "~src/services/algo/up-next";
+import fireworks from "fireworks";
 
 import("~components/app/tasks/tasks-card").then(f => f.default());
 import("~components/app/tasks/task-item").then(f => f.default());
@@ -20,6 +21,8 @@ export default class AppPageHome extends AppPageElement {
     @state() upNextTasks: Task[] = [];
     @state() recommendedTasks: Task[] = [];
     @state() completedTasks: Task[] = [];
+
+    @query("#clear-button") clearButton!: HTMLElement;
 
     render(): TemplateResult {
         return html`
@@ -53,8 +56,8 @@ export default class AppPageHome extends AppPageElement {
                     <div class="flex col gap">
                         <div class="flex header">
                             <h6>Completed today</h6>
-                            <md-button label="To the next day!" icon="clear_all" outlined
-                                       @click=${() => clearCompletedToday(this.completedTasks)}></md-button>
+                            <md-button label="To the next day!" icon="clear_all" outlined id="clear-button"
+                                       @click=${(e: MouseEvent) => this.onCompletedClear(e)}></md-button>
                         </div>
 
                         <tasks-card .tasks=${this.completedTasks} displayType="completed"></tasks-card>
@@ -66,8 +69,15 @@ export default class AppPageHome extends AppPageElement {
         `;
     }
 
-    static get styles(): CSSResultGroup {
-        return [...pageStyles, scopedStyles];
+    private onCompletedClear(e: MouseEvent): void {
+        fireworks({
+            x: e.pageX, y: e.pageY,
+            colors: ["#8ef1ff", "#cde7ec", "#d8e2ff", "#006874", "#4a6266", "#525e7d"],
+            canvasWidth: 800, canvasHeight: 800,
+            count: 50,
+        });
+
+        clearCompletedToday(this.completedTasks);
     }
 
     requestReload() {
@@ -87,5 +97,9 @@ export default class AppPageHome extends AppPageElement {
         this.dataListeners.push(listenForTasksCompletedToday(tasks => {
             this.completedTasks = tasks;
         }));
+    }
+
+    static get styles(): CSSResultGroup {
+        return [...pageStyles, scopedStyles];
     }
 }

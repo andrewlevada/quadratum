@@ -1,5 +1,4 @@
 import { db, nullishPayloadSet, updatable, userDoc } from "~src/models/tools";
-import { updateScope } from "~src/models/scope/data";
 import { Callback } from "~utils/types";
 import {
     doc,
@@ -10,7 +9,7 @@ import {
     Unsubscribe,
     WithFieldValue
 } from "@firebase/firestore";
-import { listenForMilestonesWithFilter } from "~src/models/milestone/data";
+import { listenForMilestonesWithFilter, updateMilestone } from "~src/models/milestone/data";
 
 export interface MilestoneDraft {
     label: string;
@@ -28,22 +27,22 @@ export default class Milestone {
     public readonly id: string;
 
     private labelInner: string;
-    @updatable(updateScope) label!: string;
+    @updatable(updateMilestone) label!: string;
 
     private descriptionInner: string;
-    @updatable(updateScope) description!: string;
+    @updatable(updateMilestone) description!: string;
 
     private dueDateInner: number;
-    @updatable(updateScope) dueDate!: number;
+    @updatable(updateMilestone) dueDate!: number;
 
     private totalSessionsInner: number;
-    @updatable(updateScope) readonly totalSessions!: number;
+    @updatable(updateMilestone) readonly totalSessions!: number;
 
     private completedSessionsInner: number;
-    @updatable(updateScope) readonly completedSessions!: number;
+    @updatable(updateMilestone) readonly completedSessions!: number;
 
     private isArchivedInner?: boolean;
-    @updatable(updateScope, "boolean") isArchived!: boolean;
+    @updatable(updateMilestone, "boolean") isArchived!: boolean;
 
     constructor(id: string, document: MilestoneDocument) {
         this.id = id;
