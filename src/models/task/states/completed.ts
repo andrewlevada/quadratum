@@ -1,6 +1,7 @@
 import TaskState from "~src/models/task/states/index";
 import PendingState from "~src/models/task/states/pending";
 import Task, { CompletedTaskDocumentPart } from "~src/models/task";
+import Milestone from "~src/models/milestone";
 
 export default class CompletedState extends TaskState {
     private isInHomeInner: boolean;
@@ -14,11 +15,20 @@ export default class CompletedState extends TaskState {
         return true;
     }
 
+    get completedSessions(): number {
+        return this.task.sessions;
+    }
+
     public get progress(): boolean[] | null {
         return new Array(this.task.sessions).fill(true);
     }
 
     public set progress(value: boolean[] | null) {
+        if (this.task.milestone)
+            Milestone.updateSessions(this.task.milestone.id,
+                this.getProgressDeltaChange(value, "all"),
+                this.getProgressDeltaChange(value, "completed"));
+
         if (value === null) {
             this.task.edit({ sessions: 0 }).then();
             return;

@@ -1,11 +1,12 @@
-import { nullishPayloadSet, updatable } from "~src/models/tools";
+import { db, nullishPayloadSet, updatable, userDoc } from "~src/models/tools";
 import { updateScope } from "~src/models/scope/data";
 import { Callback } from "~utils/types";
 import {
+    doc,
     DocumentData,
     FirestoreDataConverter,
     orderBy, PartialWithFieldValue,
-    QueryDocumentSnapshot,
+    QueryDocumentSnapshot, runTransaction,
     Unsubscribe,
     WithFieldValue
 } from "@firebase/firestore";
@@ -52,6 +53,18 @@ export default class Milestone {
         this.totalSessionsInner = document.totalSessions;
         this.completedSessionsInner = document.completedSessions;
         this.isArchivedInner = document.isArchived;
+    }
+
+    public static updateSessions(milestoneId: string, totalUpdate: number, completedUpdate: number) {
+        runTransaction(db(), async transaction => {
+            const milestone = await transaction.get(doc(userDoc(), "milestones", milestoneId));
+            if (!milestone.exists()) return;
+            const data = milestone.data() as MilestoneDocument;
+            transaction.update(milestone.ref, {
+                totalSessions: data.totalSessions + totalUpdate,
+                completedSessions: data.completedSessions + completedUpdate,
+            } as Partial<MilestoneDocument>);
+        }).then();
     }
 
     public static listenForAll(callback: Callback<Milestone[]>): Unsubscribe {

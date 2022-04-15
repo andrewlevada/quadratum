@@ -1,10 +1,12 @@
 import { deleteTask, fetchTasksWithFilter, updateTask } from "~src/models/task/data";
 import { getUserInfo } from "~services/user";
 import {
+    doc,
     DocumentData,
     FirestoreDataConverter,
     PartialWithFieldValue,
     QueryDocumentSnapshot,
+    runTransaction,
     setDoc,
     where,
     WithFieldValue
@@ -14,13 +16,16 @@ import TaskState, { TaskStateBehaviour } from "~src/models/task/states";
 import PendingState from "~src/models/task/states/pending";
 import CompletedState from "~src/models/task/states/completed";
 import { FullPartial } from "~src/utils/types";
-import { nullishPayloadSet, updatable, userDoc } from "~src/models/tools";
+import { db, nullishPayloadSet, updatable, userDoc } from "~src/models/tools";
+import Milestone, { MilestoneDocument } from "~src/models/milestone";
+import { captureMessage, Severity } from "@sentry/browser";
 
 export interface BaseTaskDocument {
     text: string;
     isCompleted: boolean;
     sessions: number;
     scope: ScopeReference;
+    milestone?: MilestoneReference;
     parentTaskId?: string;
     dueDate?: number;
 }
@@ -28,6 +33,11 @@ export interface BaseTaskDocument {
 export interface ScopeReference {
     id: string | "pile";
     location: string;
+}
+
+export interface MilestoneReference {
+    id: string;
+    label: string;
 }
 
 export type PendingTaskDocument = BaseTaskDocument & PendingTaskDocumentPart;
@@ -38,7 +48,6 @@ export interface PendingTaskDocumentPart {
 }
 
 export type CompletedTaskDocument = BaseTaskDocument & CompletedTaskDocumentPart;
-// eslint-disable-next-line
 export interface CompletedTaskDocumentPart {
     isInHome?: boolean;
 }
@@ -48,33 +57,21 @@ export type TaskDocument = PendingTaskDocument & CompletedTaskDocument;
 export default class Task extends TaskStateBehaviour {
     public readonly id: string;
 
-    private state: TaskState;
-
     private textInner: string;
-    public get text(): string {
-        return this.textInner;
-    }
-    public set text(value: string) {
-        value = value.trim();
-        if (this.textInner === value) return;
-        this.textInner = value;
-        updateTask({ id: this.id, text: value }).then();
-        this.propagateScopeUpdate().then();
-    }
+    @updatable<Task>(updateTask, null, obj => obj.propagateScopeUpdate()) text!: string;
 
     private sessionsInner: number;
-    @updatable(updateTask) readonly sessions!: number;
+    @updatable<Task>(updateTask) readonly sessions!: number;
 
     private scopeInner: ScopeReference;
-    public get scope(): ScopeReference {
-        return this.scopeInner;
-    }
-    public set scope(value: ScopeReference) {
-        if (this.scopeInner === value) return;
-        this.scopeInner = value;
-        updateTask({ id: this.id, scope: value }).then();
-        this.propagateScopeUpdate().then();
-    }
+    @updatable<Task>(updateTask, null, obj => obj.propagateScopeUpdate()) scope!: ScopeReference;
+
+    private milestoneInner?: MilestoneReference;
+    @updatable<Task, MilestoneReference | undefined>(updateTask, "null", (obj, oldValue, newValue) => {
+        if (oldValue) Milestone.updateSessions(oldValue.id, -obj.sessions, -obj.completedSessions);
+        if (newValue) Milestone.updateSessions(newValue.id, obj.sessions, obj.completedSessions);
+        obj.propagateMilestoneUpdate().then();
+    }) milestone!: MilestoneReference | null;
 
     private parentTaskIdInner?: string;
     @updatable(updateTask, "null") parentTaskId!: string | null;
@@ -83,6 +80,8 @@ export default class Task extends TaskStateBehaviour {
     @updatable(updateTask, "null") dueDate!: number | null;
 
     // State
+
+    private state: TaskState;
 
     public getState(): TaskState {
         return this.state;
@@ -96,6 +95,7 @@ export default class Task extends TaskStateBehaviour {
         return this.state.isCompleted;
     }
 
+    @forwardState() completedSessions!: number;
     @forwardState() progress!: boolean[];
     @forwardState() wasActive!: boolean;
     @forwardState() upNextBlockTime!: number | null;
@@ -106,9 +106,10 @@ export default class Task extends TaskStateBehaviour {
         this.id = id;
 
         this.textInner = data.text;
-        this.scopeInner = data.scope;
         this.sessionsInner = data.sessions;
+        this.scopeInner = data.scope;
 
+        this.milestoneInner = data.milestone;
         this.parentTaskIdInner = data.parentTaskId;
         this.dueDateInner = data.dueDate;
 
@@ -131,9 +132,21 @@ export default class Task extends TaskStateBehaviour {
     }
 
     private async propagateScopeUpdate() {
-        const children = await fetchTasksWithFilter([where("parentTaskId", "==", this.id)], true);
+        const children = await this.getChildrenTasks();
         for (const child of children)
-            child.scope = { ...child.scope, location: `${this.scopeInner.location}/${this.textInner}` };
+            child.scope = {
+                id: this.scope.id,
+                location: `${this.scopeInner.location}/${this.textInner}`,
+            };
+    }
+
+    private async propagateMilestoneUpdate() {
+        const children = await this.getChildrenTasks();
+        for (const child of children) child.milestone = this.milestone;
+    }
+
+    private async getChildrenTasks(): Promise<Task[]> {
+        return fetchTasksWithFilter([where("parentTaskId", "==", this.id)], true);
     }
 
     public static converter: FirestoreDataConverter<Task> = {
@@ -151,6 +164,7 @@ export default class Task extends TaskStateBehaviour {
             if (o.isCompleted !== undefined) payload.isCompleted = o.isCompleted;
 
             nullishPayloadSet<Task>("parentTaskId", o, payload);
+            nullishPayloadSet<Task>("milestone", o, payload);
             nullishPayloadSet<Task>("dueDate", o, payload);
             nullishPayloadSet<Task>("progress", o, payload);
             nullishPayloadSet<Task>("wasActive", o, payload);

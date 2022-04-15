@@ -3,6 +3,7 @@ import Task from "~src/models/task";
 
 export abstract class TaskStateBehaviour {
     public abstract get isCompleted(): boolean;
+    public abstract get completedSessions(): number;
 
     // Pending
     public abstract get progress(): boolean[] | null;
@@ -23,5 +24,10 @@ export default abstract class TaskState extends TaskStateBehaviour {
     protected constructor(task: Task) {
         super();
         this.task = task;
+    }
+
+    public getProgressDeltaChange(n: boolean[] | null, mode: "all" | "completed"): number {
+        return (n || []).filter(v => mode === "all" || v).length
+            - (this.progress || []).filter(v => mode === "all" || v).length;
     }
 }

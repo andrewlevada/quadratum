@@ -5,6 +5,7 @@ import Task, {
 } from "~src/models/task";
 import { updateTask } from "~src/models/task/data";
 import CompletedState from "~src/models/task/states/completed";
+import Milestone from "~src/models/milestone";
 
 export default class PendingState extends TaskState {
     private progressInner: boolean[] | null;
@@ -22,12 +23,23 @@ export default class PendingState extends TaskState {
         return false;
     }
 
+    public get completedSessions(): number {
+        return this.progressInner?.filter(x => x).length || 0;
+    }
+
     public get progress(): boolean[] | null {
         return this.progressInner?.clone() || null;
     }
 
     public set progress(value: boolean[] | null) {
         if (value === this.progressInner) return;
+
+        if (this.task.milestone)
+            Milestone.updateSessions(this.task.milestone.id,
+                this.getProgressDeltaChange(value, "all"),
+                this.getProgressDeltaChange(value, "completed"));
+
+
         this.progressInner = value;
         if (value?.every(v => v) && value?.length > 0) {
             const updateValues = {

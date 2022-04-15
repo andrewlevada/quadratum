@@ -1,4 +1,5 @@
 import { deleteField, doc, DocumentReference, Firestore, getFirestore } from "@firebase/firestore";
+import { Callback } from "~utils/types";
 
 export function db(): Firestore {
     return getFirestore();
@@ -24,9 +25,11 @@ export function nullishPayloadSet<T>(field: keyof T, o: Partial<T>, payload: any
 }
 
 type PartialWithId<T> = Partial<T> & { id: string };
-type Convertor = "string" | "number" | "boolean" | "null";
-export function updatable<T>(updateFunction: (data: PartialWithId<T>) => Promise<void>, type?: Convertor, additionalPayload?: Partial<T>) {
-    return (target: Object, key: string) => {
+type Convertor = "string" | "number" | "boolean" | "null" | null;
+export function updatable<T, K = unknown>(updateFunction: (data: PartialWithId<T>) => Promise<void>,
+                                          type?: Convertor,
+                                          transform?: (obj: T, oldValue: K, newValue: K) => void) {
+    return (target: T, key: string) => {
         const privateKey = `${key}Inner`;
 
         const getter = function() {
@@ -37,11 +40,14 @@ export function updatable<T>(updateFunction: (data: PartialWithId<T>) => Promise
             return this[privateKey];
         }
 
-        const setter = function (value: unknown) {
-            if (value === this[privateKey]) return;
+        const setter = function (value: K) {
+            const oldValue = this[privateKey];
+            if (value === oldValue) return;
+            if (transform) transform(this, oldValue, value);
+
             this[privateKey] = value;
 
-            const payload: Record<string, unknown> = additionalPayload || {};
+            const payload: Record<string, unknown> = {};
             payload[key] = value;
             updateFunction({ ...(payload as Partial<T>), id: this.id }).then();
         }
