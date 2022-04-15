@@ -43,6 +43,8 @@ export class SessionsAdjuster extends LitElement {
         if (delta < 0) {
             this.task.progress = this.task.progress.slice(0, this.value + delta);
         }
+
+        this.requestUpdate();
     }
 
     static get styles(): CSSResultGroup {
