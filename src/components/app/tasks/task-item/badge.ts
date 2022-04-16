@@ -6,6 +6,7 @@ import Task from "~src/models/task";
 import { timestampToRelativeString } from "~utils/time";
 import scopedStyles from "./styles.lit.scss";
 import { CalendarInput } from "~components/common/calendar-input";
+import { MilestonesListMenu } from "~components/app/menues/milestones-list-menu";
 
 export default (): void => defineComponent("task-item--badge", TaskItemBadge);
 export class TaskItemBadge extends LitElement {
@@ -14,6 +15,7 @@ export class TaskItemBadge extends LitElement {
     @state() editing: boolean = false;
 
     @query("calendar-input") calendarInput: CalendarInput | undefined;
+    @query("milestones-list-menu") milestonesMenu: MilestonesListMenu | undefined;
 
     render(): TemplateResult {
         return html`
@@ -35,6 +37,14 @@ export class TaskItemBadge extends LitElement {
             `;
         }
 
+        if (this.task.milestone) {
+            import("~components/app/menues/milestones-list-menu").then();
+            return html`
+                <p>${this.task.milestone.label}</p>
+                <span class="material-icons">flag</span>
+            `;
+        }
+
         if (this.task.wasActive) return html`
             <p>Not finished</p>
             <span class="material-icons">pause_circle</span>
@@ -53,14 +63,30 @@ export class TaskItemBadge extends LitElement {
                             }}></calendar-input>
         `;
 
+        if (this.task.milestone) return html`
+            <milestones-list-menu .milestone=${this.task.milestone}
+                                  @change=${() => {
+                                      this.task.milestone = this.milestonesMenu!.selected
+                                  }}></milestones-list-menu>
+        `;
+
         return html``;
     }
 
     private onInfoBadgeClick(): void {
         this.editing = true;
-        if (this.task.dueDate) waitForRender().then(() => {
-            this.calendarInput!.anchor = this;
-            this.calendarInput!.open()
+
+        waitForRender().then(() => {
+            if (this.task.dueDate) {
+                this.calendarInput!.anchor = this;
+                this.calendarInput!.open();
+                return;
+            }
+
+            if (this.task.milestone) {
+                this.milestonesMenu!.anchor = this;
+                this.milestonesMenu!.open = true;
+            }
         });
     }
 
