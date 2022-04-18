@@ -68,7 +68,8 @@ export class AppRouter extends LitElement {
     }
 
     private choosePage(): PageInfo {
-        const path = window.location.pathname;
+        const pathname = window.location.pathname;
+        const path = pathname.endsWith("/") ? pathname.substring(0, pathname.length-1) : pathname;
 
         if (path === "/enter") return { tag: "enter" };
         if (path === "/") return { tag: "landing" };
@@ -76,6 +77,7 @@ export class AppRouter extends LitElement {
         this.withSidebar = path.startsWith("/app");
         if (path === "/app") return { tag: "home", importPath: "/app" };
         if (path === "/app/map") return { tag: "map", importPath: "/app" };
+        if (path === "/app/milestones") return { tag: "milestones", importPath: "/app" };
         if (path.startsWith("/app/scope/")) return { tag: "scope", importPath: "/app" };
 
         return { tag: "not-found" };

@@ -41,7 +41,7 @@ export default class AppPageHome extends AppPageElement {
                     ` : html`<p>No active task</p>`}
                 </card-surface>
 
-                <div class="wrapper">
+                <div class="two-columns">
                     <div class="flex col gap">
                         <h6>Up next</h6>
                         <tasks-card .tasks=${this.upNextTasks.filter(t => t.id !== this.activeTask?.id)} displayType="pending"></tasks-card>

@@ -1,6 +1,6 @@
 import { html, LitElement, TemplateResult } from "lit";
 import { defineComponent } from "~utils/components";
-import scopedStyles from "./styles.lit.css";
+import scopedStyles from "./styles.lit.scss";
 import { componentStyles } from "~src/global";
 import { property } from "lit/decorators.js";
 import Milestone from "~src/models/milestone";

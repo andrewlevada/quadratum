@@ -16,7 +16,12 @@ export class RealtimeLitElement extends LitElement {
 
     disconnectedCallback() {
         super.disconnectedCallback();
+        this.unsubscribeFromListeners();
+    }
+
+    protected unsubscribeFromListeners(): void {
         this.dataListeners.forEach((unsubscribe) => unsubscribe());
+        this.dataListeners = [];
     }
 }
 
