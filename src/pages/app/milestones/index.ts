@@ -6,6 +6,7 @@ import Milestone from "~src/models/milestone";
 
 import("~components/common/card-surface").then(f => f.default());
 import("~components/milestones/milestone-item").then(f => f.default());
+import("~components/milestones/create-form").then(f => f.default());
 
 @customElement("app-page--milestones")
 export default class AppPageMilestones extends AppPageElement {
@@ -18,23 +19,29 @@ export default class AppPageMilestones extends AppPageElement {
                 <div class="flex row justify-between align-center full-width">
                     <h4>Milestones</h4>
                 </div>
-                
+
                 <div class="two-columns">
                     <div class="flex col gap big-gap flex-grow">
                         <h6>Ongoing</h6>
-                        
+
                         ${this.milestones.filter(v => !v.isArchived && !v.isFinished).map(milestone => html`
                             <milestone-item .value=${milestone} detailed></milestone-item>
                         `)}
 
-                        <card-surface class="clickable" type="outlined">
-                            <div class="flex row gap">
-                                <span class="material-icons">add</span>
-                                <p>Set new milestone!</p>
-                            </div>
-                        </card-surface @click=${() => {
-                            this.isCreatingNew = true;
-                        }}>
+                        ${this.isCreatingNew ? html`
+                            <milestone-create-form @created=${() => {
+                                this.isCreatingNew = false;
+                            }}></milestone-create-form>
+                        ` : html`
+                            <card-surface class="clickable" type="outlined" @click=${() => {
+                                this.isCreatingNew = true;
+                            }}>
+                                <div class="flex row gap">
+                                    <span class="material-icons">add</span>
+                                    <p>Set new milestone!</p>
+                                </div>
+                            </card-surface>
+                        `}
                     </div>
 
                     <div class="flex-grow">

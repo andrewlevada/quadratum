@@ -3,7 +3,7 @@ import { addDoc, collection } from "@firebase/firestore";
 import { userDoc } from "~src/models/tools";
 import { getDayTimestamp } from "~utils/time";
 
-export function createMilestone(draft: MilestoneDraft): Promise<Milestone> {
+export function createMilestone(draft: Omit<MilestoneDraft, "startDate">): Promise<Milestone> {
     const payload = {
         ...draft,
         totalSessions: 0,
