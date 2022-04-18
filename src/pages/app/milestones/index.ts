@@ -23,8 +23,8 @@ export default class AppPageMilestones extends AppPageElement {
                     <div class="flex col gap big-gap flex-grow">
                         <h6>Ongoing</h6>
                         
-                        ${this.milestones.map(milestone => html`
-                            <milestone-item .value=${milestone}></milestone-item>
+                        ${this.milestones.filter(v => !v.isArchived && !v.isFinished).map(milestone => html`
+                            <milestone-item .value=${milestone} detailed></milestone-item>
                         `)}
 
                         <card-surface class="clickable" type="outlined">
@@ -38,9 +38,11 @@ export default class AppPageMilestones extends AppPageElement {
                     </div>
 
                     <div class="flex-grow">
-                        <h6>Completed</h6>
-                        
-                        
+                        <h6>Closed</h6>
+
+                        ${this.milestones.filter(v => v.isArchived || v.isFinished).map(milestone => html`
+                            <milestone-item .value=${milestone} detailed></milestone-item>
+                        `)}
                     </div>
                 </div>
             </div>

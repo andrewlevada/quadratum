@@ -24,6 +24,7 @@ export interface MilestoneDocument extends MilestoneDraft {
     totalSessions: number;
     completedSessions: number;
     isArchived?: boolean;
+    isFinished?: boolean;
 }
 
 export default class Milestone {
@@ -50,6 +51,9 @@ export default class Milestone {
     private isArchivedInner?: boolean;
     @updatable(updateMilestone, "boolean") isArchived!: boolean;
 
+    private isFinishedInner?: boolean;
+    @updatable(updateMilestone, "boolean") isFinished!: boolean;
+
     constructor(id: string, document: MilestoneDocument) {
         this.id = id;
         this.labelInner = document.label;
@@ -59,6 +63,7 @@ export default class Milestone {
         this.totalSessionsInner = document.totalSessions;
         this.completedSessionsInner = document.completedSessions;
         this.isArchivedInner = document.isArchived;
+        this.isFinishedInner = document.isFinished;
     }
 
     public static updateSessions(milestoneId: string, totalUpdate: number, completedUpdate: number) {
@@ -74,8 +79,7 @@ export default class Milestone {
     }
 
     public static listenForAll(callback: Callback<Milestone[]>): Unsubscribe {
-        return listenForMilestonesWithFilter([orderBy("label")],
-            (milestones: Milestone[]) => callback(milestones.filter(v => !v.isArchived)));
+        return listenForMilestonesWithFilter([orderBy("label")], callback);
     }
 
     public static converter: FirestoreDataConverter<Milestone> = {
@@ -95,6 +99,7 @@ export default class Milestone {
             if (o.completedSessions !== undefined) payload.completedSessions = o.completedSessions;
 
             nullishPayloadSet<Milestone>("isArchived", o, payload);
+            nullishPayloadSet<Milestone>("isFinished", o, payload);
 
             return payload;
         }
