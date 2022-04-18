@@ -1,4 +1,4 @@
-import { css, CSSResultGroup, html, LitElement, TemplateResult } from "lit";
+import { css, html, LitElement, TemplateResult } from "lit";
 import { componentStyles } from "~src/global";
 import { defineComponent } from "~utils/components";
 import { property } from "lit/decorators.js";
@@ -19,7 +19,7 @@ export class TasksCard extends LitElement {
                 ${this.tasks.map(task => html`
                     <task-item .task=${task} .displayType=${this.displayType}></task-item>
                 `)}
-                
+
                 ${this.tasks.length === 0 ? html`
                     <p>No tasks to display</p>
                 ` : ""}
@@ -27,15 +27,13 @@ export class TasksCard extends LitElement {
         `;
     }
 
-    static get styles(): CSSResultGroup {
-        return [...componentStyles, css`
-          :host {
-            height: fit-content;
-          }
-          
-          card-surface {
-            width: 100%;
-          }
-        `];
-    }
+    static styles = [...componentStyles, css`
+      :host {
+        height: fit-content;
+      }
+
+      card-surface {
+        width: 100%;
+      }
+    `];
 }

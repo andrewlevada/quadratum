@@ -1,4 +1,4 @@
-import { css, CSSResultGroup, html, LitElement, PropertyValues, TemplateResult } from "lit";
+import { css, html, LitElement, PropertyValues, TemplateResult } from "lit";
 import { property, query } from "lit/decorators.js";
 import { componentStyles } from "~src/global";
 import { defineComponent } from "~utils/components";
@@ -30,28 +30,26 @@ export class MenuTinyButton extends LitElement {
         this.actionsMenu.anchor = this.actionsButton;
     }
 
-    static get styles(): CSSResultGroup {
-        return [...componentStyles, css`
-          :host {
-            position: relative;
-            width: 18px;
-            height: 18px;
+    static styles = [...componentStyles, css`
+      :host {
+        position: relative;
+        width: 18px;
+        height: 18px;
 
-            --mdc-icon-button-size: 24px;
-            --mdc-icon-size: 18px;
-          }
+        --mdc-icon-button-size: 24px;
+        --mdc-icon-size: 18px;
+      }
 
-          .actions-button {
-            position: absolute;
-            top: -4px;
-            left: -3px;
+      .actions-button {
+        position: absolute;
+        top: -4px;
+        left: -3px;
 
-            opacity: 0;
-          }
+        opacity: 0;
+      }
 
-          .actions-button:hover {
-            opacity: 1;
-          }
-        `];
-    }
+      .actions-button:hover {
+        opacity: 1;
+      }
+    `];
 }

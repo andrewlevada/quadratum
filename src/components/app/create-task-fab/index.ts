@@ -1,4 +1,4 @@
-import { CSSResultGroup, html, PropertyValues, TemplateResult } from "lit";
+import { html, PropertyValues, TemplateResult } from "lit";
 import { componentStyles } from "~src/global";
 import { defineComponent, RealtimeLitElement } from "~utils/components";
 import { query, state } from "lit/decorators.js";
@@ -147,7 +147,5 @@ export class CreateTaskFab extends RealtimeLitElement {
         })
     }
 
-    static get styles(): CSSResultGroup {
-        return [...componentStyles, scopesStyles];
-    }
+    static styles = [...componentStyles, scopesStyles];
 }

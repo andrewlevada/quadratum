@@ -1,4 +1,4 @@
-import { css, CSSResultGroup, html, TemplateResult } from "lit";
+import { css, html, TemplateResult } from "lit";
 import { componentStyles } from "~src/global";
 import { defineComponent, RealtimeLitElement } from "~utils/components";
 import { property, query, state } from "lit/decorators.js";
@@ -41,9 +41,7 @@ export class ScopesListMenu extends RealtimeLitElement {
         this.scopesMenuElement.anchor = value;
     }
 
-    static get styles(): CSSResultGroup {
-        return [...componentStyles, css`
-          --mdc-menu-item-height: 32px;
-        `];
-    }
+    static styles = [...componentStyles, css`
+      --mdc-menu-item-height: 32px;
+    `];
 }

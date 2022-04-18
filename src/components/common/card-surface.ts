@@ -1,4 +1,4 @@
-import { css, CSSResultGroup, html, LitElement, TemplateResult } from "lit";
+import { css, html, LitElement, TemplateResult } from "lit";
 import { componentStyles } from "~src/global";
 import { defineComponent } from "~utils/components";
 import { property } from "lit/decorators.js";
@@ -17,28 +17,26 @@ export class CardSurface extends LitElement {
         `;
     }
 
-    static get styles(): CSSResultGroup {
-        return [...componentStyles, css`
-          div {
-            width: auto;
-            height: fit-content;
-            
-            padding: 16px;
-            border-radius: 12px;
-          }
-          
-          :host([type=filled]) div {
-            background-color: var(--md-sys-color-surface-variant);
-          }
+    static styles = [...componentStyles, css`
+      div {
+        width: auto;
+        height: fit-content;
 
-          :host([type=outlined]) div {
-            background-color: var(--md-sys-color-surface);
-            border: 1px solid var(--md-sys-color-outline);
-          }
-          
-          ::slotted(*:not(:last-child)) {
-            margin-bottom: 12px;
-          }
-        `];
-    }
+        padding: 16px;
+        border-radius: 12px;
+      }
+
+      :host([type=filled]) div {
+        background-color: var(--md-sys-color-surface-variant);
+      }
+
+      :host([type=outlined]) div {
+        background-color: var(--md-sys-color-surface);
+        border: 1px solid var(--md-sys-color-outline);
+      }
+
+      ::slotted(*:not(:last-child)) {
+        margin-bottom: 12px;
+      }
+    `];
 }

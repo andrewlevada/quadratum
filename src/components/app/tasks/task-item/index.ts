@@ -1,4 +1,4 @@
-import { CSSResultGroup, html, LitElement, TemplateResult } from "lit";
+import { html, LitElement, TemplateResult } from "lit";
 import { componentStyles } from "~src/global";
 import { defineComponent } from "~utils/components";
 import { property, query } from "lit/decorators.js";
@@ -74,7 +74,5 @@ export class TaskItem extends LitElement {
         return this.task.sessions.toString();
     }
 
-    static get styles(): CSSResultGroup {
-        return [...componentStyles, scopedStyles, taskItemActionsStyles];
-    }
+    static styles = [...componentStyles, scopedStyles, taskItemActionsStyles];
 }

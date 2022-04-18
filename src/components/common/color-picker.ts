@@ -1,4 +1,4 @@
-import { css, CSSResultGroup, html, LitElement, PropertyValues, TemplateResult } from "lit";
+import { css, html, LitElement, PropertyValues, TemplateResult } from "lit";
 import { componentStyles } from "~src/global";
 import { defineComponent } from "~utils/components";
 import { property } from "lit/decorators.js";
@@ -40,12 +40,10 @@ export class ColorPicker extends LitElement {
         this.dispatchSimpleEvent("update", color);
     }
 
-    static get styles(): CSSResultGroup {
-        return [...componentStyles, css`
-          #color-display {
-            height: 56px;
-            border-radius: var(--mdc-shape-small, 16px);
-          }
-        `];
-    }
+    static styles = [...componentStyles, css`
+      #color-display {
+        height: 56px;
+        border-radius: var(--mdc-shape-small, 16px);
+      }
+    `];
 }

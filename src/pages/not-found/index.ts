@@ -1,4 +1,4 @@
-import { css, CSSResultGroup, html, TemplateResult } from "lit";
+import { html, TemplateResult } from "lit";
 import { customElement } from "lit/decorators.js";
 import { pageStyles } from "~src/global";
 import { AppPageElement } from "~components/app/router/app-router";
@@ -11,11 +11,5 @@ export default class AppPageNotFound extends AppPageElement {
         `;
     }
 
-    static get styles(): CSSResultGroup {
-        // Styles can either be in this file (only css)
-        // or imported from another file (scss in this case)
-        return [...pageStyles, css`
-          // More styles here
-        `];
-    }
+    static styles = [...pageStyles];
 }

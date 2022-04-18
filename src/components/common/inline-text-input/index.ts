@@ -1,5 +1,5 @@
 /* eslint-disable */
-import { CSSResultGroup, html, LitElement, PropertyValues, TemplateResult } from "lit";
+import { html, LitElement, PropertyValues, TemplateResult } from "lit";
 import { property, query } from "lit/decorators.js";
 import { componentStyles } from "~src/global";
 import { defineComponent } from "~utils/components";
@@ -37,7 +37,5 @@ export class InlineTextInput extends LitElement {
         this.keyUpOldValue = this.value;
     }
 
-    static get styles(): CSSResultGroup {
-        return [...componentStyles, scopedStyles];
-    }
+    static styles = [...componentStyles, scopedStyles];
 }

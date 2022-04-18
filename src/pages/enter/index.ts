@@ -1,4 +1,4 @@
-import { css, CSSResultGroup, html, TemplateResult, unsafeCSS } from "lit";
+import { css, html, TemplateResult, unsafeCSS } from "lit";
 import { customElement } from "lit/decorators.js";
 import { pageStyles } from "~src/global";
 import googleIcon from "~assets/icons/logo_google.svg";
@@ -38,40 +38,38 @@ export default class EnterPage extends AppPageElement {
             }).catch((reason) => console.log("Auth failed", reason));
     }
 
-    static get styles(): CSSResultGroup {
-        return [...pageStyles, scopedStyles, css`
-          #logo {
-            position: absolute;
-            left: 80px;
-            top: 80px;
-            width: 120px;
-            height: 120px;
-          }
-          
-          h2, h3 {
-            color: var(--mdc-theme-on-primary);
-          }
-          
-          mwc-fab {
-            --mdc-theme-secondary: white;
-            --mdc-theme-on-secondary: black;
-            margin-top: 40px;
-          }
-          
-          .wrapper {
-            background-image: url(${unsafeCSS(backgroundImage)});
-            background-size: cover;
-            background-position: right;
-            padding: 80px;
-          }
-          
-          .inner {
-            align-items: end;
-          }
-          
-          h2 {
-            margin-bottom: 60px !important;
-          }
-        `];
-    }
+    static styles = [...pageStyles, scopedStyles, css`
+      #logo {
+        position: absolute;
+        left: 80px;
+        top: 80px;
+        width: 120px;
+        height: 120px;
+      }
+
+      h2, h3 {
+        color: var(--mdc-theme-on-primary);
+      }
+
+      mwc-fab {
+        --mdc-theme-secondary: white;
+        --mdc-theme-on-secondary: black;
+        margin-top: 40px;
+      }
+
+      .wrapper {
+        background-image: url(${unsafeCSS(backgroundImage)});
+        background-size: cover;
+        background-position: right;
+        padding: 80px;
+      }
+
+      .inner {
+        align-items: end;
+      }
+
+      h2 {
+        margin-bottom: 60px !important;
+      }
+    `];
 }

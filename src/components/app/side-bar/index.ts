@@ -1,4 +1,4 @@
-import { CSSResultGroup, html, TemplateResult } from "lit";
+import { html, TemplateResult } from "lit";
 import { componentStyles } from "~src/global";
 import { defineComponent, RealtimeLitElement } from "~utils/components";
 import { property, state } from "lit/decorators.js";
@@ -97,7 +97,5 @@ export class SideBar extends RealtimeLitElement {
         }));
     }
 
-    static get styles(): CSSResultGroup {
-        return [...componentStyles, scopedStyles];
-    }
+    static styles = [...componentStyles, scopedStyles];
 }

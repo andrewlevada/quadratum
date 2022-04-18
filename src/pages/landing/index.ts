@@ -1,4 +1,4 @@
-import { css, CSSResultGroup, html, TemplateResult } from "lit";
+import { html, TemplateResult } from "lit";
 import { customElement } from "lit/decorators.js";
 import { pageStyles } from "~src/global";
 import { getAuth } from "@firebase/auth";
@@ -23,11 +23,5 @@ export default class LandingPage extends AppPageElement {
         });
     }
 
-    static get styles(): CSSResultGroup {
-        // Styles can either be in this file (only css)
-        // or imported from another file (scss in this case)
-        return [...pageStyles, scopedStyles, css`
-          // More styles here
-        `];
-    }
+    static styles = [...pageStyles, scopedStyles];
 }

@@ -1,9 +1,8 @@
-import { css, CSSResultGroup, html, LitElement, PropertyValues, TemplateResult } from "lit";
+import { css, html, LitElement, PropertyValues, TemplateResult } from "lit";
 import { html as staticHtml, unsafeStatic } from "lit/static-html.js";
 import { query, state } from "lit/decorators.js";
 import { componentStyles } from "~src/global";
 import { defineComponent, RealtimeLitElement } from "~utils/components";
-import { Unsubscribe } from "@firebase/firestore";
 
 import("~components/app/create-task-fab").then(f => f.default());
 
@@ -82,17 +81,15 @@ export class AppRouter extends LitElement {
         return { tag: "not-found" };
     }
 
-    static get styles(): CSSResultGroup {
-        return [...componentStyles, css`
-          :host {
-            background-color: var(--md-sys-color-background);
-            color: var(--mdc-theme-on-surface);
-            width: 100%;
-            height: 100%;
-            display: block;
-          }
-        `];
-    }
+    static styles = [...componentStyles, css`
+      :host {
+        background-color: var(--md-sys-color-background);
+        color: var(--mdc-theme-on-surface);
+        width: 100%;
+        height: 100%;
+        display: block;
+      }
+    `];
 
     public static goTo(href: string): void {
         window.history.pushState(null, "Quadratum", href);

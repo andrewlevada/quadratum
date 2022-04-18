@@ -1,4 +1,4 @@
-import { css, CSSResultGroup, html, PropertyValues, TemplateResult } from "lit";
+import { css, html, PropertyValues, TemplateResult } from "lit";
 import { customElement, state } from "lit/decorators.js";
 import { pageStyles } from "~src/global";
 import Task from "~src/models/task";
@@ -83,11 +83,9 @@ export default class AppPageScope extends AppPageElement {
         }
     }
 
-    static get styles(): CSSResultGroup {
-        return [...pageStyles, css`
-          #scope-icon {
-            font-size: 24px;
-          }
-        `];
-    }
+    static styles = [...pageStyles, css`
+      #scope-icon {
+        font-size: 24px;
+      }
+    `];
 }

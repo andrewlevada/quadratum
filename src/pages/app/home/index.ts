@@ -1,4 +1,4 @@
-import { CSSResultGroup, html, TemplateResult } from "lit";
+import { html, TemplateResult } from "lit";
 import { customElement, query, state } from "lit/decorators.js";
 import { pageStyles } from "~src/global";
 import { AppPageElement } from "~components/app/router/app-router";
@@ -99,7 +99,5 @@ export default class AppPageHome extends AppPageElement {
         }));
     }
 
-    static get styles(): CSSResultGroup {
-        return [...pageStyles, scopedStyles];
-    }
+    static styles = [...pageStyles, scopedStyles];
 }

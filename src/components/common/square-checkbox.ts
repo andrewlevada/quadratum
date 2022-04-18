@@ -1,5 +1,4 @@
-/* eslint-disable */
-import { css, CSSResultGroup, html, LitElement, TemplateResult } from "lit";
+import { css, html, LitElement, TemplateResult } from "lit";
 import { property } from "lit/decorators.js";
 import { componentStyles } from "~src/global";
 import { defineComponent } from "~utils/components";
@@ -32,41 +31,39 @@ export class SquareCheckbox extends LitElement {
         `;
     }
 
-    static get styles(): CSSResultGroup {
-        return [...componentStyles, css`
-          :host {
-            width: 18px;
-            height: 18px;
-            position: relative;
-          }
+    static styles = [...componentStyles, css`
+      :host {
+        width: 18px;
+        height: 18px;
+        position: relative;
+      }
 
-          .input-box {
-            width: 18px;
-            height: 18px;
-            
-            box-sizing: border-box;
-            border: 1px solid var(--md-sys-color-outline);
-            border-radius: 4px;
+      .input-box {
+        width: 18px;
+        height: 18px;
 
-            transition: background-color 100ms ease-out;
-          }
+        box-sizing: border-box;
+        border: 1px solid var(--md-sys-color-outline);
+        border-radius: 4px;
 
-          input {
-            position: absolute;
-            opacity: 0;
-            z-index: 1;
-            cursor: pointer;
-          }
+        transition: background-color 100ms ease-out;
+      }
 
-          .input-box > * {
-            margin: 0;
-            padding: 0;
-            font-size: 11px;
-            font-weight: 500;
-            line-height: 16px;
-            text-align: center;
-            color: var(--md-sys-color-outline);
-          }
-        `];
-    }
+      input {
+        position: absolute;
+        opacity: 0;
+        z-index: 1;
+        cursor: pointer;
+      }
+
+      .input-box > * {
+        margin: 0;
+        padding: 0;
+        font-size: 11px;
+        font-weight: 500;
+        line-height: 16px;
+        text-align: center;
+        color: var(--md-sys-color-outline);
+      }
+    `];
 }

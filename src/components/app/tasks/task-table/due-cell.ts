@@ -1,4 +1,4 @@
-import { css, CSSResultGroup, html, LitElement, TemplateResult } from "lit";
+import { html, LitElement, TemplateResult } from "lit";
 import { componentStyles } from "~src/global";
 import { defineComponent } from "~utils/components";
 import { property, query } from "lit/decorators.js";
@@ -35,7 +35,5 @@ export class TaskTableDueCell extends LitElement {
         `;
     }
 
-    static get styles(): CSSResultGroup {
-        return [...componentStyles, scopedStyles];
-    }
+    static styles = [...componentStyles, scopedStyles];
 }

@@ -1,4 +1,4 @@
-import { CSSResultGroup, html, LitElement, PropertyValues, TemplateResult } from "lit";
+import { html, LitElement, PropertyValues, TemplateResult } from "lit";
 import { componentStyles } from "~src/global";
 import { defineComponent } from "~utils/components";
 import { property, query } from "lit/decorators.js";
@@ -37,7 +37,5 @@ export class CompactListItemElement extends LitElement {
         }
     }
 
-    static get styles(): CSSResultGroup {
-        return [...componentStyles, scopedStyles];
-    }
+    static styles = [...componentStyles, scopedStyles];
 }
