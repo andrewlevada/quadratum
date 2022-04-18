@@ -1,7 +1,7 @@
 import { html, TemplateResult } from "lit";
 import { customElement } from "lit/decorators.js";
 import { pageStyles } from "~src/global";
-import { AppPageElement } from "~components/app/router/app-router";
+import { AppPageElement } from "~components/app-container/router/app-router";
 
 @customElement("app-page--not-found")
 export default class AppPageNotFound extends AppPageElement {

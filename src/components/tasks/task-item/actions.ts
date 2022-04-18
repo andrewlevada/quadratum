@@ -1,8 +1,8 @@
 import { css, html, TemplateResult } from "lit";
-import { TaskItem } from "~components/app/tasks/task-item/index";
+import { TaskItem } from "~components/tasks/task-item/index";
 import Task from "~src/models/task";
 
-import("~components/app/tasks/task-table/sessions-adjuster").then(f => f.default());
+import("~components/tasks/task-table/sessions-adjuster").then(f => f.default());
 
 export function taskItemActionsHtml(item: TaskItem): TemplateResult[] {
     const actions = [html`

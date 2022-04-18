@@ -4,7 +4,7 @@ import { query, state } from "lit/decorators.js";
 import { componentStyles } from "~src/global";
 import { defineComponent, RealtimeLitElement } from "~utils/components";
 
-import("~components/app/create-task-fab").then(f => f.default());
+import("~components/app-container/create-task-fab").then(f => f.default());
 
 interface PageInfo {
     tag: string;
@@ -64,7 +64,7 @@ export class AppRouter extends LitElement {
         // This has to be here until esbuild will do something about this
         // https://github.com/evanw/esbuild/issues/700
         import(`../../../pages${this.page.importPath || ""}/${this.page.tag}/index.js`).then().catch();
-        if (this.withSidebar) import("~components/app/side-bar").then(f => f.default());
+        if (this.withSidebar) import("~components/app-container/side-bar").then(f => f.default());
     }
 
     private choosePage(): PageInfo {

@@ -9,13 +9,13 @@ import { TextField } from "@material/mwc-textfield";
 import { createTask, CreationContext } from "~src/models/task/factory";
 import Task from "~src/models/task";
 import { dateToDisplayString } from "~utils/time";
-import { ScopesListMenu } from "~components/app/scopes-list-menu";
+import { ScopesListMenu } from "~components/scopes/scopes-list-menu";
 import { CalendarInput } from "~components/common/calendar-input";
 import "@material/mwc-textfield";
 
 import("~components/common/selection-chip").then(f => f.default());
 import("~components/common/compact-list").then(f => f.default());
-import("~components/app/scopes-list-menu").then(f => f.default());
+import("~components/scopes/scopes-list-menu").then(f => f.default());
 import("~components/overwrites/md-fab").then(f => f.default());
 import("~components/overwrites/md-button").then(f => f.default());
 import("~components/common/calendar-input").then(f => f.default());

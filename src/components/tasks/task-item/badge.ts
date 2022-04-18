@@ -6,7 +6,7 @@ import Task from "~src/models/task";
 import { timestampToRelativeString } from "~utils/time";
 import scopedStyles from "./styles.lit.scss";
 import { CalendarInput } from "~components/common/calendar-input";
-import { MilestonesListMenu } from "~components/app/menues/milestones-list-menu";
+import { MilestonesListMenu } from "~components/milestones/milestones-list-menu";
 
 export default (): void => defineComponent("task-item--badge", TaskItemBadge);
 export class TaskItemBadge extends LitElement {
@@ -38,7 +38,7 @@ export class TaskItemBadge extends LitElement {
         }
 
         if (this.task.milestone) {
-            import("~components/app/menues/milestones-list-menu").then();
+            import("~components/milestones/milestones-list-menu").then();
             return html`
                 <p>${this.task.milestone.label}</p>
                 <span class="material-icons">flag</span>

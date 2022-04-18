@@ -1,7 +1,7 @@
 import { html, TemplateResult } from "lit";
 import { customElement, query, state } from "lit/decorators.js";
 import { pageStyles } from "~src/global";
-import { AppPageElement } from "~components/app/router/app-router";
+import { AppPageElement } from "~components/app-container/router/app-router";
 import { listenForUserInfo } from "~services/user";
 import Task from "~src/models/task";
 import { getTaskById } from "~src/models/task/factory";
@@ -10,8 +10,8 @@ import { clearCompletedToday, listenForTasksCompletedToday } from "~src/services
 import listenForUpNextTasks from "~src/services/algo/up-next";
 import fireworks from "fireworks";
 
-import("~components/app/tasks/tasks-card").then(f => f.default());
-import("~components/app/tasks/task-item").then(f => f.default());
+import("~components/tasks/tasks-card").then(f => f.default());
+import("~components/tasks/task-item").then(f => f.default());
 import("~components/common/card-surface").then(f => f.default());
 import("~components/overwrites/md-button").then(f => f.default());
 

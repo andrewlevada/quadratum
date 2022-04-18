@@ -1,7 +1,7 @@
 import { html, TemplateResult } from "lit";
 import { customElement, query, state } from "lit/decorators.js";
 import { pageStyles } from "~src/global";
-import { AppPageElement } from "~components/app/router/app-router";
+import { AppPageElement } from "~components/app-container/router/app-router";
 import { listenForUserInfo, OAuthData, setFigmaMapUrl, setFigmaOAuth } from "~services/user";
 import scopedStyles from "./styles.lit.scss";
 import { getAuth, onAuthStateChanged } from "@firebase/auth";

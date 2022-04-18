@@ -2,7 +2,7 @@ import { html, TemplateResult } from "lit";
 import { componentStyles } from "~src/global";
 import { defineComponent, RealtimeLitElement } from "~utils/components";
 import { property, state } from "lit/decorators.js";
-import { Item } from "~components/app/side-bar/item";
+import { Item } from "~components/app-container/side-bar/item";
 import scopedStyles from "./styles.lit.scss";
 import Scope from "~src/models/scope";
 

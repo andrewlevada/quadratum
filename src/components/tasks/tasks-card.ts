@@ -3,10 +3,10 @@ import { componentStyles } from "~src/global";
 import { defineComponent } from "~utils/components";
 import { property } from "lit/decorators.js";
 import Task from "~src/models/task";
-import { TaskItemDisplay } from "~components/app/tasks/task-item";
+import { TaskItemDisplay } from "~components/tasks/task-item";
 
 import("~components/common/card-surface").then(f => f.default());
-import("~components/app/tasks/task-item").then(f => f.default());
+import("~components/tasks/task-item").then(f => f.default());
 
 export default (): void => defineComponent("tasks-card", TasksCard);
 export class TasksCard extends LitElement {

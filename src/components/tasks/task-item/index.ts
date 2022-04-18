@@ -5,7 +5,7 @@ import { property, query } from "lit/decorators.js";
 import Task from "~src/models/task";
 import { Menu } from "@material/mwc-menu";
 import { TaskContextModifier } from "~src/models/task/task-context-modifier";
-import { taskItemActionsHtml, taskItemActionsStyles } from "~components/app/tasks/task-item/actions";
+import { taskItemActionsHtml, taskItemActionsStyles } from "~components/tasks/task-item/actions";
 import scopedStyles from "./styles.lit.scss";
 
 import("~components/common/menu-tiny-button").then(f => f.default());

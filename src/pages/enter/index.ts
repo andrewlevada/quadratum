@@ -6,7 +6,7 @@ import { getAuth, GoogleAuthProvider, signInWithPopup } from "@firebase/auth";
 import { initializeUser } from "~services/user";
 import backgroundImage from "~assets/images/enter-bg.png";
 import logoImage from "~assets/icons/logo.svg";
-import { AppPageElement } from "~components/app/router/app-router";
+import { AppPageElement } from "~components/app-container/router/app-router";
 import scopedStyles from "./styles.lit.scss";
 import "@material/mwc-fab";
 

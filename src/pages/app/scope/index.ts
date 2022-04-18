@@ -6,12 +6,12 @@ import "@material/mwc-button";
 import "@material/mwc-dialog";
 import "@material/mwc-textfield";
 import "@material/mwc-icon-button";
-import { AppPageElement } from "~components/app/router/app-router";
+import { AppPageElement } from "~components/app-container/router/app-router";
 import Scope from "~src/models/scope";
 import { listenForCompletedTasksFromScope, listenForPendingTasksFromScope } from "~src/models/task/factory";
 
 import("~components/common/card-surface").then(f => f.default());
-import("~components/app/tasks/task-table").then(f => f.default());
+import("~components/tasks/task-table").then(f => f.default());
 
 @customElement("app-page--scope")
 export default class AppPageScope extends AppPageElement {

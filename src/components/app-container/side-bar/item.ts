@@ -2,7 +2,7 @@ import { html, LitElement, TemplateResult } from "lit";
 import { componentStyles } from "~src/global";
 import { defineComponent } from "~utils/components";
 import { property, query } from "lit/decorators.js";
-import { AppRouter } from "~components/app/router/app-router";
+import { AppRouter } from "~components/app-container/router/app-router";
 import scopedStyles from "./styles.lit.scss";
 
 export interface Item {
