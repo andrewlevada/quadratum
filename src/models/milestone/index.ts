@@ -4,8 +4,10 @@ import {
     doc,
     DocumentData,
     FirestoreDataConverter,
-    orderBy, PartialWithFieldValue,
-    QueryDocumentSnapshot, runTransaction,
+    orderBy,
+    PartialWithFieldValue,
+    QueryDocumentSnapshot,
+    runTransaction,
     Unsubscribe,
     WithFieldValue
 } from "@firebase/firestore";
@@ -14,6 +16,7 @@ import { listenForMilestonesWithFilter, updateMilestone } from "~src/models/mile
 export interface MilestoneDraft {
     label: string;
     description: string;
+    startDate: number;
     dueDate: number;
 }
 
@@ -32,6 +35,9 @@ export default class Milestone {
     private descriptionInner: string;
     @updatable(updateMilestone) description!: string;
 
+    private startDateInner: number;
+    @updatable(updateMilestone) readonly startDate!: number;
+
     private dueDateInner: number;
     @updatable(updateMilestone) dueDate!: number;
 
@@ -48,6 +54,7 @@ export default class Milestone {
         this.id = id;
         this.labelInner = document.label;
         this.descriptionInner = document.description;
+        this.startDateInner = document.startDate;
         this.dueDateInner = document.dueDate;
         this.totalSessionsInner = document.totalSessions;
         this.completedSessionsInner = document.completedSessions;
@@ -82,6 +89,7 @@ export default class Milestone {
 
             if (o.label !== undefined) payload.label = o.label;
             if (o.description !== undefined) payload.description = o.description;
+            if (o.startDate !== undefined) payload.dueDate = o.startDate;
             if (o.dueDate !== undefined) payload.dueDate = o.dueDate;
             if (o.totalSessions !== undefined) payload.totalSessions = o.totalSessions;
             if (o.completedSessions !== undefined) payload.completedSessions = o.completedSessions;

@@ -46,7 +46,9 @@ export class MilestoneItem extends LitElement {
     }
 
     private getExpectedProgress(): number {
-        return 0;
+        const duration = this.value.dueDate - this.value.startDate;
+        const passed = new Date().getTime() - this.value.startDate;
+        return passed / duration;
     }
 
     static styles = [...componentStyles, scopedStyles];
